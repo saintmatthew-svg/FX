@@ -652,7 +652,7 @@ export default function Index() {
               account to make us about them or social media all and up giving you the first and cheapest options for the site and the industry. OurForexCapitals is open to traders worldwide.
             </p>
             <p className="text-white/60 text-xs mt-4">
-              2023 © All Time High Profit Forex Sc.
+              2021 - 2025 © All Time High Profit Forex Sc.
             </p>
           </div>
         </div>
