@@ -9,7 +9,6 @@ export default function Platforms() {
     <div className="min-h-screen bg-forex-dark">
       <Navigation currentPage="platforms" />
 
-      {/* Hero Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark to-forex-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -21,12 +20,10 @@ export default function Platforms() {
         </div>
       </section>
 
-      {/* Platform Options */}
       <section className="py-20 bg-forex-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid lg:grid-cols-3 gap-8">
-            
-            {/* MetaTrader 5 */}
+
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -71,7 +68,6 @@ export default function Platforms() {
               </CardContent>
             </Card>
 
-            {/* cTrader */}
             <Card className="forex-card-gradient border-forex-cyan/20 ring-2 ring-forex-cyan/30">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span className="bg-forex-cyan text-forex-dark px-4 py-1 rounded-full text-sm font-semibold">
@@ -121,7 +117,6 @@ export default function Platforms() {
               </CardContent>
             </Card>
 
-            {/* Mobile Apps */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -168,7 +163,6 @@ export default function Platforms() {
         </div>
       </section>
 
-      {/* Features Comparison */}
       <section className="py-20 bg-forex-dark-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -229,7 +223,6 @@ export default function Platforms() {
         </div>
       </section>
 
-      {/* Platform Requirements */}
       <section className="py-20 bg-forex-dark-300">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -283,7 +276,6 @@ export default function Platforms() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark-300 to-forex-dark">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold text-white mb-6">Get Started Today</h2>

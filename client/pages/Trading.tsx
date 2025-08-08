@@ -9,7 +9,6 @@ export default function Trading() {
     <div className="min-h-screen bg-forex-dark">
       <Navigation currentPage="trading" />
 
-      {/* Hero Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark to-forex-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -21,7 +20,6 @@ export default function Trading() {
         </div>
       </section>
 
-      {/* Trading Instruments */}
       <section className="py-20 bg-forex-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -97,7 +95,6 @@ export default function Trading() {
         </div>
       </section>
 
-      {/* Trading Conditions */}
       <section className="py-20 bg-forex-dark-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -145,7 +142,6 @@ export default function Trading() {
         </div>
       </section>
 
-      {/* Risk Management */}
       <section className="py-20 bg-forex-dark-300">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -200,7 +196,6 @@ export default function Trading() {
         </div>
       </section>
 
-      {/* Trading Hours */}
       <section className="py-20 bg-forex-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -234,7 +229,6 @@ export default function Trading() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark-100 to-forex-dark">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold text-white mb-6">Start Trading Today</h2>

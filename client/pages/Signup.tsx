@@ -7,7 +7,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Eye, EyeOff, ArrowLeft, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 
-// Comprehensive list of countries with their phone codes (sorted alphabetically)
 const countries = [
   { code: 'ar', name: 'Argentina', phoneCode: '+54', format: '+54 XX XXXX XXXX' },
   { code: 'au', name: 'Australia', phoneCode: '+61', format: '+61 X XXXX XXXX' },
@@ -98,10 +97,8 @@ export default function Signup() {
   const [selectedCountry, setSelectedCountry] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
 
-  // Get selected country data
   const currentCountry = countries.find(country => country.code === selectedCountry);
 
-  // Handle country change
   const handleCountryChange = (countryCode: string) => {
     setSelectedCountry(countryCode);
     const country = countries.find(c => c.code === countryCode);
@@ -110,11 +107,9 @@ export default function Signup() {
     }
   };
 
-  // Handle phone number input
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (currentCountry) {
-      // Ensure the phone code is always present
       if (!value.startsWith(currentCountry.phoneCode)) {
         setPhoneNumber(currentCountry.phoneCode + ' ');
       } else {
@@ -127,10 +122,8 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen bg-forex-dark flex items-center justify-center relative overflow-hidden py-8">
-      {/* Background Effects */}
       <div className="absolute inset-0 forex-network-animation"></div>
       
-      {/* Back to Home */}
       <Link 
         to="/" 
         className="absolute top-6 left-6 text-white/80 hover:text-forex-cyan transition-colors flex items-center gap-2 z-20"
@@ -139,7 +132,6 @@ export default function Signup() {
         Back to Home
       </Link>
 
-      {/* Logo */}
       <div className="absolute top-6 right-6 flex items-center space-x-2 z-20">
         <div className="w-8 h-8 bg-forex-cyan rounded transform rotate-45"></div>
         <span className="text-xl font-bold text-white">
@@ -148,7 +140,6 @@ export default function Signup() {
         </span>
       </div>
 
-      {/* Signup Form */}
       <div className="relative z-10 w-full max-w-lg mx-auto px-4">
         <Card className="forex-card-gradient border-forex-cyan/20 shadow-2xl">
           <CardHeader className="text-center pb-2">
@@ -158,7 +149,6 @@ export default function Signup() {
           
           <CardContent className="space-y-6">
             <form className="space-y-4">
-              {/* Full Name */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstName" className="text-white text-sm font-medium">
@@ -184,7 +174,6 @@ export default function Signup() {
                 </div>
               </div>
 
-              {/* Email Input */}
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-white text-sm font-medium">
                   Email Address
@@ -197,7 +186,6 @@ export default function Signup() {
                 />
               </div>
 
-              {/* Phone Number */}
               <div className="space-y-2">
                 <Label htmlFor="phone" className="text-white text-sm font-medium">
                   Phone Number
@@ -217,7 +205,6 @@ export default function Signup() {
                 )}
               </div>
 
-              {/* Country */}
               <div className="space-y-2">
                 <Label htmlFor="country" className="text-white text-sm font-medium">
                   Country
@@ -236,7 +223,6 @@ export default function Signup() {
                 </Select>
               </div>
 
-              {/* Experience Level */}
               <div className="space-y-2">
                 <Label htmlFor="experience" className="text-white text-sm font-medium">
                   Trading Experience
@@ -254,7 +240,6 @@ export default function Signup() {
                 </Select>
               </div>
 
-              {/* Password Input */}
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-white text-sm font-medium">
                   Password
@@ -276,7 +261,6 @@ export default function Signup() {
                 </div>
               </div>
 
-              {/* Confirm Password Input */}
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword" className="text-white text-sm font-medium">
                   Confirm Password
@@ -298,7 +282,6 @@ export default function Signup() {
                 </div>
               </div>
 
-              {/* Password Requirements */}
               <div className="bg-forex-dark-100/50 p-4 rounded-lg border border-forex-cyan/20">
                 <p className="text-white/70 text-sm mb-2">Password must contain:</p>
                 <div className="space-y-1">
@@ -321,7 +304,6 @@ export default function Signup() {
                 </div>
               </div>
 
-              {/* Terms and Conditions */}
               <div className="space-y-4">
                 <label className="flex items-start space-x-3 text-sm text-white/70">
                   <input 
@@ -357,14 +339,12 @@ export default function Signup() {
                 </label>
               </div>
 
-              {/* Create Account Button */}
               <Button className="forex-btn-primary w-full h-12 text-lg font-semibold">
                 Create Account
               </Button>
             </form>
 
 
-            {/* Sign In Link */}
             <div className="text-center pt-4">
               <p className="text-white/70">
                 Already have an account?{' '}

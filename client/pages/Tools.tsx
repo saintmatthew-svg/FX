@@ -9,7 +9,6 @@ export default function Tools() {
     <div className="min-h-screen bg-forex-dark">
       <Navigation currentPage="tools" />
 
-      {/* Hero Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark to-forex-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -21,12 +20,10 @@ export default function Tools() {
         </div>
       </section>
 
-      {/* Trading Tools Grid */}
       <section className="py-20 bg-forex-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             
-            {/* Position Size Calculator */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -56,7 +53,6 @@ export default function Tools() {
               </CardContent>
             </Card>
 
-            {/* Pip Calculator */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -86,7 +82,6 @@ export default function Tools() {
               </CardContent>
             </Card>
 
-            {/* Market Analysis */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -116,7 +111,6 @@ export default function Tools() {
               </CardContent>
             </Card>
 
-            {/* Economic Calendar */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -146,7 +140,6 @@ export default function Tools() {
               </CardContent>
             </Card>
 
-            {/* Trading Signals */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -176,7 +169,6 @@ export default function Tools() {
               </CardContent>
             </Card>
 
-            {/* Risk Management */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -209,7 +201,6 @@ export default function Tools() {
         </div>
       </section>
 
-      {/* Featured Tool */}
       <section className="py-20 bg-forex-dark-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -266,7 +257,6 @@ export default function Tools() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark-200 to-forex-dark">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold text-white mb-6">Elevate Your Trading</h2>

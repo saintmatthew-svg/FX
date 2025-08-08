@@ -11,10 +11,8 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-forex-dark flex items-center justify-center relative overflow-hidden">
-      {/* Background Effects */}
       <div className="absolute inset-0 forex-network-animation"></div>
       
-      {/* Back to Home */}
       <Link 
         to="/" 
         className="absolute top-6 left-6 text-white/80 hover:text-forex-cyan transition-colors flex items-center gap-2 z-20"
@@ -23,7 +21,6 @@ export default function Login() {
         Back to Home
       </Link>
 
-      {/* Logo */}
       <div className="absolute top-6 right-6 flex items-center space-x-2 z-20">
         <div className="w-8 h-8 bg-forex-cyan rounded transform rotate-45"></div>
         <span className="text-xl font-bold text-white">
@@ -32,7 +29,6 @@ export default function Login() {
         </span>
       </div>
 
-      {/* Login Form */}
       <div className="relative z-10 w-full max-w-md mx-auto px-4">
         <Card className="forex-card-gradient border-forex-cyan/20 shadow-2xl">
           <CardHeader className="text-center pb-2">
@@ -42,7 +38,6 @@ export default function Login() {
           
           <CardContent className="space-y-6">
             <form className="space-y-4">
-              {/* Email Input */}
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-white text-sm font-medium">
                   Email Address
@@ -55,7 +50,6 @@ export default function Login() {
                 />
               </div>
 
-              {/* Password Input */}
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-white text-sm font-medium">
                   Password
@@ -77,7 +71,6 @@ export default function Login() {
                 </div>
               </div>
 
-              {/* Remember Me & Forgot Password */}
               <div className="flex items-center justify-between">
                 <label className="flex items-center space-x-2 text-sm text-white/70">
                   <input 
@@ -91,13 +84,11 @@ export default function Login() {
                 </Link>
               </div>
 
-              {/* Sign In Button */}
               <Button className="forex-btn-primary w-full h-12 text-lg font-semibold">
                 Sign In
               </Button>
             </form>
 
-            {/* Divider */}
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-forex-cyan/20"></div>
@@ -107,13 +98,12 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Social Login Options */}
             <div className="grid grid-cols-2 gap-4">
               <Button
                 variant="outline"
                 className="bg-forex-dark-100 border-forex-cyan/30 text-white hover:bg-forex-cyan/10 h-12"
                 onClick={() => {
-                  // Redirect to Google OAuth
+
                   window.location.href = '/api/auth/google';
                 }}
               >
@@ -129,7 +119,7 @@ export default function Login() {
                 variant="outline"
                 className="bg-forex-dark-100 border-forex-cyan/30 text-white hover:bg-forex-cyan/10 h-12"
                 onClick={() => {
-                  // Redirect to Facebook OAuth
+
                   window.location.href = '/api/auth/facebook';
                 }}
               >
@@ -140,7 +130,6 @@ export default function Login() {
               </Button>
             </div>
 
-            {/* Sign Up Link */}
             <div className="text-center pt-4">
               <p className="text-white/70">
                 Don't have an account?{' '}
@@ -152,7 +141,6 @@ export default function Login() {
           </CardContent>
         </Card>
 
-        {/* Additional Info */}
         <div className="mt-8 text-center">
           <p className="text-white/60 text-sm leading-relaxed">
             By signing in, you agree to our{' '}
