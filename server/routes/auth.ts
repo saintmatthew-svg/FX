@@ -49,7 +49,6 @@ export const handleFacebookCallback: RequestHandler = async (req, res) => {
       return res.redirect('/login?error=oauth_failed');
     }
     console.log('Facebook OAuth callback received code:', code);
-    
     res.redirect('/?success=facebook_login');
     
   } catch (error) {
