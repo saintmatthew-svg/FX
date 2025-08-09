@@ -270,9 +270,15 @@ export default function TradingNew() {
         })
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
       if (data.success && data.user) {
         updateBalance(data.user.balance);
+      } else {
+        throw new Error(data.message || 'Balance update failed');
       }
 
       // Add to positions

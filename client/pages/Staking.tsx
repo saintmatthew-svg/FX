@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,16 +26,164 @@ import {
   Bell,
   Settings,
   RefreshCw,
+  X,
 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function Staking() {
+  const { user } = useAuth();
   const [selectedValidator, setSelectedValidator] = useState(null);
   const [favoriteStakes, setFavoriteStakes] = useState<Set<string>>(new Set());
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+  const [userStakingHistory, setUserStakingHistory] = useState<any[]>([]);
+  const [calculatorData, setCalculatorData] = useState({
+    amount: '',
+    apy: '15.5',
+    period: '12', // months
+    periodType: 'months',
+    asset: 'LUNA'
+  });
+  const [nextRewardCountdown, setNextRewardCountdown] = useState({
+    hours: 6,
+    minutes: 23,
+    seconds: 45
+  });
 
   // Function to handle staking
   const handleStake = (poolSymbol: string, poolName: string) => {
+    if (user) {
+      // Add to user's staking history when they actually stake
+      const newStakingEntry = {
+        date: new Date().toISOString().split('T')[0],
+        asset: poolSymbol,
+        amount: '0',
+        value: '$0.00',
+        validator: poolName,
+        type: 'stake'
+      };
+      setUserStakingHistory(prev => [newStakingEntry, ...prev]);
+    }
     alert(`Staking for ${poolName} (${poolSymbol}) will be available soon!`);
   };
+
+  // Function to open rewards calculator
+  const openRewardsCalculator = () => {
+    setIsCalculatorOpen(true);
+  };
+
+  // Comprehensive crypto assets with enhanced APYs
+  const cryptoAssets = {
+    'BTC': { name: 'Bitcoin', apy: '8.5' },
+    'ETH': { name: 'Ethereum', apy: '12.2' },
+    'ADA': { name: 'Cardano', apy: '15.8' },
+    'SOL': { name: 'Solana', apy: '18.1' },
+    'DOT': { name: 'Polkadot', apy: '22.5' },
+    'ATOM': { name: 'Cosmos', apy: '28.2' },
+    'AVAX': { name: 'Avalanche', apy: '19.8' },
+    'LUNA': { name: 'Terra Luna', apy: '35.5' },
+    'NEAR': { name: 'Near Protocol', apy: '24.7' },
+    'ALGO': { name: 'Algorand', apy: '16.3' },
+    'MATIC': { name: 'Polygon', apy: '14.9' },
+    'FTM': { name: 'Fantom', apy: '21.4' },
+    'OSMO': { name: 'Osmosis', apy: '45.2' },
+    'JUNO': { name: 'Juno', apy: '38.7' },
+    'SCRT': { name: 'Secret Network', apy: '32.1' },
+    'KAVA': { name: 'Kava', apy: '29.6' },
+    'CRO': { name: 'Cronos', apy: '18.5' },
+    'ONE': { name: 'Harmony', apy: '26.3' },
+    'VET': { name: 'VeChain', apy: '13.7' },
+    'THETA': { name: 'Theta Network', apy: '17.9' },
+    'XTZ': { name: 'Tezos', apy: '11.4' },
+    'ICX': { name: 'ICON', apy: '19.2' },
+    'QTUM': { name: 'Qtum', apy: '15.6' },
+    'ZIL': { name: 'Zilliqa', apy: '23.8' },
+    'BAND': { name: 'Band Protocol', apy: '31.4' },
+    'RUNE': { name: 'THORChain', apy: '42.1' },
+    'KSM': { name: 'Kusama', apy: '16.8' },
+    'FLOW': { name: 'Flow', apy: '20.3' },
+    'MINA': { name: 'Mina Protocol', apy: '25.7' },
+    'ROSE': { name: 'Oasis Network', apy: '33.9' }
+  };
+
+  // Function to calculate rewards over time with monthly support
+  const calculateRewards = () => {
+    const principal = parseFloat(calculatorData.amount) || 0;
+    const annualRate = parseFloat(calculatorData.apy) / 100;
+    const totalPeriods = parseFloat(calculatorData.period);
+    const isMonthly = calculatorData.periodType === 'months';
+
+    if (principal <= 0) return { total: 0, earned: 0, breakdown: [] };
+
+    const breakdown = [];
+    let currentAmount = principal;
+
+    // Calculate compound interest for each period
+    if (isMonthly) {
+      const monthlyRate = annualRate / 12;
+      for (let month = 1; month <= totalPeriods; month++) {
+        const monthlyEarnings = currentAmount * monthlyRate;
+        currentAmount += monthlyEarnings;
+        breakdown.push({
+          period: month,
+          periodLabel: `Month ${month}`,
+          amount: currentAmount,
+          earned: monthlyEarnings,
+          totalEarned: currentAmount - principal
+        });
+      }
+    } else {
+      // Yearly calculation
+      for (let year = 1; year <= totalPeriods; year++) {
+        const yearlyEarnings = currentAmount * annualRate;
+        currentAmount += yearlyEarnings;
+        breakdown.push({
+          period: year,
+          periodLabel: `Year ${year}`,
+          amount: currentAmount,
+          earned: yearlyEarnings,
+          totalEarned: currentAmount - principal
+        });
+      }
+    }
+
+    return {
+      total: currentAmount,
+      earned: currentAmount - principal,
+      breakdown
+    };
+  };
+
+  // Countdown timer effect
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNextRewardCountdown(prev => {
+        let { hours, minutes, seconds } = prev;
+
+        if (seconds > 0) {
+          seconds--;
+        } else if (minutes > 0) {
+          minutes--;
+          seconds = 59;
+        } else if (hours > 0) {
+          hours--;
+          minutes = 59;
+          seconds = 59;
+        } else {
+          // Reset to next reward cycle (24 hours)
+          hours = 23;
+          minutes = 59;
+          seconds = 59;
+        }
+
+        return { hours, minutes, seconds };
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   // Function to toggle favorite staking pools
   const toggleFavoriteStake = (poolSymbol: string) => {
@@ -179,6 +328,7 @@ export default function Staking() {
             <Button
               variant="outline"
               className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10"
+              onClick={openRewardsCalculator}
             >
               <Calculator className="w-4 h-4 mr-2" />
               Rewards Calculator
@@ -238,7 +388,7 @@ export default function Staking() {
                 <span className="text-white/80">Next Reward</span>
               </div>
               <div className="text-2xl font-bold text-crypto-accent mb-1">
-                6h 23m
+                {nextRewardCountdown.hours}h {nextRewardCountdown.minutes}m {nextRewardCountdown.seconds}s
               </div>
               <div className="text-sm text-white/60">ETH Reward</div>
             </CardContent>
@@ -453,56 +603,44 @@ export default function Staking() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {[
-                    {
-                      date: "2024-01-15",
-                      asset: "ETH",
-                      amount: "0.0234",
-                      value: "$81.34",
-                      validator: "Lido",
-                    },
-                    {
-                      date: "2024-01-14",
-                      asset: "ADA",
-                      amount: "12.567",
-                      value: "$6.07",
-                      validator: "AZTEC Pool",
-                    },
-                    {
-                      date: "2024-01-13",
-                      asset: "SOL",
-                      amount: "0.456",
-                      value: "$71.34",
-                      validator: "Chorus One",
-                    },
-                  ].map((reward, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-3 rounded-lg bg-crypto-dark/50"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-crypto-gold/20 rounded-full flex items-center justify-center">
-                          <Award className="w-4 h-4 text-crypto-gold" />
+                  {userStakingHistory.length > 0 ? (
+                    userStakingHistory.map((reward, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-3 rounded-lg bg-crypto-dark/50"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-crypto-gold/20 rounded-full flex items-center justify-center">
+                            <Award className="w-4 h-4 text-crypto-gold" />
+                          </div>
+                          <div>
+                            <div className="text-white font-medium">
+                              {reward.asset} Reward
+                            </div>
+                            <div className="text-white/60 text-sm">
+                              {reward.validator} • {reward.date}
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="text-white font-medium">
-                            {reward.asset} Reward
+                        <div className="text-right">
+                          <div className="text-crypto-green font-medium">
+                            +{reward.amount} {reward.asset}
                           </div>
                           <div className="text-white/60 text-sm">
-                            {reward.validator} • {reward.date}
+                            {reward.value}
                           </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-crypto-green font-medium">
-                          +{reward.amount} {reward.asset}
-                        </div>
-                        <div className="text-white/60 text-sm">
-                          {reward.value}
-                        </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 bg-crypto-gold/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Award className="w-8 h-8 text-crypto-gold/50" />
                       </div>
+                      <div className="text-white/70 font-medium mb-2">No Staking History</div>
+                      <div className="text-white/50 text-sm">Start staking to see your rewards history here.</div>
                     </div>
-                  ))}
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -602,6 +740,219 @@ export default function Staking() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Rewards Calculator Dialog */}
+      <Dialog open={isCalculatorOpen} onOpenChange={setIsCalculatorOpen}>
+        <DialogContent className="crypto-card-gradient border-crypto-gold/20 max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center">
+              <Calculator className="w-5 h-5 mr-2 text-crypto-gold" />
+              Staking Rewards Calculator
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 max-h-[calc(90vh-120px)] overflow-y-auto pr-2">
+            {/* Input Form */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="amount" className="text-white">Amount to Stake</Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  placeholder="Enter amount"
+                  value={calculatorData.amount}
+                  onChange={(e) => setCalculatorData(prev => ({ ...prev, amount: e.target.value }))}
+                  className="bg-crypto-dark border-crypto-gold/20 text-white"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="asset" className="text-white">Asset</Label>
+                <Select value={calculatorData.asset} onValueChange={(value) => {
+                  setCalculatorData(prev => ({
+                    ...prev,
+                    asset: value,
+                    apy: cryptoAssets[value as keyof typeof cryptoAssets]?.apy || prev.apy
+                  }));
+                }}>
+                  <SelectTrigger className="bg-crypto-dark border-crypto-gold/20 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-crypto-dark border-crypto-gold/20 max-h-96 overflow-y-auto">
+                    {Object.entries(cryptoAssets).map(([symbol, { name, apy }]) => (
+                      <SelectItem key={symbol} value={symbol} className="text-white hover:bg-crypto-gold/10">
+                        {symbol} - {name} ({apy}% APY)
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="apy" className="text-white">APY (%)</Label>
+                <Input
+                  id="apy"
+                  type="number"
+                  step="0.1"
+                  value={calculatorData.apy}
+                  onChange={(e) => setCalculatorData(prev => ({ ...prev, apy: e.target.value }))}
+                  className="bg-crypto-dark border-crypto-gold/20 text-white"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="periodType" className="text-white">Period Type</Label>
+                <Select value={calculatorData.periodType} onValueChange={(value) => {
+                  setCalculatorData(prev => ({
+                    ...prev,
+                    periodType: value,
+                    period: value === 'months' ? '12' : '1'
+                  }));
+                }}>
+                  <SelectTrigger className="bg-crypto-dark border-crypto-gold/20 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-crypto-dark border-crypto-gold/20">
+                    <SelectItem value="months" className="text-white hover:bg-crypto-gold/10">Months</SelectItem>
+                    <SelectItem value="years" className="text-white hover:bg-crypto-gold/10">Years</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="period" className="text-white">
+                  Staking Period ({calculatorData.periodType === 'months' ? 'Months' : 'Years'})
+                </Label>
+                <Select value={calculatorData.period} onValueChange={(value) => setCalculatorData(prev => ({ ...prev, period: value }))}>
+                  <SelectTrigger className="bg-crypto-dark border-crypto-gold/20 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-crypto-dark border-crypto-gold/20">
+                    {calculatorData.periodType === 'months' ? (
+                      <>
+                        <SelectItem value="1" className="text-white hover:bg-crypto-gold/10">1 Month</SelectItem>
+                        <SelectItem value="3" className="text-white hover:bg-crypto-gold/10">3 Months</SelectItem>
+                        <SelectItem value="6" className="text-white hover:bg-crypto-gold/10">6 Months</SelectItem>
+                        <SelectItem value="12" className="text-white hover:bg-crypto-gold/10">12 Months</SelectItem>
+                        <SelectItem value="18" className="text-white hover:bg-crypto-gold/10">18 Months</SelectItem>
+                        <SelectItem value="24" className="text-white hover:bg-crypto-gold/10">24 Months</SelectItem>
+                        <SelectItem value="36" className="text-white hover:bg-crypto-gold/10">36 Months</SelectItem>
+                      </>
+                    ) : (
+                      <>
+                        <SelectItem value="1" className="text-white hover:bg-crypto-gold/10">1 Year</SelectItem>
+                        <SelectItem value="2" className="text-white hover:bg-crypto-gold/10">2 Years</SelectItem>
+                        <SelectItem value="3" className="text-white hover:bg-crypto-gold/10">3 Years</SelectItem>
+                        <SelectItem value="5" className="text-white hover:bg-crypto-gold/10">5 Years</SelectItem>
+                        <SelectItem value="10" className="text-white hover:bg-crypto-gold/10">10 Years</SelectItem>
+                      </>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Results */}
+            {calculatorData.amount && parseFloat(calculatorData.amount) > 0 && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-3 gap-4">
+                  <Card className="crypto-card-gradient border-crypto-gold/20">
+                    <CardContent className="p-4 text-center">
+                      <div className="text-white/70 text-sm mb-1">Initial Stake</div>
+                      <div className="text-white font-bold text-lg">
+                        {parseFloat(calculatorData.amount).toLocaleString()} {calculatorData.asset}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="crypto-card-gradient border-crypto-green/20">
+                    <CardContent className="p-4 text-center">
+                      <div className="text-white/70 text-sm mb-1">Total Rewards</div>
+                      <div className="text-crypto-green font-bold text-lg">
+                        +{calculateRewards().earned.toLocaleString(undefined, { maximumFractionDigits: 4 })} {calculatorData.asset}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="crypto-card-gradient border-crypto-accent/20">
+                    <CardContent className="p-4 text-center">
+                      <div className="text-white/70 text-sm mb-1">Final Amount</div>
+                      <div className="text-crypto-accent font-bold text-lg">
+                        {calculateRewards().total.toLocaleString(undefined, { maximumFractionDigits: 4 })} {calculatorData.asset}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Yearly Breakdown */}
+                <Card className="crypto-card-gradient border-crypto-gold/20">
+                  <CardHeader>
+                    <CardTitle className="text-white text-lg">
+                      {calculatorData.periodType === 'months' ? 'Monthly' : 'Yearly'} Breakdown
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3 max-h-40 overflow-y-auto">
+                      {calculateRewards().breakdown.map((year, index) => (
+                        <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-crypto-dark/30">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-crypto-gold/20 rounded-full flex items-center justify-center">
+                              <span className="text-crypto-gold font-bold text-sm">{year.period}</span>
+                            </div>
+                            <div>
+                              <div className="text-white font-medium">{year.periodLabel}</div>
+                              <div className="text-white/60 text-sm">+{year.earned.toLocaleString(undefined, { maximumFractionDigits: 4 })} {calculatorData.asset} earned</div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-white font-medium">
+                              {year.amount.toLocaleString(undefined, { maximumFractionDigits: 4 })} {calculatorData.asset}
+                            </div>
+                            <div className="text-crypto-green text-sm">
+                              +{year.totalEarned.toLocaleString(undefined, { maximumFractionDigits: 4 })} total
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            <div className="flex justify-end space-x-2">
+              <Button
+                variant="outline"
+                onClick={() => setIsCalculatorOpen(false)}
+                className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10"
+              >
+                Close
+              </Button>
+              <Button
+                className="crypto-btn-primary"
+                onClick={() => {
+                  // Auto-select asset APY when asset changes
+                  const assetAPYMap: { [key: string]: string } = {
+                    'ETH': '5.2',
+                    'ADA': '4.8',
+                    'SOL': '7.1',
+                    'DOT': '12.5',
+                    'ATOM': '18.2',
+                    'AVAX': '9.8'
+                  };
+                  setCalculatorData(prev => ({
+                    ...prev,
+                    apy: assetAPYMap[prev.asset] || prev.apy
+                  }));
+                }}
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Update APY
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

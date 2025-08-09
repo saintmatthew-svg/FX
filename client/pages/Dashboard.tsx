@@ -114,9 +114,14 @@ export default function Dashboard() {
 
   const handleDeposit = async () => {
     if (!depositAmount || parseFloat(depositAmount) <= 0) return;
+    if (isLoading) return; // Prevent double-clicks
 
+    console.log('Starting deposit for amount:', depositAmount);
     setIsLoading(true);
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
       const response = await fetch('/api/auth/balance', {
         method: 'POST',
         headers: {
@@ -126,8 +131,15 @@ export default function Dashboard() {
         body: JSON.stringify({
           type: 'deposit',
           amount: parseFloat(depositAmount)
-        })
+        }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const data = await response.json();
       if (data.success && data.user) {
@@ -135,9 +147,12 @@ export default function Dashboard() {
         addTransaction('deposit', 'USD', parseFloat(depositAmount));
         setDepositAmount('');
         setIsDepositOpen(false);
+      } else {
+        throw new Error(data.message || 'Deposit failed');
       }
     } catch (error) {
       console.error('Deposit error:', error);
+      alert(`Deposit failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }
@@ -145,9 +160,14 @@ export default function Dashboard() {
 
   const handleWithdrawal = async () => {
     if (!withdrawAmount || parseFloat(withdrawAmount) <= 0) return;
+    if (isLoading) return; // Prevent double-clicks
 
+    console.log('Starting withdrawal for amount:', withdrawAmount);
     setIsLoading(true);
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
       const response = await fetch('/api/auth/balance', {
         method: 'POST',
         headers: {
@@ -157,8 +177,15 @@ export default function Dashboard() {
         body: JSON.stringify({
           type: 'withdrawal',
           amount: parseFloat(withdrawAmount)
-        })
+        }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const data = await response.json();
       if (data.success && data.user) {
@@ -166,9 +193,12 @@ export default function Dashboard() {
         addTransaction('withdrawal', 'USD', parseFloat(withdrawAmount));
         setWithdrawAmount('');
         setIsWithdrawOpen(false);
+      } else {
+        throw new Error(data.message || 'Withdrawal failed');
       }
     } catch (error) {
       console.error('Withdrawal error:', error);
+      alert(`Withdrawal failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }
