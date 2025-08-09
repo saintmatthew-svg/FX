@@ -88,7 +88,7 @@ export default function Index() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-crypto-purple to-crypto-cyan bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-crypto-gold to-crypto-accent bg-clip-text text-transparent">
               Crypto Future
             </span>
             <br />
@@ -119,7 +119,7 @@ export default function Index() {
           {/* Live Crypto Prices Ticker */}
           <div className="crypto-glassmorphism rounded-2xl p-6 mb-8">
             <div className="flex items-center justify-center mb-4">
-              <Activity className="w-5 h-5 text-crypto-cyan mr-2" />
+              <Activity className="w-5 h-5 text-crypto-gold mr-2" />
               <span className="text-white font-semibold">
                 Live Crypto Prices
               </span>
@@ -128,7 +128,7 @@ export default function Index() {
               {cryptoPrices.map((crypto) => (
                 <div key={crypto.symbol} className="text-center">
                   <div className="text-white font-medium">{crypto.symbol}</div>
-                  <div className="text-crypto-cyan text-sm">{crypto.price}</div>
+                  <div className="text-crypto-gold text-sm">{crypto.price}</div>
                   <div
                     className={`text-xs flex items-center justify-center ${crypto.up ? "crypto-price-up" : "crypto-price-down"}`}
                   >
@@ -298,7 +298,7 @@ export default function Index() {
                   and access to exclusive investment opportunities with higher
                   potential returns.
                 </p>
-                <Button className="crypto-btn-cyan w-full">
+                <Button className="crypto-btn-accent w-full">
                   Start Investing
                 </Button>
               </CardContent>
