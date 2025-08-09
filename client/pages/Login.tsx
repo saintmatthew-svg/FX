@@ -10,22 +10,22 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="min-h-screen bg-forex-dark flex items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 forex-network-animation"></div>
+    <div className="min-h-screen bg-crypto-dark flex items-center justify-center relative overflow-hidden">
+      <div className="absolute inset-0 crypto-network-animation"></div>
       
       <Link 
         to="/" 
-        className="absolute top-6 left-6 text-white/80 hover:text-forex-cyan transition-colors flex items-center gap-2 z-20"
+        className="absolute top-6 left-6 text-white/80 hover:text-crypto-gold transition-colors flex items-center gap-2 z-20"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Home
       </Link>
 
       <div className="absolute top-6 right-6 flex items-center space-x-2 z-20">
-        <div className="w-8 h-8 bg-forex-cyan rounded transform rotate-45"></div>
+        <div className="w-8 h-8 bg-crypto-gold rounded transform rotate-45"></div>
         <span className="text-xl font-bold text-white">
-          MEGA FX<br />
-          <span className="text-sm">MARKET</span>
+          CRYPTO<br />
+          <span className="text-sm">FUTURE</span>
         </span>
       </div>
 
