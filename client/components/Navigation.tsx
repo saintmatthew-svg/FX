@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Users } from 'lucide-react';
+import { Menu, X, BarChart3, Wallet, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 
 interface NavigationProps {
@@ -11,55 +11,62 @@ export default function Navigation({ currentPage }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { name: 'Accounts', href: '/accounts' },
-    { name: 'About', href: '/about' },
-    { name: 'Trading', href: '/trading' },
-    { name: 'Platforms', href: '/platforms' },
-    { name: 'Tools', href: '/tools' },
-    { name: 'News & Education', href: '/education' },
+    { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
+    { name: 'Trading', href: '/trading', icon: TrendingUp },
+    { name: 'Portfolio', href: '/portfolio', icon: Wallet },
+    { name: 'Staking', href: '/staking', icon: TrendingUp },
+    { name: 'Learn', href: '/education', icon: BarChart3 },
+    { name: 'News', href: '/news', icon: BarChart3 },
   ];
 
   return (
-    <nav className="bg-forex-dark/95 backdrop-blur-md border-b border-forex-cyan/20 sticky top-0 z-50">
+    <nav className="bg-crypto-dark/95 backdrop-blur-md border-b border-crypto-purple/20 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-forex-cyan rounded transform rotate-45"></div>
+            <div className="w-8 h-8 bg-crypto-purple rounded transform rotate-45"></div>
             <span className="text-xl font-bold text-white">
-              MEGA FX<br />
-              <span className="text-sm">MARKET</span>
+              CRYPTO<br />
+              <span className="text-sm">FUTURE</span>
             </span>
           </Link>
 
           <div className="hidden lg:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`transition-colors ${
-                  currentPage === item.name.toLowerCase().replace(' & ', '-').replace(' ', '-')
-                    ? 'text-forex-cyan font-semibold'
-                    : 'text-white hover:text-forex-cyan'
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`flex items-center space-x-1 transition-colors ${
+                    currentPage === item.name.toLowerCase()
+                      ? 'text-crypto-purple font-semibold'
+                      : 'text-white hover:text-crypto-purple'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{item.name}</span>
+                </Link>
+              );
+            })}
           </div>
 
           <div className="hidden lg:flex items-center space-x-4">
-            <Link to="/login" className="text-white hover:text-forex-cyan transition-colors">
+            <Link to="/login" className="text-white hover:text-crypto-purple transition-colors">
               Sign In
             </Link>
             <Link to="/signup">
-              <Button className="forex-btn-primary">Get Started</Button>
+              <Button className="crypto-btn-primary">
+                <Wallet className="w-4 h-4 mr-2" />
+                Get Started
+              </Button>
             </Link>
           </div>
 
           <div className="lg:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-white hover:text-forex-cyan transition-colors"
+              className="text-white hover:text-crypto-purple transition-colors"
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -68,33 +75,40 @@ export default function Navigation({ currentPage }: NavigationProps) {
 
         {isMenuOpen && (
           <div className="lg:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-forex-dark-100 rounded-lg mt-2 border border-forex-cyan/20">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                    currentPage === item.name.toLowerCase().replace(' & ', '-').replace(' ', '-')
-                      ? 'text-forex-cyan bg-forex-cyan/10'
-                      : 'text-white hover:text-forex-cyan hover:bg-forex-cyan/5'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
+            <div className="px-2 pt-2 pb-3 space-y-1 crypto-glassmorphism rounded-lg mt-2 border border-crypto-purple/20">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                      currentPage === item.name.toLowerCase()
+                        ? 'text-crypto-purple bg-crypto-purple/10'
+                        : 'text-white hover:text-crypto-purple hover:bg-crypto-purple/5'
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
               
-              <div className="border-t border-forex-cyan/20 pt-4 mt-4">
+              <div className="border-t border-crypto-purple/20 pt-4 mt-4">
                 <Link
                   to="/login"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-forex-cyan hover:bg-forex-cyan/5 transition-colors"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-crypto-purple hover:bg-crypto-purple/5 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Sign In
                 </Link>
                 <div className="px-3 py-2">
                   <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="forex-btn-primary w-full">Get Started</Button>
+                    <Button className="crypto-btn-primary w-full">
+                      <Wallet className="w-4 h-4 mr-2" />
+                      Get Started
+                    </Button>
                   </Link>
                 </div>
               </div>
