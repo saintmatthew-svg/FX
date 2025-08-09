@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import Navigation from "@/components/Navigation";
+import { useMarketNews, useMarketSentiment } from "@/hooks/use-market-data";
 import {
   TrendingUp,
   TrendingDown,
@@ -36,8 +37,11 @@ export default function News() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Mock news data - in real app, this would come from APIs
-  const [newsData, setNewsData] = useState([
+  const { data: liveNews, loading: newsLoading, error: newsError } = useMarketNews(activeCategory, 20);
+  const { data: sentimentData, loading: sentimentLoading } = useMarketSentiment();
+
+  // Fallback news data
+  const fallbackNewsData = [
     {
       id: 1,
       title: "Bitcoin Surges Past $70,000 Amid Institutional Adoption",
@@ -122,9 +126,25 @@ export default function News() {
       likes: 76,
       comments: 12,
     },
-  ]);
+  ];
 
-  const marketSentiment = {
+  // Use live news data if available, otherwise fallback
+  const newsData = liveNews.length > 0 ? liveNews.map(news => ({
+    id: parseInt(news.id),
+    title: news.title,
+    summary: news.summary,
+    category: news.category,
+    source: news.source,
+    publishedAt: news.publishedAt,
+    readTime: '3 min',
+    image: '/placeholder.svg',
+    trending: news.sentiment === 'positive',
+    tags: [news.category.toUpperCase(), 'Breaking'],
+    likes: Math.floor(Math.random() * 500),
+    comments: Math.floor(Math.random() * 100),
+  })) : fallbackNewsData;
+
+  const marketSentiment = sentimentData || {
     crypto: { sentiment: "bullish", percentage: 78 },
     forex: { sentiment: "neutral", percentage: 52 },
     commodities: { sentiment: "bearish", percentage: 34 },
@@ -204,7 +224,7 @@ export default function News() {
             <CardContent className="p-6">
               <div className="flex items-center space-x-2 mb-4">
                 <Bitcoin className="w-5 h-5 text-crypto-gold" />
-                <span className="text-white/80">Crypto Sentiment</span>
+                <span className="text-white/80">Crypto Sentiment {sentimentLoading && <span className="text-xs text-crypto-accent">(Live)</span>}</span>
               </div>
               <div className="flex items-center justify-between">
                 <div>
