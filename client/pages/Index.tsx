@@ -171,8 +171,8 @@ export default function Index() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-crypto-purple/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow">
-                <Coins className="w-8 h-8 text-crypto-purple" />
+              <div className="w-16 h-16 bg-crypto-gold/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow">
+                <Coins className="w-8 h-8 text-crypto-gold" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-4">
                 Spot & Futures Trading
@@ -184,8 +184,8 @@ export default function Index() {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-crypto-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow-cyan">
-                <PiggyBank className="w-8 h-8 text-crypto-cyan" />
+              <div className="w-16 h-16 bg-crypto-accent/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow-accent">
+                <PiggyBank className="w-8 h-8 text-crypto-accent" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-4">
                 DeFi Staking & Yield
@@ -197,8 +197,8 @@ export default function Index() {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-crypto-purple/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow">
-                <Wallet className="w-8 h-8 text-crypto-purple" />
+              <div className="w-16 h-16 bg-crypto-gold/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow">
+                <Wallet className="w-8 h-8 text-crypto-gold" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-4">
                 Multi-Chain Wallet
@@ -210,8 +210,8 @@ export default function Index() {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-crypto-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow-cyan">
-                <Shield className="w-8 h-8 text-crypto-cyan" />
+              <div className="w-16 h-16 bg-crypto-accent/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow-accent">
+                <Shield className="w-8 h-8 text-crypto-accent" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-4">
                 Bank-Grade Security
