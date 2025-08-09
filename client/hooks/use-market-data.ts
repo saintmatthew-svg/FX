@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 export interface CryptoPrice {
   symbol: string;
@@ -27,7 +27,7 @@ export interface MarketNews {
   source: string;
   publishedAt: string;
   url: string;
-  sentiment: 'positive' | 'negative' | 'neutral';
+  sentiment: "positive" | "negative" | "neutral";
 }
 
 export interface MarketSentiment {
@@ -60,25 +60,30 @@ interface ApiResponse<T> {
   timestamp: number;
 }
 
-export const useCryptoPrices = (symbols?: string[], refreshInterval = 30000) => {
+export const useCryptoPrices = (
+  symbols?: string[],
+  refreshInterval = 30000,
+) => {
   const [data, setData] = useState<CryptoPrice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
-      const symbolsParam = symbols ? symbols.join(',') : '';
-      const response = await fetch(`/api/crypto/prices?symbols=${symbolsParam}`);
+      const symbolsParam = symbols ? symbols.join(",") : "";
+      const response = await fetch(
+        `/api/crypto/prices?symbols=${symbolsParam}`,
+      );
       const result: ApiResponse<CryptoPrice[]> = await response.json();
-      
+
       if (result.success) {
         setData(result.data);
         setError(null);
       } else {
-        setError(result.error || 'Failed to fetch crypto prices');
+        setError(result.error || "Failed to fetch crypto prices");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -100,18 +105,18 @@ export const useForexRates = (pairs?: string[], refreshInterval = 10000) => {
 
   const fetchData = useCallback(async () => {
     try {
-      const pairsParam = pairs ? pairs.join(',') : '';
+      const pairsParam = pairs ? pairs.join(",") : "";
       const response = await fetch(`/api/forex/rates?pairs=${pairsParam}`);
       const result: ApiResponse<ForexRate[]> = await response.json();
-      
+
       if (result.success) {
         setData(result.data);
         setError(null);
       } else {
-        setError(result.error || 'Failed to fetch forex rates');
+        setError(result.error || "Failed to fetch forex rates");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -126,24 +131,30 @@ export const useForexRates = (pairs?: string[], refreshInterval = 10000) => {
   return { data, loading, error, refetch: fetchData };
 };
 
-export const useMarketNews = (category = 'all', limit = 20, refreshInterval = 300000) => {
+export const useMarketNews = (
+  category = "all",
+  limit = 20,
+  refreshInterval = 300000,
+) => {
   const [data, setData] = useState<MarketNews[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
-      const response = await fetch(`/api/market/news?category=${category}&limit=${limit}`);
+      const response = await fetch(
+        `/api/market/news?category=${category}&limit=${limit}`,
+      );
       const result: ApiResponse<MarketNews[]> = await response.json();
-      
+
       if (result.success) {
         setData(result.data);
         setError(null);
       } else {
-        setError(result.error || 'Failed to fetch market news');
+        setError(result.error || "Failed to fetch market news");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -165,17 +176,17 @@ export const useMarketSentiment = (refreshInterval = 60000) => {
 
   const fetchData = useCallback(async () => {
     try {
-      const response = await fetch('/api/market/sentiment');
+      const response = await fetch("/api/market/sentiment");
       const result: ApiResponse<MarketSentiment> = await response.json();
-      
+
       if (result.success) {
         setData(result.data);
         setError(null);
       } else {
-        setError(result.error || 'Failed to fetch market sentiment');
+        setError(result.error || "Failed to fetch market sentiment");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -191,9 +202,11 @@ export const useMarketSentiment = (refreshInterval = 60000) => {
 };
 
 // Utility function to format price changes
-export const formatPriceChange = (change: number): { text: string; isPositive: boolean } => {
+export const formatPriceChange = (
+  change: number,
+): { text: string; isPositive: boolean } => {
   const isPositive = change >= 0;
-  const sign = isPositive ? '+' : '';
+  const sign = isPositive ? "+" : "";
   return {
     text: `${sign}${change.toFixed(2)}%`,
     isPositive,
@@ -201,9 +214,9 @@ export const formatPriceChange = (change: number): { text: string; isPositive: b
 };
 
 // Utility function to format currency
-export const formatCurrency = (amount: number, currency = 'USD'): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
+export const formatCurrency = (amount: number, currency = "USD"): string => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
     currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 6,

@@ -2,7 +2,11 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
-import { useCryptoPrices, formatPriceChange, formatCurrency } from "@/hooks/use-market-data";
+import {
+  useCryptoPrices,
+  formatPriceChange,
+  formatCurrency,
+} from "@/hooks/use-market-data";
 import {
   TrendingUp,
   Shield,
@@ -34,7 +38,13 @@ import {
 } from "lucide-react";
 
 export default function Index() {
-  const { data: liveData, loading: pricesLoading } = useCryptoPrices(['BTC', 'ETH', 'ADA', 'SOL', 'DOT']);
+  const { data: liveData, loading: pricesLoading } = useCryptoPrices([
+    "BTC",
+    "ETH",
+    "ADA",
+    "SOL",
+    "DOT",
+  ]);
 
   // Fallback data while loading or if API fails
   const fallbackData = [
@@ -76,16 +86,19 @@ export default function Index() {
   ];
 
   // Use live data if available, otherwise fallback
-  const cryptoPrices = liveData.length > 0 ? liveData.map(crypto => {
-    const changeInfo = formatPriceChange(crypto.change24h);
-    return {
-      name: crypto.name,
-      symbol: crypto.symbol,
-      price: formatCurrency(crypto.price),
-      change: changeInfo.text,
-      up: changeInfo.isPositive,
-    };
-  }) : fallbackData;
+  const cryptoPrices =
+    liveData.length > 0
+      ? liveData.map((crypto) => {
+          const changeInfo = formatPriceChange(crypto.change24h);
+          return {
+            name: crypto.name,
+            symbol: crypto.symbol,
+            price: formatCurrency(crypto.price),
+            change: changeInfo.text,
+            up: changeInfo.isPositive,
+          };
+        })
+      : fallbackData;
 
   return (
     <div className="min-h-screen bg-crypto-dark">
@@ -137,7 +150,12 @@ export default function Index() {
             <div className="flex items-center justify-center mb-4">
               <Activity className="w-5 h-5 text-crypto-gold mr-2" />
               <span className="text-white font-semibold">
-                Live Crypto Prices {pricesLoading && <span className="text-crypto-accent text-sm ml-2">(Updating...)</span>}
+                Live Crypto Prices{" "}
+                {pricesLoading && (
+                  <span className="text-crypto-accent text-sm ml-2">
+                    (Updating...)
+                  </span>
+                )}
               </span>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">

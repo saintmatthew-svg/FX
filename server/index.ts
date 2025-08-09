@@ -2,9 +2,26 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
-import { handleGoogleAuth, handleGoogleCallback, handleFacebookAuth, handleFacebookCallback } from "./routes/auth";
-import { getCryptoPrices, getForexRates, getMarketNews, getMarketSentiment } from "./routes/market-data";
-import { placeOrder, cancelOrder, getOrders, getPositions, getTrades, getAccountInfo } from "./routes/trading";
+import {
+  handleGoogleAuth,
+  handleGoogleCallback,
+  handleFacebookAuth,
+  handleFacebookCallback,
+} from "./routes/auth";
+import {
+  getCryptoPrices,
+  getForexRates,
+  getMarketNews,
+  getMarketSentiment,
+} from "./routes/market-data";
+import {
+  placeOrder,
+  cancelOrder,
+  getOrders,
+  getPositions,
+  getTrades,
+  getAccountInfo,
+} from "./routes/trading";
 
 export function createServer() {
   const app = express();

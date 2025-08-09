@@ -91,11 +91,13 @@ export default function Portfolio() {
   // Simulate real-time price updates
   useEffect(() => {
     const interval = setInterval(() => {
-      setPortfolioData(prev => prev.map(asset => ({
-        ...asset,
-        change: `${Math.random() > 0.5 ? '+' : '-'}${(Math.random() * 10).toFixed(2)}%`,
-        up: Math.random() > 0.4,
-      })));
+      setPortfolioData((prev) =>
+        prev.map((asset) => ({
+          ...asset,
+          change: `${Math.random() > 0.5 ? "+" : "-"}${(Math.random() * 10).toFixed(2)}%`,
+          up: Math.random() > 0.4,
+        })),
+      );
     }, 5000);
 
     return () => clearInterval(interval);
@@ -272,9 +274,7 @@ export default function Portfolio() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-white/70">Price</span>
-                        <span className="text-white">
-                          {asset.price}
-                        </span>
+                        <span className="text-white">{asset.price}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-white/70">24h Change</span>
@@ -360,14 +360,17 @@ export default function Portfolio() {
               <CardContent>
                 <div className="space-y-4">
                   {portfolioData.map((asset) => (
-                    <div key={asset.symbol} className="flex items-center justify-between">
+                    <div
+                      key={asset.symbol}
+                      className="flex items-center justify-between"
+                    >
                       <div className="flex items-center space-x-3">
                         <div className="w-4 h-4 bg-crypto-gold rounded-full"></div>
                         <span className="text-white">{asset.name}</span>
                       </div>
                       <div className="flex items-center space-x-3">
                         <div className="w-32 h-2 bg-crypto-dark-200 rounded-full overflow-hidden">
-                          <div 
+                          <div
                             className="h-full bg-crypto-gold rounded-full"
                             style={{ width: `${asset.percentage}%` }}
                           ></div>
@@ -461,9 +464,7 @@ export default function Portfolio() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-white font-medium">
-                          {tx.value}
-                        </div>
+                        <div className="text-white font-medium">{tx.value}</div>
                         <div className="text-crypto-green text-sm">
                           {tx.status}
                         </div>

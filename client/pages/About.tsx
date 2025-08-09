@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import Navigation from '@/components/Navigation';
-import { Shield, Users, Award, TrendingUp, Globe, Clock } from 'lucide-react';
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import Navigation from "@/components/Navigation";
+import { Shield, Users, Award, TrendingUp, Globe, Clock } from "lucide-react";
 
 export default function About() {
   return (
@@ -12,9 +12,13 @@ export default function About() {
       <section className="py-20 bg-gradient-to-b from-crypto-dark to-crypto-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">About CryptoFuture</h1>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+              About CryptoFuture
+            </h1>
             <p className="text-xl text-white/80 max-w-3xl mx-auto">
-              We are a leading cryptocurrency and forex trading platform committed to empowering traders worldwide with advanced tools, real-time data, and institutional-grade security.
+              We are a leading cryptocurrency and forex trading platform
+              committed to empowering traders worldwide with advanced tools,
+              real-time data, and institutional-grade security.
             </p>
           </div>
         </div>
@@ -27,13 +31,23 @@ export default function About() {
               <h2 className="text-4xl font-bold text-white mb-6">Our Story</h2>
               <div className="space-y-6 text-white/80 leading-relaxed">
                 <p>
-                  Founded in 2018, Mega FX Market emerged from a simple vision: to democratize access to professional trading capital and create opportunities for skilled traders regardless of their financial background.
+                  Founded in 2018, Mega FX Market emerged from a simple vision:
+                  to democratize access to professional trading capital and
+                  create opportunities for skilled traders regardless of their
+                  financial background.
                 </p>
                 <p>
-                  Our founders, seasoned traders and technology experts, recognized the barriers that prevented talented individuals from accessing the capital needed to maximize their trading potential. This insight led to the creation of our innovative evaluation process and funding model.
+                  Our founders, seasoned traders and technology experts,
+                  recognized the barriers that prevented talented individuals
+                  from accessing the capital needed to maximize their trading
+                  potential. This insight led to the creation of our innovative
+                  evaluation process and funding model.
                 </p>
                 <p>
-                  Today, we've funded thousands of traders worldwide, distributing over $50 million in profits and establishing ourselves as a trusted partner in the proprietary trading industry.
+                  Today, we've funded thousands of traders worldwide,
+                  distributing over $50 million in profits and establishing
+                  ourselves as a trusted partner in the proprietary trading
+                  industry.
                 </p>
               </div>
             </div>
@@ -77,7 +91,9 @@ export default function About() {
       <section className="py-20 bg-forex-dark-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Our Core Values</h2>
+            <h2 className="text-4xl font-bold text-white mb-4">
+              Our Core Values
+            </h2>
             <div className="section-divider"></div>
           </div>
 
@@ -87,9 +103,12 @@ export default function About() {
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
                   <Shield className="w-8 h-8 text-forex-cyan" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-4">Transparency</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">
+                  Transparency
+                </h3>
                 <p className="text-white/70">
-                  We believe in complete transparency in all our processes, from evaluation criteria to payout procedures.
+                  We believe in complete transparency in all our processes, from
+                  evaluation criteria to payout procedures.
                 </p>
               </CardContent>
             </Card>
@@ -99,9 +118,12 @@ export default function About() {
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
                   <Users className="w-8 h-8 text-forex-cyan" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-4">Community</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">
+                  Community
+                </h3>
                 <p className="text-white/70">
-                  Building a supportive community where traders can learn, grow, and succeed together.
+                  Building a supportive community where traders can learn, grow,
+                  and succeed together.
                 </p>
               </CardContent>
             </Card>
@@ -111,9 +133,12 @@ export default function About() {
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
                   <Award className="w-8 h-8 text-forex-cyan" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-4">Excellence</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">
+                  Excellence
+                </h3>
                 <p className="text-white/70">
-                  Striving for excellence in everything we do, from technology to customer service.
+                  Striving for excellence in everything we do, from technology
+                  to customer service.
                 </p>
               </CardContent>
             </Card>
@@ -123,9 +148,12 @@ export default function About() {
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
                   <TrendingUp className="w-8 h-8 text-forex-cyan" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-4">Innovation</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">
+                  Innovation
+                </h3>
                 <p className="text-white/70">
-                  Continuously innovating to provide better tools and opportunities for our traders.
+                  Continuously innovating to provide better tools and
+                  opportunities for our traders.
                 </p>
               </CardContent>
             </Card>
@@ -135,9 +163,12 @@ export default function About() {
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
                   <Globe className="w-8 h-8 text-forex-cyan" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-4">Global Reach</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">
+                  Global Reach
+                </h3>
                 <p className="text-white/70">
-                  Connecting talented traders from around the world with opportunities to succeed.
+                  Connecting talented traders from around the world with
+                  opportunities to succeed.
                 </p>
               </CardContent>
             </Card>
@@ -147,9 +178,12 @@ export default function About() {
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
                   <Clock className="w-8 h-8 text-forex-cyan" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-4">Reliability</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">
+                  Reliability
+                </h3>
                 <p className="text-white/70">
-                  Providing reliable platforms, fast payouts, and consistent support you can depend on.
+                  Providing reliable platforms, fast payouts, and consistent
+                  support you can depend on.
                 </p>
               </CardContent>
             </Card>
@@ -160,7 +194,9 @@ export default function About() {
       <section className="py-20 bg-forex-dark-300">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Leadership Team</h2>
+            <h2 className="text-4xl font-bold text-white mb-4">
+              Leadership Team
+            </h2>
             <div className="section-divider"></div>
           </div>
 
@@ -170,10 +206,13 @@ export default function About() {
                 <div className="w-24 h-24 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Users className="w-12 h-12 text-forex-cyan" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">Michael Chen</h3>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  Michael Chen
+                </h3>
                 <p className="text-forex-cyan mb-4">CEO & Co-Founder</p>
                 <p className="text-white/70 text-sm">
-                  Former Goldman Sachs trader with 15+ years in institutional trading and risk management.
+                  Former Goldman Sachs trader with 15+ years in institutional
+                  trading and risk management.
                 </p>
               </CardContent>
             </Card>
@@ -183,10 +222,13 @@ export default function About() {
                 <div className="w-24 h-24 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Users className="w-12 h-12 text-forex-cyan" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">Sarah Williams</h3>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  Sarah Williams
+                </h3>
                 <p className="text-forex-cyan mb-4">CTO & Co-Founder</p>
                 <p className="text-white/70 text-sm">
-                  Technology expert specializing in financial systems and algorithmic trading platforms.
+                  Technology expert specializing in financial systems and
+                  algorithmic trading platforms.
                 </p>
               </CardContent>
             </Card>
@@ -196,10 +238,13 @@ export default function About() {
                 <div className="w-24 h-24 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Users className="w-12 h-12 text-forex-cyan" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">David Rodriguez</h3>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  David Rodriguez
+                </h3>
                 <p className="text-forex-cyan mb-4">Head of Risk Management</p>
                 <p className="text-white/70 text-sm">
-                  Risk management specialist with extensive experience in derivatives and forex markets.
+                  Risk management specialist with extensive experience in
+                  derivatives and forex markets.
                 </p>
               </CardContent>
             </Card>
@@ -209,9 +254,12 @@ export default function About() {
 
       <section className="py-20 bg-gradient-to-b from-forex-dark-300 to-forex-dark">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">Join Our Success Story</h2>
+          <h2 className="text-4xl font-bold text-white mb-6">
+            Join Our Success Story
+          </h2>
           <p className="text-xl text-white/80 mb-8">
-            Be part of a company that's revolutionizing the prop trading industry and empowering traders worldwide.
+            Be part of a company that's revolutionizing the prop trading
+            industry and empowering traders worldwide.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/accounts">

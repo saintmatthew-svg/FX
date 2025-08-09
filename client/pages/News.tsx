@@ -37,15 +37,21 @@ export default function News() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: liveNews, loading: newsLoading, error: newsError } = useMarketNews(activeCategory, 20);
-  const { data: sentimentData, loading: sentimentLoading } = useMarketSentiment();
+  const {
+    data: liveNews,
+    loading: newsLoading,
+    error: newsError,
+  } = useMarketNews(activeCategory, 20);
+  const { data: sentimentData, loading: sentimentLoading } =
+    useMarketSentiment();
 
   // Fallback news data
   const fallbackNewsData = [
     {
       id: 1,
       title: "Bitcoin Surges Past $70,000 Amid Institutional Adoption",
-      summary: "Major corporations continue to add Bitcoin to their treasury reserves, driving price to new all-time highs.",
+      summary:
+        "Major corporations continue to add Bitcoin to their treasury reserves, driving price to new all-time highs.",
       category: "crypto",
       source: "CryptoNews",
       publishedAt: "2024-01-15T10:30:00Z",
@@ -59,7 +65,8 @@ export default function News() {
     {
       id: 2,
       title: "Federal Reserve Signals Potential Rate Cuts This Year",
-      summary: "Fed Chair Jerome Powell hints at possible interest rate reductions to combat economic slowdown.",
+      summary:
+        "Fed Chair Jerome Powell hints at possible interest rate reductions to combat economic slowdown.",
       category: "forex",
       source: "Financial Times",
       publishedAt: "2024-01-15T09:15:00Z",
@@ -73,7 +80,8 @@ export default function News() {
     {
       id: 3,
       title: "Ethereum Layer 2 Solutions See Record Transaction Volume",
-      summary: "Polygon, Arbitrum, and Optimism process millions of transactions as scaling solutions gain traction.",
+      summary:
+        "Polygon, Arbitrum, and Optimism process millions of transactions as scaling solutions gain traction.",
       category: "crypto",
       source: "DeFi Pulse",
       publishedAt: "2024-01-15T08:45:00Z",
@@ -87,7 +95,8 @@ export default function News() {
     {
       id: 4,
       title: "EUR/USD Reaches Parity as ECB Maintains Dovish Stance",
-      summary: "European Central Bank keeps rates unchanged while hinting at potential stimulus measures.",
+      summary:
+        "European Central Bank keeps rates unchanged while hinting at potential stimulus measures.",
       category: "forex",
       source: "Reuters",
       publishedAt: "2024-01-15T07:20:00Z",
@@ -101,7 +110,8 @@ export default function News() {
     {
       id: 5,
       title: "DeFi Protocol Launches Revolutionary Yield Farming Strategy",
-      summary: "New automated market maker promises up to 25% APY through innovative liquidity provision mechanisms.",
+      summary:
+        "New automated market maker promises up to 25% APY through innovative liquidity provision mechanisms.",
       category: "defi",
       source: "DeFi Weekly",
       publishedAt: "2024-01-15T06:00:00Z",
@@ -115,7 +125,8 @@ export default function News() {
     {
       id: 6,
       title: "Gold Prices Soar as Inflation Concerns Mount",
-      summary: "Precious metals rally as investors seek safe haven assets amid economic uncertainty.",
+      summary:
+        "Precious metals rally as investors seek safe haven assets amid economic uncertainty.",
       category: "commodities",
       source: "MarketWatch",
       publishedAt: "2024-01-15T05:30:00Z",
@@ -129,20 +140,23 @@ export default function News() {
   ];
 
   // Use live news data if available, otherwise fallback
-  const newsData = liveNews.length > 0 ? liveNews.map(news => ({
-    id: parseInt(news.id),
-    title: news.title,
-    summary: news.summary,
-    category: news.category,
-    source: news.source,
-    publishedAt: news.publishedAt,
-    readTime: '3 min',
-    image: '/placeholder.svg',
-    trending: news.sentiment === 'positive',
-    tags: [news.category.toUpperCase(), 'Breaking'],
-    likes: Math.floor(Math.random() * 500),
-    comments: Math.floor(Math.random() * 100),
-  })) : fallbackNewsData;
+  const newsData =
+    liveNews.length > 0
+      ? liveNews.map((news) => ({
+          id: parseInt(news.id),
+          title: news.title,
+          summary: news.summary,
+          category: news.category,
+          source: news.source,
+          publishedAt: news.publishedAt,
+          readTime: "3 min",
+          image: "/placeholder.svg",
+          trending: news.sentiment === "positive",
+          tags: [news.category.toUpperCase(), "Breaking"],
+          likes: Math.floor(Math.random() * 500),
+          comments: Math.floor(Math.random() * 100),
+        }))
+      : fallbackNewsData;
 
   const marketSentiment = sentimentData || {
     crypto: { sentiment: "bullish", percentage: 78 },
@@ -158,19 +172,25 @@ export default function News() {
     { tag: "Regulation", count: 589 },
   ];
 
-  const filteredNews = newsData.filter(article => {
-    const matchesCategory = activeCategory === "all" || article.category === activeCategory;
-    const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         article.summary.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         article.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredNews = newsData.filter((article) => {
+    const matchesCategory =
+      activeCategory === "all" || article.category === activeCategory;
+    const matchesSearch =
+      article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      article.summary.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      article.tags.some((tag) =>
+        tag.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
     return matchesCategory && matchesSearch;
   });
 
   const formatTimeAgo = (dateString: string) => {
     const now = new Date();
     const published = new Date(dateString);
-    const diffInHours = Math.floor((now.getTime() - published.getTime()) / (1000 * 60 * 60));
-    
+    const diffInHours = Math.floor(
+      (now.getTime() - published.getTime()) / (1000 * 60 * 60),
+    );
+
     if (diffInHours < 1) return "Just now";
     if (diffInHours < 24) return `${diffInHours}h ago`;
     return `${Math.floor(diffInHours / 24)}d ago`;
@@ -224,7 +244,12 @@ export default function News() {
             <CardContent className="p-6">
               <div className="flex items-center space-x-2 mb-4">
                 <Bitcoin className="w-5 h-5 text-crypto-gold" />
-                <span className="text-white/80">Crypto Sentiment {sentimentLoading && <span className="text-xs text-crypto-accent">(Live)</span>}</span>
+                <span className="text-white/80">
+                  Crypto Sentiment{" "}
+                  {sentimentLoading && (
+                    <span className="text-xs text-crypto-accent">(Live)</span>
+                  )}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <div>
@@ -305,7 +330,11 @@ export default function News() {
             </div>
 
             {/* Category Tabs */}
-            <Tabs value={activeCategory} onValueChange={setActiveCategory} className="mb-6">
+            <Tabs
+              value={activeCategory}
+              onValueChange={setActiveCategory}
+              className="mb-6"
+            >
               <TabsList className="bg-crypto-dark-100 border border-crypto-gold/20">
                 <TabsTrigger
                   value="all"
@@ -354,7 +383,7 @@ export default function News() {
                           <Globe className="w-8 h-8 text-crypto-gold" />
                         </div>
                       </div>
-                      
+
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center space-x-2">
@@ -364,12 +393,17 @@ export default function News() {
                                 Trending
                               </span>
                             )}
-                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
-                              article.category === 'crypto' ? 'bg-crypto-gold/20 text-crypto-gold' :
-                              article.category === 'forex' ? 'bg-crypto-accent/20 text-crypto-accent' :
-                              article.category === 'defi' ? 'bg-crypto-green/20 text-crypto-green' :
-                              'bg-crypto-purple/20 text-crypto-purple'
-                            }`}>
+                            <span
+                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
+                                article.category === "crypto"
+                                  ? "bg-crypto-gold/20 text-crypto-gold"
+                                  : article.category === "forex"
+                                    ? "bg-crypto-accent/20 text-crypto-accent"
+                                    : article.category === "defi"
+                                      ? "bg-crypto-green/20 text-crypto-green"
+                                      : "bg-crypto-purple/20 text-crypto-purple"
+                              }`}
+                            >
                               {article.category.toUpperCase()}
                             </span>
                           </div>
@@ -377,15 +411,15 @@ export default function News() {
                             <Star className="w-4 h-4" />
                           </Button>
                         </div>
-                        
+
                         <h3 className="text-lg font-semibold text-white mb-2 hover:text-crypto-gold transition-colors cursor-pointer">
                           {article.title}
                         </h3>
-                        
+
                         <p className="text-white/70 text-sm mb-3 leading-relaxed">
                           {article.summary}
                         </p>
-                        
+
                         <div className="flex flex-wrap gap-2 mb-3">
                           {article.tags.map((tag, index) => (
                             <span
@@ -397,7 +431,7 @@ export default function News() {
                             </span>
                           ))}
                         </div>
-                        
+
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-4 text-sm text-white/60">
                             <span className="flex items-center">
@@ -413,7 +447,7 @@ export default function News() {
                               {article.readTime}
                             </span>
                           </div>
-                          
+
                           <div className="flex items-center space-x-4">
                             <button className="flex items-center space-x-1 text-white/60 hover:text-crypto-gold transition-colors">
                               <Users className="w-4 h-4" />
@@ -421,7 +455,9 @@ export default function News() {
                             </button>
                             <button className="flex items-center space-x-1 text-white/60 hover:text-crypto-gold transition-colors">
                               <MessageSquare className="w-4 h-4" />
-                              <span className="text-sm">{article.comments}</span>
+                              <span className="text-sm">
+                                {article.comments}
+                              </span>
                             </button>
                             <button className="flex items-center space-x-1 text-white/60 hover:text-crypto-gold transition-colors">
                               <Share2 className="w-4 h-4" />
@@ -487,7 +523,7 @@ export default function News() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start space-x-3 p-3 rounded bg-crypto-accent/10">
                     <Info className="w-5 h-5 text-crypto-accent mt-0.5" />
                     <div>
@@ -499,7 +535,7 @@ export default function News() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start space-x-3 p-3 rounded bg-crypto-red/10">
                     <AlertCircle className="w-5 h-5 text-crypto-red mt-0.5" />
                     <div>

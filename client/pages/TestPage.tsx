@@ -1,12 +1,17 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Navigation from '@/components/Navigation';
-import TradingViewWidget from '@/components/TradingViewWidget';
-import MetaTrader5Widget from '@/components/MetaTrader5Widget';
-import { useCryptoPrices, useForexRates, useMarketNews, useMarketSentiment } from '@/hooks/use-market-data';
-import { useTrading } from '@/hooks/use-trading';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Navigation from "@/components/Navigation";
+import TradingViewWidget from "@/components/TradingViewWidget";
+import MetaTrader5Widget from "@/components/MetaTrader5Widget";
+import {
+  useCryptoPrices,
+  useForexRates,
+  useMarketNews,
+  useMarketSentiment,
+} from "@/hooks/use-market-data";
+import { useTrading } from "@/hooks/use-trading";
 import {
   CheckCircle,
   XCircle,
@@ -19,11 +24,11 @@ import {
   Settings,
   RefreshCw,
   Zap,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface TestResult {
   name: string;
-  status: 'pass' | 'fail' | 'warning';
+  status: "pass" | "fail" | "warning";
   message: string;
   duration?: number;
 }
@@ -31,147 +36,199 @@ interface TestResult {
 export default function TestPage() {
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [isRunning, setIsRunning] = useState(false);
-  const [currentTest, setCurrentTest] = useState<string>('');
+  const [currentTest, setCurrentTest] = useState<string>("");
 
   // Hook instances for testing
-  const { data: cryptoData, loading: cryptoLoading, error: cryptoError } = useCryptoPrices();
-  const { data: forexData, loading: forexLoading, error: forexError } = useForexRates();
-  const { data: newsData, loading: newsLoading, error: newsError } = useMarketNews();
-  const { data: sentimentData, loading: sentimentLoading, error: sentimentError } = useMarketSentiment();
-  const { placeOrder, getAccountInfo, loading: tradingLoading, error: tradingError } = useTrading();
+  const {
+    data: cryptoData,
+    loading: cryptoLoading,
+    error: cryptoError,
+  } = useCryptoPrices();
+  const {
+    data: forexData,
+    loading: forexLoading,
+    error: forexError,
+  } = useForexRates();
+  const {
+    data: newsData,
+    loading: newsLoading,
+    error: newsError,
+  } = useMarketNews();
+  const {
+    data: sentimentData,
+    loading: sentimentLoading,
+    error: sentimentError,
+  } = useMarketSentiment();
+  const {
+    placeOrder,
+    getAccountInfo,
+    loading: tradingLoading,
+    error: tradingError,
+  } = useTrading();
 
   const addTestResult = (result: TestResult) => {
-    setTestResults(prev => [...prev, result]);
+    setTestResults((prev) => [...prev, result]);
   };
 
   const runTests = async () => {
     setIsRunning(true);
     setTestResults([]);
-    
+
     // Test 1: Navigation Component
-    setCurrentTest('Testing Navigation Component');
+    setCurrentTest("Testing Navigation Component");
     try {
-      const navElement = document.querySelector('nav');
+      const navElement = document.querySelector("nav");
       addTestResult({
-        name: 'Navigation Component',
-        status: navElement ? 'pass' : 'fail',
-        message: navElement ? 'Navigation component rendered successfully' : 'Navigation component not found',
+        name: "Navigation Component",
+        status: navElement ? "pass" : "fail",
+        message: navElement
+          ? "Navigation component rendered successfully"
+          : "Navigation component not found",
       });
     } catch (error) {
       addTestResult({
-        name: 'Navigation Component',
-        status: 'fail',
-        message: 'Failed to test navigation component',
+        name: "Navigation Component",
+        status: "fail",
+        message: "Failed to test navigation component",
       });
     }
 
     // Test 2: Theme Integration
-    setCurrentTest('Testing Black & Gold Theme');
+    setCurrentTest("Testing Black & Gold Theme");
     try {
-      const darkBgElements = document.querySelectorAll('.bg-crypto-dark');
-      const goldElements = document.querySelectorAll('.text-crypto-gold, .bg-crypto-gold');
+      const darkBgElements = document.querySelectorAll(".bg-crypto-dark");
+      const goldElements = document.querySelectorAll(
+        ".text-crypto-gold, .bg-crypto-gold",
+      );
       addTestResult({
-        name: 'Black & Gold Theme',
-        status: darkBgElements.length > 0 && goldElements.length > 0 ? 'pass' : 'warning',
+        name: "Black & Gold Theme",
+        status:
+          darkBgElements.length > 0 && goldElements.length > 0
+            ? "pass"
+            : "warning",
         message: `Found ${darkBgElements.length} dark elements and ${goldElements.length} gold elements`,
       });
     } catch (error) {
       addTestResult({
-        name: 'Black & Gold Theme',
-        status: 'fail',
-        message: 'Failed to verify theme elements',
+        name: "Black & Gold Theme",
+        status: "fail",
+        message: "Failed to verify theme elements",
       });
     }
 
     // Test 3: API Data Loading
-    setCurrentTest('Testing API Data Loading');
-    
+    setCurrentTest("Testing API Data Loading");
+
     // Wait for data to load
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     addTestResult({
-      name: 'Crypto Prices API',
-      status: cryptoError ? 'fail' : cryptoData.length > 0 ? 'pass' : 'warning',
-      message: cryptoError || (cryptoData.length > 0 ? `Loaded ${cryptoData.length} crypto prices` : 'No crypto data received'),
+      name: "Crypto Prices API",
+      status: cryptoError ? "fail" : cryptoData.length > 0 ? "pass" : "warning",
+      message:
+        cryptoError ||
+        (cryptoData.length > 0
+          ? `Loaded ${cryptoData.length} crypto prices`
+          : "No crypto data received"),
     });
 
     addTestResult({
-      name: 'Forex Rates API',
-      status: forexError ? 'fail' : forexData.length > 0 ? 'pass' : 'warning',
-      message: forexError || (forexData.length > 0 ? `Loaded ${forexData.length} forex rates` : 'No forex data received'),
+      name: "Forex Rates API",
+      status: forexError ? "fail" : forexData.length > 0 ? "pass" : "warning",
+      message:
+        forexError ||
+        (forexData.length > 0
+          ? `Loaded ${forexData.length} forex rates`
+          : "No forex data received"),
     });
 
     addTestResult({
-      name: 'Market News API',
-      status: newsError ? 'fail' : newsData.length > 0 ? 'pass' : 'warning',
-      message: newsError || (newsData.length > 0 ? `Loaded ${newsData.length} news articles` : 'No news data received'),
+      name: "Market News API",
+      status: newsError ? "fail" : newsData.length > 0 ? "pass" : "warning",
+      message:
+        newsError ||
+        (newsData.length > 0
+          ? `Loaded ${newsData.length} news articles`
+          : "No news data received"),
     });
 
     addTestResult({
-      name: 'Market Sentiment API',
-      status: sentimentError ? 'fail' : sentimentData ? 'pass' : 'warning',
-      message: sentimentError || (sentimentData ? 'Sentiment data loaded successfully' : 'No sentiment data received'),
+      name: "Market Sentiment API",
+      status: sentimentError ? "fail" : sentimentData ? "pass" : "warning",
+      message:
+        sentimentError ||
+        (sentimentData
+          ? "Sentiment data loaded successfully"
+          : "No sentiment data received"),
     });
 
     // Test 4: TradingView Widget
-    setCurrentTest('Testing TradingView Integration');
+    setCurrentTest("Testing TradingView Integration");
     try {
-      const tradingViewScript = document.querySelector('script[src*="tradingview.com"]');
+      const tradingViewScript = document.querySelector(
+        'script[src*="tradingview.com"]',
+      );
       addTestResult({
-        name: 'TradingView Widget',
-        status: tradingViewScript ? 'pass' : 'warning',
-        message: tradingViewScript ? 'TradingView script loaded' : 'TradingView script not found (may load dynamically)',
+        name: "TradingView Widget",
+        status: tradingViewScript ? "pass" : "warning",
+        message: tradingViewScript
+          ? "TradingView script loaded"
+          : "TradingView script not found (may load dynamically)",
       });
     } catch (error) {
       addTestResult({
-        name: 'TradingView Widget',
-        status: 'fail',
-        message: 'Failed to test TradingView integration',
+        name: "TradingView Widget",
+        status: "fail",
+        message: "Failed to test TradingView integration",
       });
     }
 
     // Test 5: Trading Engine
-    setCurrentTest('Testing Trading Engine');
+    setCurrentTest("Testing Trading Engine");
     try {
       const accountInfo = await getAccountInfo();
       addTestResult({
-        name: 'Trading Engine - Account Info',
-        status: accountInfo ? 'pass' : 'fail',
-        message: accountInfo ? `Account balance: $${accountInfo.balance.toLocaleString()}` : 'Failed to fetch account info',
+        name: "Trading Engine - Account Info",
+        status: accountInfo ? "pass" : "fail",
+        message: accountInfo
+          ? `Account balance: $${accountInfo.balance.toLocaleString()}`
+          : "Failed to fetch account info",
       });
 
       // Test order placement
       try {
         const testOrder = await placeOrder({
-          symbol: 'BTCUSDT',
-          side: 'buy',
-          type: 'limit',
+          symbol: "BTCUSDT",
+          side: "buy",
+          type: "limit",
           quantity: 0.001,
           price: 60000, // Low price to avoid execution
         });
-        
+
         addTestResult({
-          name: 'Trading Engine - Order Placement',
-          status: testOrder ? 'pass' : 'fail',
-          message: testOrder ? `Order placed successfully: ${testOrder.orderId}` : 'Failed to place test order',
+          name: "Trading Engine - Order Placement",
+          status: testOrder ? "pass" : "fail",
+          message: testOrder
+            ? `Order placed successfully: ${testOrder.orderId}`
+            : "Failed to place test order",
         });
       } catch (orderError) {
         addTestResult({
-          name: 'Trading Engine - Order Placement',
-          status: 'warning',
+          name: "Trading Engine - Order Placement",
+          status: "warning",
           message: `Order placement test failed: ${orderError}`,
         });
       }
     } catch (error) {
       addTestResult({
-        name: 'Trading Engine',
-        status: 'fail',
-        message: 'Failed to test trading engine',
+        name: "Trading Engine",
+        status: "fail",
+        message: "Failed to test trading engine",
       });
     }
 
     // Test 6: Responsive Design
-    setCurrentTest('Testing Responsive Design');
+    setCurrentTest("Testing Responsive Design");
     try {
       const viewportWidth = window.innerWidth;
       const isMobile = viewportWidth < 768;
@@ -179,80 +236,89 @@ export default function TestPage() {
       const isDesktop = viewportWidth >= 1024;
 
       addTestResult({
-        name: 'Responsive Design',
-        status: 'pass',
-        message: `Viewport: ${viewportWidth}px (${isMobile ? 'Mobile' : isTablet ? 'Tablet' : 'Desktop'})`,
+        name: "Responsive Design",
+        status: "pass",
+        message: `Viewport: ${viewportWidth}px (${isMobile ? "Mobile" : isTablet ? "Tablet" : "Desktop"})`,
       });
 
       // Test mobile menu
       if (isMobile) {
-        const mobileMenuButton = document.querySelector('button[aria-label*="menu"], button:has(svg)');
+        const mobileMenuButton = document.querySelector(
+          'button[aria-label*="menu"], button:has(svg)',
+        );
         addTestResult({
-          name: 'Mobile Navigation',
-          status: mobileMenuButton ? 'pass' : 'warning',
-          message: mobileMenuButton ? 'Mobile menu button found' : 'Mobile menu button not found',
+          name: "Mobile Navigation",
+          status: mobileMenuButton ? "pass" : "warning",
+          message: mobileMenuButton
+            ? "Mobile menu button found"
+            : "Mobile menu button not found",
         });
       }
     } catch (error) {
       addTestResult({
-        name: 'Responsive Design',
-        status: 'fail',
-        message: 'Failed to test responsive design',
+        name: "Responsive Design",
+        status: "fail",
+        message: "Failed to test responsive design",
       });
     }
 
     // Test 7: Component Rendering
-    setCurrentTest('Testing Component Rendering');
+    setCurrentTest("Testing Component Rendering");
     try {
-      const cardElements = document.querySelectorAll('.crypto-card-gradient');
-      const buttonElements = document.querySelectorAll('.crypto-btn-primary, .crypto-btn-secondary');
-      
+      const cardElements = document.querySelectorAll(".crypto-card-gradient");
+      const buttonElements = document.querySelectorAll(
+        ".crypto-btn-primary, .crypto-btn-secondary",
+      );
+
       addTestResult({
-        name: 'Component Rendering',
-        status: cardElements.length > 0 && buttonElements.length > 0 ? 'pass' : 'warning',
+        name: "Component Rendering",
+        status:
+          cardElements.length > 0 && buttonElements.length > 0
+            ? "pass"
+            : "warning",
         message: `Found ${cardElements.length} cards and ${buttonElements.length} styled buttons`,
       });
     } catch (error) {
       addTestResult({
-        name: 'Component Rendering',
-        status: 'fail',
-        message: 'Failed to test component rendering',
+        name: "Component Rendering",
+        status: "fail",
+        message: "Failed to test component rendering",
       });
     }
 
-    setCurrentTest('');
+    setCurrentTest("");
     setIsRunning(false);
   };
 
-  const getStatusIcon = (status: TestResult['status']) => {
+  const getStatusIcon = (status: TestResult["status"]) => {
     switch (status) {
-      case 'pass':
+      case "pass":
         return <CheckCircle className="w-5 h-5 text-crypto-green" />;
-      case 'fail':
+      case "fail":
         return <XCircle className="w-5 h-5 text-crypto-red" />;
-      case 'warning':
+      case "warning":
         return <AlertTriangle className="w-5 h-5 text-crypto-accent" />;
       default:
         return null;
     }
   };
 
-  const getStatusColor = (status: TestResult['status']) => {
+  const getStatusColor = (status: TestResult["status"]) => {
     switch (status) {
-      case 'pass':
-        return 'text-crypto-green';
-      case 'fail':
-        return 'text-crypto-red';
-      case 'warning':
-        return 'text-crypto-accent';
+      case "pass":
+        return "text-crypto-green";
+      case "fail":
+        return "text-crypto-red";
+      case "warning":
+        return "text-crypto-accent";
       default:
-        return 'text-white';
+        return "text-white";
     }
   };
 
-  const passedTests = testResults.filter(t => t.status === 'pass').length;
-  const failedTests = testResults.filter(t => t.status === 'fail').length;
-  const warningTests = testResults.filter(t => t.status === 'warning').length;
+  const passedTests = testResults.filter((t) => t.status === "pass").length;
+  const failedTests = testResults.filter((t) => t.status === "fail").length;
+  const warningTests = testResults.filter((t) => t.status === "warning").length;
 
   return (
     <div className="min-h-screen bg-crypto-dark">
@@ -290,10 +356,11 @@ export default function TestPage() {
                     </>
                   )}
                 </Button>
-                
+
                 {isRunning && currentTest && (
                   <div className="text-white/70">
-                    Currently testing: <span className="text-crypto-gold">{currentTest}</span>
+                    Currently testing:{" "}
+                    <span className="text-crypto-gold">{currentTest}</span>
                   </div>
                 )}
               </div>
@@ -302,15 +369,21 @@ export default function TestPage() {
                 <div className="flex items-center space-x-6">
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="w-4 h-4 text-crypto-green" />
-                    <span className="text-crypto-green">{passedTests} Passed</span>
+                    <span className="text-crypto-green">
+                      {passedTests} Passed
+                    </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <AlertTriangle className="w-4 h-4 text-crypto-accent" />
-                    <span className="text-crypto-accent">{warningTests} Warnings</span>
+                    <span className="text-crypto-accent">
+                      {warningTests} Warnings
+                    </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <XCircle className="w-4 h-4 text-crypto-red" />
-                    <span className="text-crypto-red">{failedTests} Failed</span>
+                    <span className="text-crypto-red">
+                      {failedTests} Failed
+                    </span>
                   </div>
                 </div>
               )}
@@ -337,13 +410,19 @@ export default function TestPage() {
                     <div className="flex items-start space-x-3">
                       {getStatusIcon(result.status)}
                       <div>
-                        <div className="text-white font-medium">{result.name}</div>
-                        <div className={`text-sm ${getStatusColor(result.status)}`}>
+                        <div className="text-white font-medium">
+                          {result.name}
+                        </div>
+                        <div
+                          className={`text-sm ${getStatusColor(result.status)}`}
+                        >
                           {result.message}
                         </div>
                       </div>
                     </div>
-                    <div className={`text-sm font-medium ${getStatusColor(result.status)}`}>
+                    <div
+                      className={`text-sm font-medium ${getStatusColor(result.status)}`}
+                    >
                       {result.status.toUpperCase()}
                     </div>
                   </div>
@@ -388,7 +467,7 @@ export default function TestPage() {
                     {cryptoData.length}
                   </div>
                   <div className="text-sm text-crypto-green">
-                    {cryptoLoading ? 'Loading...' : 'Assets loaded'}
+                    {cryptoLoading ? "Loading..." : "Assets loaded"}
                   </div>
                 </CardContent>
               </Card>
@@ -403,7 +482,7 @@ export default function TestPage() {
                     {forexData.length}
                   </div>
                   <div className="text-sm text-crypto-green">
-                    {forexLoading ? 'Loading...' : 'Pairs loaded'}
+                    {forexLoading ? "Loading..." : "Pairs loaded"}
                   </div>
                 </CardContent>
               </Card>
@@ -418,7 +497,7 @@ export default function TestPage() {
                     {newsData.length}
                   </div>
                   <div className="text-sm text-crypto-green">
-                    {newsLoading ? 'Loading...' : 'Articles loaded'}
+                    {newsLoading ? "Loading..." : "Articles loaded"}
                   </div>
                 </CardContent>
               </Card>
@@ -430,10 +509,10 @@ export default function TestPage() {
                     <span className="text-white/80">Sentiment</span>
                   </div>
                   <div className="text-2xl font-bold text-white mb-1">
-                    {sentimentData ? 'Active' : 'Inactive'}
+                    {sentimentData ? "Active" : "Inactive"}
                   </div>
                   <div className="text-sm text-crypto-green">
-                    {sentimentLoading ? 'Loading...' : 'Data available'}
+                    {sentimentLoading ? "Loading..." : "Data available"}
                   </div>
                 </CardContent>
               </Card>

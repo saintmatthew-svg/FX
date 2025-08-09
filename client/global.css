@@ -164,8 +164,8 @@
     background: linear-gradient(
       90deg,
       transparent 0%,
-      #FFD700 30%,
-      #FFA500 70%,
+      #ffd700 30%,
+      #ffa500 70%,
       transparent 100%
     );
     margin: 1.5rem auto;
@@ -178,7 +178,7 @@
     display: block;
     width: 10px;
     height: 10px;
-    background: linear-gradient(45deg, #FFD700, #FFA500);
+    background: linear-gradient(45deg, #ffd700, #ffa500);
     border-radius: 50%;
     position: relative;
     top: -4px;

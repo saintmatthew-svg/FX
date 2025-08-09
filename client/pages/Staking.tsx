@@ -29,7 +29,7 @@ import {
 
 export default function Staking() {
   const [selectedValidator, setSelectedValidator] = useState(null);
-  
+
   const stakingPools = [
     {
       name: "Ethereum 2.0",
@@ -40,7 +40,8 @@ export default function Staking() {
       validators: 245000,
       lockPeriod: "Until upgrade",
       risk: "Low",
-      description: "Secure the Ethereum network and earn rewards through Proof of Stake consensus.",
+      description:
+        "Secure the Ethereum network and earn rewards through Proof of Stake consensus.",
     },
     {
       name: "Cardano",
@@ -51,7 +52,8 @@ export default function Staking() {
       validators: 3200,
       lockPeriod: "Flexible",
       risk: "Low",
-      description: "Delegate your ADA to stake pools and earn rewards without locking your funds.",
+      description:
+        "Delegate your ADA to stake pools and earn rewards without locking your funds.",
     },
     {
       name: "Solana",
@@ -62,7 +64,8 @@ export default function Staking() {
       validators: 1800,
       lockPeriod: "2-3 days",
       risk: "Medium",
-      description: "High-performance blockchain with fast transactions and competitive staking rewards.",
+      description:
+        "High-performance blockchain with fast transactions and competitive staking rewards.",
     },
     {
       name: "Polkadot",
@@ -73,7 +76,8 @@ export default function Staking() {
       validators: 297,
       lockPeriod: "28 days",
       risk: "Medium",
-      description: "Multi-chain protocol enabling blockchain interoperability with nominator staking.",
+      description:
+        "Multi-chain protocol enabling blockchain interoperability with nominator staking.",
     },
     {
       name: "Cosmos",
@@ -84,7 +88,8 @@ export default function Staking() {
       validators: 175,
       lockPeriod: "21 days",
       risk: "High",
-      description: "Internet of blockchains with high staking rewards and liquid staking options.",
+      description:
+        "Internet of blockchains with high staking rewards and liquid staking options.",
     },
     {
       name: "Avalanche",
@@ -95,7 +100,8 @@ export default function Staking() {
       validators: 1250,
       lockPeriod: "14 days",
       risk: "Medium",
-      description: "Fast, low-cost, and eco-friendly blockchain platform for DeFi applications.",
+      description:
+        "Fast, low-cost, and eco-friendly blockchain platform for DeFi applications.",
     },
   ];
 
@@ -130,11 +136,11 @@ export default function Staking() {
   ];
 
   const totalStakedValue = activeStakes.reduce((sum, stake) => {
-    return sum + parseFloat(stake.value.replace('$', '').replace(',', ''));
+    return sum + parseFloat(stake.value.replace("$", "").replace(",", ""));
   }, 0);
 
   const totalEarned = activeStakes.reduce((sum, stake) => {
-    return sum + parseFloat(stake.earned.replace('$', ''));
+    return sum + parseFloat(stake.earned.replace("$", ""));
   }, 0);
 
   return (
@@ -301,11 +307,15 @@ export default function Staking() {
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-white/70">Risk Level</span>
-                        <span className={`${
-                          pool.risk === 'Low' ? 'text-crypto-green' :
-                          pool.risk === 'Medium' ? 'text-crypto-accent' :
-                          'text-crypto-red'
-                        }`}>
+                        <span
+                          className={`${
+                            pool.risk === "Low"
+                              ? "text-crypto-green"
+                              : pool.risk === "Medium"
+                                ? "text-crypto-accent"
+                                : "text-crypto-red"
+                          }`}
+                        >
                           {pool.risk}
                         </span>
                       </div>
@@ -355,7 +365,7 @@ export default function Staking() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center space-x-8">
                         <div className="text-center">
                           <div className="text-white font-medium">
@@ -363,28 +373,28 @@ export default function Staking() {
                           </div>
                           <div className="text-white/60 text-sm">Staked</div>
                         </div>
-                        
+
                         <div className="text-center">
                           <div className="text-white font-medium">
                             {stake.value}
                           </div>
                           <div className="text-white/60 text-sm">Value</div>
                         </div>
-                        
+
                         <div className="text-center">
                           <div className="text-crypto-gold font-medium">
                             {stake.apy}
                           </div>
                           <div className="text-white/60 text-sm">APY</div>
                         </div>
-                        
+
                         <div className="text-center">
                           <div className="text-crypto-green font-medium">
                             {stake.earned}
                           </div>
                           <div className="text-white/60 text-sm">Earned</div>
                         </div>
-                        
+
                         <div className="flex space-x-2">
                           <Button
                             variant="outline"
@@ -526,18 +536,24 @@ export default function Staking() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center space-x-6">
                         <div className="text-center">
-                          <div className="text-white">{validator.commission}</div>
-                          <div className="text-white/60 text-xs">Commission</div>
+                          <div className="text-white">
+                            {validator.commission}
+                          </div>
+                          <div className="text-white/60 text-xs">
+                            Commission
+                          </div>
                         </div>
-                        
+
                         <div className="text-center">
-                          <div className="text-crypto-green">{validator.uptime}</div>
+                          <div className="text-crypto-green">
+                            {validator.uptime}
+                          </div>
                           <div className="text-white/60 text-xs">Uptime</div>
                         </div>
-                        
+
                         <div className="flex">
                           {[...Array(5)].map((_, i) => (
                             <Star
@@ -550,11 +566,8 @@ export default function Staking() {
                             />
                           ))}
                         </div>
-                        
-                        <Button
-                          size="sm"
-                          className="crypto-btn-primary"
-                        >
+
+                        <Button size="sm" className="crypto-btn-primary">
                           Select
                         </Button>
                       </div>

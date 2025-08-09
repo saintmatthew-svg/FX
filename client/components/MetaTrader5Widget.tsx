@@ -1,10 +1,16 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Activity,
   AlertCircle,
@@ -27,7 +33,7 @@ import {
   Upload,
   Link,
   ExternalLink,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface MT5Account {
   accountId: string;
@@ -45,7 +51,7 @@ interface MT5Account {
 interface MT5Position {
   ticket: number;
   symbol: string;
-  type: 'buy' | 'sell';
+  type: "buy" | "sell";
   volume: number;
   openPrice: number;
   currentPrice: number;
@@ -59,7 +65,7 @@ interface MT5Position {
 interface MT5Order {
   ticket: number;
   symbol: string;
-  type: 'buy_limit' | 'sell_limit' | 'buy_stop' | 'sell_stop';
+  type: "buy_limit" | "sell_limit" | "buy_stop" | "sell_stop";
   volume: number;
   openPrice: number;
   stopLoss?: number;
@@ -70,19 +76,21 @@ interface MT5Order {
 
 export default function MetaTrader5Widget() {
   const [isConnected, setIsConnected] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<'disconnected' | 'connecting' | 'connected' | 'error'>('disconnected');
+  const [connectionStatus, setConnectionStatus] = useState<
+    "disconnected" | "connecting" | "connected" | "error"
+  >("disconnected");
   const [account, setAccount] = useState<MT5Account | null>(null);
   const [positions, setPositions] = useState<MT5Position[]>([]);
   const [orders, setOrders] = useState<MT5Order[]>([]);
-  const [activeTab, setActiveTab] = useState('account');
+  const [activeTab, setActiveTab] = useState("account");
 
   // Mock account data
   const mockAccount: MT5Account = {
-    accountId: 'MT5_DEMO_12345',
-    server: 'MetaQuotes-Demo',
-    login: '12345678',
-    password: '••••••••',
-    balance: 50000.00,
+    accountId: "MT5_DEMO_12345",
+    server: "MetaQuotes-Demo",
+    login: "12345678",
+    password: "••••••••",
+    balance: 50000.0,
     equity: 52345.67,
     margin: 1234.56,
     freeMargin: 51111.11,
@@ -93,52 +101,52 @@ export default function MetaTrader5Widget() {
   const mockPositions: MT5Position[] = [
     {
       ticket: 123456789,
-      symbol: 'EURUSD',
-      type: 'buy',
+      symbol: "EURUSD",
+      type: "buy",
       volume: 0.1,
-      openPrice: 1.08560,
-      currentPrice: 1.08620,
-      profit: 6.00,
-      swap: 0.00,
-      commission: -0.70,
-      comment: 'Manual trade',
-      openTime: '2024-01-15 10:30:00',
+      openPrice: 1.0856,
+      currentPrice: 1.0862,
+      profit: 6.0,
+      swap: 0.0,
+      commission: -0.7,
+      comment: "Manual trade",
+      openTime: "2024-01-15 10:30:00",
     },
     {
       ticket: 987654321,
-      symbol: 'GBPUSD',
-      type: 'sell',
+      symbol: "GBPUSD",
+      type: "sell",
       volume: 0.05,
-      openPrice: 1.26340,
-      currentPrice: 1.26280,
-      profit: 3.00,
-      swap: -0.50,
+      openPrice: 1.2634,
+      currentPrice: 1.2628,
+      profit: 3.0,
+      swap: -0.5,
       commission: -0.35,
-      comment: 'Auto trade',
-      openTime: '2024-01-15 09:15:00',
+      comment: "Auto trade",
+      openTime: "2024-01-15 09:15:00",
     },
   ];
 
   const mockOrders: MT5Order[] = [
     {
       ticket: 555666777,
-      symbol: 'USDJPY',
-      type: 'buy_limit',
+      symbol: "USDJPY",
+      type: "buy_limit",
       volume: 0.1,
-      openPrice: 149.000,
-      stopLoss: 148.500,
-      takeProfit: 150.000,
-      comment: 'Pending order',
-      expiration: '2024-01-20 23:59:59',
+      openPrice: 149.0,
+      stopLoss: 148.5,
+      takeProfit: 150.0,
+      comment: "Pending order",
+      expiration: "2024-01-20 23:59:59",
     },
   ];
 
   const connectToMT5 = async () => {
-    setConnectionStatus('connecting');
-    
+    setConnectionStatus("connecting");
+
     // Simulate connection process
     setTimeout(() => {
-      setConnectionStatus('connected');
+      setConnectionStatus("connected");
       setIsConnected(true);
       setAccount(mockAccount);
       setPositions(mockPositions);
@@ -147,7 +155,7 @@ export default function MetaTrader5Widget() {
   };
 
   const disconnectFromMT5 = () => {
-    setConnectionStatus('disconnected');
+    setConnectionStatus("disconnected");
     setIsConnected(false);
     setAccount(null);
     setPositions([]);
@@ -155,9 +163,9 @@ export default function MetaTrader5Widget() {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 2,
     }).format(amount);
   };
@@ -172,19 +180,29 @@ export default function MetaTrader5Widget() {
               <Activity className="w-5 h-5 mr-2 text-crypto-gold" />
               MetaTrader 5 Integration
             </div>
-            <div className={`flex items-center space-x-2 px-3 py-1 rounded-full text-xs ${
-              connectionStatus === 'connected' 
-                ? 'bg-crypto-green/20 text-crypto-green' 
-                : connectionStatus === 'connecting'
-                ? 'bg-crypto-accent/20 text-crypto-accent'
-                : connectionStatus === 'error'
-                ? 'bg-crypto-red/20 text-crypto-red'
-                : 'bg-crypto-dark-200 text-white/60'
-            }`}>
-              {connectionStatus === 'connected' && <CheckCircle className="w-3 h-3" />}
-              {connectionStatus === 'connecting' && <RefreshCw className="w-3 h-3 animate-spin" />}
-              {connectionStatus === 'error' && <AlertCircle className="w-3 h-3" />}
-              {connectionStatus === 'disconnected' && <AlertCircle className="w-3 h-3" />}
+            <div
+              className={`flex items-center space-x-2 px-3 py-1 rounded-full text-xs ${
+                connectionStatus === "connected"
+                  ? "bg-crypto-green/20 text-crypto-green"
+                  : connectionStatus === "connecting"
+                    ? "bg-crypto-accent/20 text-crypto-accent"
+                    : connectionStatus === "error"
+                      ? "bg-crypto-red/20 text-crypto-red"
+                      : "bg-crypto-dark-200 text-white/60"
+              }`}
+            >
+              {connectionStatus === "connected" && (
+                <CheckCircle className="w-3 h-3" />
+              )}
+              {connectionStatus === "connecting" && (
+                <RefreshCw className="w-3 h-3 animate-spin" />
+              )}
+              {connectionStatus === "error" && (
+                <AlertCircle className="w-3 h-3" />
+              )}
+              {connectionStatus === "disconnected" && (
+                <AlertCircle className="w-3 h-3" />
+              )}
               <span className="capitalize">{connectionStatus}</span>
             </div>
           </CardTitle>
@@ -222,22 +240,28 @@ export default function MetaTrader5Widget() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="metaquotes">MetaQuotes Software Corp.</SelectItem>
-                      <SelectItem value="alpari">Alpari International</SelectItem>
-                      <SelectItem value="fxpro">FxPro Global Markets</SelectItem>
+                      <SelectItem value="metaquotes">
+                        MetaQuotes Software Corp.
+                      </SelectItem>
+                      <SelectItem value="alpari">
+                        Alpari International
+                      </SelectItem>
+                      <SelectItem value="fxpro">
+                        FxPro Global Markets
+                      </SelectItem>
                       <SelectItem value="ic-markets">IC Markets</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
-              
+
               <div className="flex space-x-3">
                 <Button
                   onClick={connectToMT5}
-                  disabled={connectionStatus === 'connecting'}
+                  disabled={connectionStatus === "connecting"}
                   className="crypto-btn-primary flex-1"
                 >
-                  {connectionStatus === 'connecting' ? (
+                  {connectionStatus === "connecting" ? (
                     <>
                       <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
                       Connecting...
@@ -257,16 +281,21 @@ export default function MetaTrader5Widget() {
                   Download MT5
                 </Button>
               </div>
-              
+
               <div className="p-4 bg-crypto-accent/10 rounded-lg">
                 <div className="flex items-start space-x-2">
                   <AlertCircle className="w-5 h-5 text-crypto-accent mt-0.5" />
                   <div>
-                    <div className="text-crypto-accent font-medium text-sm">Setup Instructions</div>
+                    <div className="text-crypto-accent font-medium text-sm">
+                      Setup Instructions
+                    </div>
                     <div className="text-white/70 text-sm mt-1">
-                      1. Download and install MetaTrader 5 platform<br/>
-                      2. Open a demo or live trading account<br/>
-                      3. Enable API access in MT5 settings<br/>
+                      1. Download and install MetaTrader 5 platform
+                      <br />
+                      2. Open a demo or live trading account
+                      <br />
+                      3. Enable API access in MT5 settings
+                      <br />
                       4. Enter your account credentials above
                     </div>
                   </div>
@@ -390,9 +419,13 @@ export default function MetaTrader5Widget() {
                       className="flex items-center justify-between p-4 border-b border-crypto-gold/10 last:border-b-0"
                     >
                       <div className="flex items-center space-x-4">
-                        <div className={`w-3 h-3 rounded-full ${
-                          position.type === 'buy' ? 'bg-crypto-green' : 'bg-crypto-red'
-                        }`} />
+                        <div
+                          className={`w-3 h-3 rounded-full ${
+                            position.type === "buy"
+                              ? "bg-crypto-green"
+                              : "bg-crypto-red"
+                          }`}
+                        />
                         <div>
                           <div className="text-white font-medium">
                             {position.symbol}
@@ -402,7 +435,7 @@ export default function MetaTrader5Widget() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center space-x-6">
                         <div className="text-center">
                           <div className="text-white text-sm">
@@ -410,21 +443,23 @@ export default function MetaTrader5Widget() {
                           </div>
                           <div className="text-white/60 text-xs">Open</div>
                         </div>
-                        
+
                         <div className="text-center">
                           <div className="text-white text-sm">
                             {position.currentPrice.toFixed(5)}
                           </div>
                           <div className="text-white/60 text-xs">Current</div>
                         </div>
-                        
+
                         <div className="text-center">
-                          <div className={`text-sm ${position.profit >= 0 ? 'text-crypto-green' : 'text-crypto-red'}`}>
+                          <div
+                            className={`text-sm ${position.profit >= 0 ? "text-crypto-green" : "text-crypto-red"}`}
+                          >
                             {formatCurrency(position.profit)}
                           </div>
                           <div className="text-white/60 text-xs">P&L</div>
                         </div>
-                        
+
                         <Button
                           size="sm"
                           variant="outline"
@@ -435,7 +470,7 @@ export default function MetaTrader5Widget() {
                       </div>
                     </div>
                   ))}
-                  
+
                   {positions.length === 0 && (
                     <div className="text-center text-white/60 py-8">
                       No open positions
@@ -462,11 +497,12 @@ export default function MetaTrader5Widget() {
                             {order.symbol}
                           </div>
                           <div className="text-white/60 text-sm">
-                            {order.type.toUpperCase().replace('_', ' ')} {order.volume}
+                            {order.type.toUpperCase().replace("_", " ")}{" "}
+                            {order.volume}
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center space-x-6">
                         <div className="text-center">
                           <div className="text-white text-sm">
@@ -474,7 +510,7 @@ export default function MetaTrader5Widget() {
                           </div>
                           <div className="text-white/60 text-xs">Price</div>
                         </div>
-                        
+
                         {order.stopLoss && (
                           <div className="text-center">
                             <div className="text-crypto-red text-sm">
@@ -483,7 +519,7 @@ export default function MetaTrader5Widget() {
                             <div className="text-white/60 text-xs">SL</div>
                           </div>
                         )}
-                        
+
                         {order.takeProfit && (
                           <div className="text-center">
                             <div className="text-crypto-green text-sm">
@@ -492,7 +528,7 @@ export default function MetaTrader5Widget() {
                             <div className="text-white/60 text-xs">TP</div>
                           </div>
                         )}
-                        
+
                         <Button
                           size="sm"
                           variant="outline"
@@ -503,7 +539,7 @@ export default function MetaTrader5Widget() {
                       </div>
                     </div>
                   ))}
-                  
+
                   {orders.length === 0 && (
                     <div className="text-center text-white/60 py-8">
                       No pending orders
@@ -577,11 +613,14 @@ export default function MetaTrader5Widget() {
                 <div className="p-3 bg-crypto-accent/10 rounded-lg">
                   <div className="flex items-center space-x-2 mb-2">
                     <ExternalLink className="w-4 h-4 text-crypto-accent" />
-                    <span className="text-crypto-accent font-medium text-sm">MT5 Integration</span>
+                    <span className="text-crypto-accent font-medium text-sm">
+                      MT5 Integration
+                    </span>
                   </div>
                   <div className="text-white/70 text-sm">
-                    Trades placed here will be executed directly in your MetaTrader 5 platform.
-                    Make sure your MT5 terminal is running and connected.
+                    Trades placed here will be executed directly in your
+                    MetaTrader 5 platform. Make sure your MT5 terminal is
+                    running and connected.
                   </div>
                 </div>
               </CardContent>

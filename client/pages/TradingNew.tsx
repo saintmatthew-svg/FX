@@ -1,14 +1,25 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import Navigation from '@/components/Navigation';
-import TradingViewWidget from '@/components/TradingViewWidget';
-import MetaTrader5Widget from '@/components/MetaTrader5Widget';
-import { useCryptoPrices, useForexRates, formatPriceChange, formatCurrency } from '@/hooks/use-market-data';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Navigation from "@/components/Navigation";
+import TradingViewWidget from "@/components/TradingViewWidget";
+import MetaTrader5Widget from "@/components/MetaTrader5Widget";
+import {
+  useCryptoPrices,
+  useForexRates,
+  formatPriceChange,
+  formatCurrency,
+} from "@/hooks/use-market-data";
 import {
   TrendingUp,
   TrendingDown,
@@ -38,39 +49,79 @@ import {
   Wallet,
   PieChart,
   LineChart,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function TradingNew() {
-  const [selectedSymbol, setSelectedSymbol] = useState('BINANCE:BTCUSDT');
-  const [orderType, setOrderType] = useState('market');
-  const [tradeType, setTradeType] = useState('buy');
-  const [amount, setAmount] = useState('');
-  const [price, setPrice] = useState('');
-  const [stopLoss, setStopLoss] = useState('');
-  const [takeProfit, setTakeProfit] = useState('');
+  const [selectedSymbol, setSelectedSymbol] = useState("BINANCE:BTCUSDT");
+  const [orderType, setOrderType] = useState("market");
+  const [tradeType, setTradeType] = useState("buy");
+  const [amount, setAmount] = useState("");
+  const [price, setPrice] = useState("");
+  const [stopLoss, setStopLoss] = useState("");
+  const [takeProfit, setTakeProfit] = useState("");
 
   const { data: cryptoData, loading: cryptoLoading } = useCryptoPrices();
   const { data: forexData, loading: forexLoading } = useForexRates();
 
   // Trading pairs data
   const tradingPairs = [
-    { symbol: 'BINANCE:BTCUSDT', name: 'Bitcoin', pair: 'BTC/USDT', type: 'crypto' },
-    { symbol: 'BINANCE:ETHUSDT', name: 'Ethereum', pair: 'ETH/USDT', type: 'crypto' },
-    { symbol: 'BINANCE:ADAUSDT', name: 'Cardano', pair: 'ADA/USDT', type: 'crypto' },
-    { symbol: 'BINANCE:SOLUSDT', name: 'Solana', pair: 'SOL/USDT', type: 'crypto' },
-    { symbol: 'FX:EURUSD', name: 'Euro vs US Dollar', pair: 'EUR/USD', type: 'forex' },
-    { symbol: 'FX:GBPUSD', name: 'British Pound vs US Dollar', pair: 'GBP/USD', type: 'forex' },
-    { symbol: 'FX:USDJPY', name: 'US Dollar vs Japanese Yen', pair: 'USD/JPY', type: 'forex' },
-    { symbol: 'OANDA:XAUUSD', name: 'Gold vs US Dollar', pair: 'XAU/USD', type: 'commodity' },
+    {
+      symbol: "BINANCE:BTCUSDT",
+      name: "Bitcoin",
+      pair: "BTC/USDT",
+      type: "crypto",
+    },
+    {
+      symbol: "BINANCE:ETHUSDT",
+      name: "Ethereum",
+      pair: "ETH/USDT",
+      type: "crypto",
+    },
+    {
+      symbol: "BINANCE:ADAUSDT",
+      name: "Cardano",
+      pair: "ADA/USDT",
+      type: "crypto",
+    },
+    {
+      symbol: "BINANCE:SOLUSDT",
+      name: "Solana",
+      pair: "SOL/USDT",
+      type: "crypto",
+    },
+    {
+      symbol: "FX:EURUSD",
+      name: "Euro vs US Dollar",
+      pair: "EUR/USD",
+      type: "forex",
+    },
+    {
+      symbol: "FX:GBPUSD",
+      name: "British Pound vs US Dollar",
+      pair: "GBP/USD",
+      type: "forex",
+    },
+    {
+      symbol: "FX:USDJPY",
+      name: "US Dollar vs Japanese Yen",
+      pair: "USD/JPY",
+      type: "forex",
+    },
+    {
+      symbol: "OANDA:XAUUSD",
+      name: "Gold vs US Dollar",
+      pair: "XAU/USD",
+      type: "commodity",
+    },
   ];
 
   // Mock trading positions
   const [positions, setPositions] = useState([
     {
       id: 1,
-      symbol: 'BTC/USDT',
-      type: 'long',
-      size: '0.5',
+      symbol: "BTC/USDT",
+      type: "long",
+      size: "0.5",
       entryPrice: 66500,
       currentPrice: 67234,
       pnl: 367,
@@ -79,9 +130,9 @@ export default function TradingNew() {
     },
     {
       id: 2,
-      symbol: 'ETH/USDT',
-      type: 'short',
-      size: '2.0',
+      symbol: "ETH/USDT",
+      type: "short",
+      size: "2.0",
       entryPrice: 3500,
       currentPrice: 3456,
       pnl: 88,
@@ -93,38 +144,38 @@ export default function TradingNew() {
   // Mock order book data
   const [orderBook, setOrderBook] = useState({
     bids: [
-      { price: 67234.50, size: 0.5234, total: 0.5234 },
-      { price: 67234.00, size: 1.2345, total: 1.7579 },
-      { price: 67233.50, size: 0.8901, total: 2.6480 },
-      { price: 67233.00, size: 2.1234, total: 4.7714 },
-      { price: 67232.50, size: 0.6789, total: 5.4503 },
+      { price: 67234.5, size: 0.5234, total: 0.5234 },
+      { price: 67234.0, size: 1.2345, total: 1.7579 },
+      { price: 67233.5, size: 0.8901, total: 2.648 },
+      { price: 67233.0, size: 2.1234, total: 4.7714 },
+      { price: 67232.5, size: 0.6789, total: 5.4503 },
     ],
     asks: [
-      { price: 67235.00, size: 0.7891, total: 0.7891 },
-      { price: 67235.50, size: 1.4567, total: 2.2458 },
-      { price: 67236.00, size: 0.9876, total: 3.2334 },
-      { price: 67236.50, size: 1.6543, total: 4.8877 },
-      { price: 67237.00, size: 0.5432, total: 5.4309 },
+      { price: 67235.0, size: 0.7891, total: 0.7891 },
+      { price: 67235.5, size: 1.4567, total: 2.2458 },
+      { price: 67236.0, size: 0.9876, total: 3.2334 },
+      { price: 67236.5, size: 1.6543, total: 4.8877 },
+      { price: 67237.0, size: 0.5432, total: 5.4309 },
     ],
   });
 
   const handleTrade = () => {
     // Mock trade execution
-    console.log('Executing trade:', {
+    console.log("Executing trade:", {
       symbol: selectedSymbol,
       type: tradeType,
       orderType,
       amount,
-      price: orderType === 'market' ? 'market' : price,
+      price: orderType === "market" ? "market" : price,
       stopLoss,
       takeProfit,
     });
-    
+
     // Reset form
-    setAmount('');
-    setPrice('');
-    setStopLoss('');
-    setTakeProfit('');
+    setAmount("");
+    setPrice("");
+    setStopLoss("");
+    setTakeProfit("");
   };
 
   return (
@@ -135,9 +186,12 @@ export default function TradingNew() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Advanced Trading</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">
+              Advanced Trading
+            </h1>
             <p className="text-white/70">
-              Professional trading platform with real-time charts and advanced tools.
+              Professional trading platform with real-time charts and advanced
+              tools.
             </p>
           </div>
           <div className="flex items-center space-x-4 mt-4 md:mt-0">
@@ -167,7 +221,9 @@ export default function TradingNew() {
               <div className="text-xl font-bold text-white mb-1">
                 $125,430.67
               </div>
-              <div className="text-sm text-crypto-green">+$2,345.12 (1.91%)</div>
+              <div className="text-sm text-crypto-green">
+                +$2,345.12 (1.91%)
+              </div>
             </CardContent>
           </Card>
 
@@ -220,7 +276,10 @@ export default function TradingNew() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <Select value={selectedSymbol} onValueChange={setSelectedSymbol}>
+                    <Select
+                      value={selectedSymbol}
+                      onValueChange={setSelectedSymbol}
+                    >
                       <SelectTrigger className="w-64 bg-crypto-dark-100 border-crypto-gold/20">
                         <SelectValue />
                       </SelectTrigger>
@@ -228,33 +287,53 @@ export default function TradingNew() {
                         {tradingPairs.map((pair) => (
                           <SelectItem key={pair.symbol} value={pair.symbol}>
                             <div className="flex items-center space-x-2">
-                              <span className={`inline-block w-2 h-2 rounded-full ${
-                                pair.type === 'crypto' ? 'bg-crypto-gold' :
-                                pair.type === 'forex' ? 'bg-crypto-accent' :
-                                'bg-crypto-green'
-                              }`} />
+                              <span
+                                className={`inline-block w-2 h-2 rounded-full ${
+                                  pair.type === "crypto"
+                                    ? "bg-crypto-gold"
+                                    : pair.type === "forex"
+                                      ? "bg-crypto-accent"
+                                      : "bg-crypto-green"
+                                }`}
+                              />
                               <span>{pair.pair}</span>
-                              <span className="text-white/60 text-sm">- {pair.name}</span>
+                              <span className="text-white/60 text-sm">
+                                - {pair.name}
+                              </span>
                             </div>
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    
-                    {cryptoData.find(c => selectedSymbol.includes(c.symbol)) && (
+
+                    {cryptoData.find((c) =>
+                      selectedSymbol.includes(c.symbol),
+                    ) && (
                       <div className="flex items-center space-x-4">
                         <div>
                           <div className="text-white font-bold text-xl">
-                            {formatCurrency(cryptoData.find(c => selectedSymbol.includes(c.symbol))?.price || 0)}
+                            {formatCurrency(
+                              cryptoData.find((c) =>
+                                selectedSymbol.includes(c.symbol),
+                              )?.price || 0,
+                            )}
                           </div>
-                          <div className={`text-sm ${cryptoData.find(c => selectedSymbol.includes(c.symbol))?.change24h >= 0 ? 'text-crypto-green' : 'text-crypto-red'}`}>
-                            {formatPriceChange(cryptoData.find(c => selectedSymbol.includes(c.symbol))?.change24h || 0).text}
+                          <div
+                            className={`text-sm ${cryptoData.find((c) => selectedSymbol.includes(c.symbol))?.change24h >= 0 ? "text-crypto-green" : "text-crypto-red"}`}
+                          >
+                            {
+                              formatPriceChange(
+                                cryptoData.find((c) =>
+                                  selectedSymbol.includes(c.symbol),
+                                )?.change24h || 0,
+                              ).text
+                            }
                           </div>
                         </div>
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="flex items-center space-x-2">
                     <Button
                       variant="outline"
@@ -335,9 +414,13 @@ export default function TradingNew() {
                           className="flex items-center justify-between p-3 rounded-lg bg-crypto-dark/50"
                         >
                           <div className="flex items-center space-x-4">
-                            <div className={`w-3 h-3 rounded-full ${
-                              position.type === 'long' ? 'bg-crypto-green' : 'bg-crypto-red'
-                            }`} />
+                            <div
+                              className={`w-3 h-3 rounded-full ${
+                                position.type === "long"
+                                  ? "bg-crypto-green"
+                                  : "bg-crypto-red"
+                              }`}
+                            />
                             <div>
                               <div className="text-white font-medium">
                                 {position.symbol}
@@ -347,7 +430,7 @@ export default function TradingNew() {
                               </div>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center space-x-6">
                             <div className="text-center">
                               <div className="text-white text-sm">
@@ -355,21 +438,27 @@ export default function TradingNew() {
                               </div>
                               <div className="text-white/60 text-xs">Entry</div>
                             </div>
-                            
+
                             <div className="text-center">
                               <div className="text-white text-sm">
                                 ${position.currentPrice.toLocaleString()}
                               </div>
-                              <div className="text-white/60 text-xs">Current</div>
+                              <div className="text-white/60 text-xs">
+                                Current
+                              </div>
                             </div>
-                            
+
                             <div className="text-center">
-                              <div className={`text-sm ${position.pnl >= 0 ? 'text-crypto-green' : 'text-crypto-red'}`}>
-                                ${position.pnl.toLocaleString()} ({position.pnlPercent > 0 ? '+' : ''}{position.pnlPercent}%)
+                              <div
+                                className={`text-sm ${position.pnl >= 0 ? "text-crypto-green" : "text-crypto-red"}`}
+                              >
+                                ${position.pnl.toLocaleString()} (
+                                {position.pnlPercent > 0 ? "+" : ""}
+                                {position.pnlPercent}%)
                               </div>
                               <div className="text-white/60 text-xs">P&L</div>
                             </div>
-                            
+
                             <Button
                               size="sm"
                               variant="outline"
@@ -422,15 +511,19 @@ export default function TradingNew() {
                             </div>
                             <div>
                               <div className="text-white">{asset.name}</div>
-                              <div className="text-white/60 text-sm">{asset.symbol}</div>
+                              <div className="text-white/60 text-sm">
+                                {asset.symbol}
+                              </div>
                             </div>
                           </div>
-                          
+
                           <div className="text-right">
                             <div className="text-white">
                               {formatCurrency(asset.price)}
                             </div>
-                            <div className={`text-sm ${asset.change24h >= 0 ? 'text-crypto-green' : 'text-crypto-red'}`}>
+                            <div
+                              className={`text-sm ${asset.change24h >= 0 ? "text-crypto-green" : "text-crypto-red"}`}
+                            >
                               {formatPriceChange(asset.change24h).text}
                             </div>
                           </div>
@@ -476,14 +569,14 @@ export default function TradingNew() {
                       </span>
                     </div>
                   ))}
-                  
+
                   {/* Spread */}
                   <div className="px-4 py-2 bg-crypto-dark/50 text-center">
                     <span className="text-crypto-gold text-sm font-medium">
                       Spread: $0.50
                     </span>
                   </div>
-                  
+
                   {/* Bids (Buy Orders) */}
                   {orderBook.bids.map((bid, index) => (
                     <div
@@ -517,24 +610,24 @@ export default function TradingNew() {
                 {/* Buy/Sell Toggle */}
                 <div className="grid grid-cols-2 gap-2">
                   <Button
-                    variant={tradeType === 'buy' ? 'default' : 'outline'}
+                    variant={tradeType === "buy" ? "default" : "outline"}
                     className={`${
-                      tradeType === 'buy'
-                        ? 'bg-crypto-green hover:bg-crypto-green/90 text-white'
-                        : 'border-crypto-green/20 text-crypto-green hover:bg-crypto-green/10'
+                      tradeType === "buy"
+                        ? "bg-crypto-green hover:bg-crypto-green/90 text-white"
+                        : "border-crypto-green/20 text-crypto-green hover:bg-crypto-green/10"
                     }`}
-                    onClick={() => setTradeType('buy')}
+                    onClick={() => setTradeType("buy")}
                   >
                     Buy
                   </Button>
                   <Button
-                    variant={tradeType === 'sell' ? 'default' : 'outline'}
+                    variant={tradeType === "sell" ? "default" : "outline"}
                     className={`${
-                      tradeType === 'sell'
-                        ? 'bg-crypto-red hover:bg-crypto-red/90 text-white'
-                        : 'border-crypto-red/20 text-crypto-red hover:bg-crypto-red/10'
+                      tradeType === "sell"
+                        ? "bg-crypto-red hover:bg-crypto-red/90 text-white"
+                        : "border-crypto-red/20 text-crypto-red hover:bg-crypto-red/10"
                     }`}
-                    onClick={() => setTradeType('sell')}
+                    onClick={() => setTradeType("sell")}
                   >
                     Sell
                   </Button>
@@ -551,7 +644,9 @@ export default function TradingNew() {
                       <SelectItem value="market">Market Order</SelectItem>
                       <SelectItem value="limit">Limit Order</SelectItem>
                       <SelectItem value="stop">Stop Order</SelectItem>
-                      <SelectItem value="stop-limit">Stop-Limit Order</SelectItem>
+                      <SelectItem value="stop-limit">
+                        Stop-Limit Order
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -568,7 +663,7 @@ export default function TradingNew() {
                 </div>
 
                 {/* Price (for limit orders) */}
-                {orderType !== 'market' && (
+                {orderType !== "market" && (
                   <div className="space-y-2">
                     <Label className="text-white/80">Price</Label>
                     <Input
@@ -591,7 +686,7 @@ export default function TradingNew() {
                       className="bg-crypto-dark-100 border-crypto-gold/20 text-white"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label className="text-white/80">Take Profit</Label>
                     <Input
@@ -623,13 +718,13 @@ export default function TradingNew() {
                 <Button
                   onClick={handleTrade}
                   className={`w-full ${
-                    tradeType === 'buy'
-                      ? 'bg-crypto-green hover:bg-crypto-green/90'
-                      : 'bg-crypto-red hover:bg-crypto-red/90'
+                    tradeType === "buy"
+                      ? "bg-crypto-green hover:bg-crypto-green/90"
+                      : "bg-crypto-red hover:bg-crypto-red/90"
                   } text-white`}
                   disabled={!amount}
                 >
-                  {tradeType === 'buy' ? 'Place Buy Order' : 'Place Sell Order'}
+                  {tradeType === "buy" ? "Place Buy Order" : "Place Sell Order"}
                 </Button>
               </CardContent>
             </Card>
