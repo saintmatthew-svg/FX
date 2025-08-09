@@ -855,7 +855,7 @@ export default function Index() {
               afford to lose.
             </p>
             <p className="text-white/60 text-xs mt-4">
-              © 2024 CryptoFuture. All rights reserved. | Licensed and
+              © 2018 - 2024 CryptoFuture. All rights reserved. | Licensed and
               regulated financial services provider.
             </p>
           </div>
