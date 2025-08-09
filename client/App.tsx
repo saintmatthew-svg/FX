@@ -15,6 +15,10 @@ import Trading from "./pages/Trading";
 import Platforms from "./pages/Platforms";
 import Tools from "./pages/Tools";
 import Education from "./pages/Education";
+import Dashboard from "./pages/Dashboard";
+import Portfolio from "./pages/Portfolio";
+import Staking from "./pages/Staking";
+import News from "./pages/News";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,10 +35,14 @@ const App = () => (
           <Route path="/signup" element={<Signup />} />
           <Route path="/accounts" element={<Accounts />} />
           <Route path="/about" element={<About />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/trading" element={<Trading />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/staking" element={<Staking />} />
           <Route path="/platforms" element={<Platforms />} />
           <Route path="/tools" element={<Tools />} />
           <Route path="/education" element={<Education />} />
+          <Route path="/news" element={<News />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
