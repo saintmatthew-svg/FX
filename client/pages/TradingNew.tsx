@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Navigation from '@/components/Navigation';
 import TradingViewWidget from '@/components/TradingViewWidget';
+import MetaTrader5Widget from '@/components/MetaTrader5Widget';
 import { useCryptoPrices, useForexRates, formatPriceChange, formatCurrency } from '@/hooks/use-market-data';
 import {
   TrendingUp,
@@ -316,6 +317,12 @@ export default function TradingNew() {
                 >
                   Assets
                 </TabsTrigger>
+                <TabsTrigger
+                  value="mt5"
+                  className="data-[state=active]:bg-crypto-gold data-[state=active]:text-black"
+                >
+                  MetaTrader 5
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="positions" className="mt-4">
@@ -432,6 +439,10 @@ export default function TradingNew() {
                     </div>
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              <TabsContent value="mt5" className="mt-4">
+                <MetaTrader5Widget />
               </TabsContent>
             </Tabs>
           </div>
