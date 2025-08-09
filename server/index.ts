@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { handleGoogleAuth, handleGoogleCallback, handleFacebookAuth, handleFacebookCallback } from "./routes/auth";
+import { getCryptoPrices, getForexRates, getMarketNews, getMarketSentiment } from "./routes/market-data";
 
 export function createServer() {
   const app = express();
@@ -22,6 +23,12 @@ export function createServer() {
   app.get("/api/auth/google/callback", handleGoogleCallback);
   app.get("/api/auth/facebook", handleFacebookAuth);
   app.get("/api/auth/facebook/callback", handleFacebookCallback);
+
+  // Market data routes
+  app.get("/api/crypto/prices", getCryptoPrices);
+  app.get("/api/forex/rates", getForexRates);
+  app.get("/api/market/news", getMarketNews);
+  app.get("/api/market/sentiment", getMarketSentiment);
 
   return app;
 }
