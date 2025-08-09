@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,9 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import Navigation from "@/components/Navigation";
 import TradingViewWidget from "@/components/TradingViewWidget";
 import MetaTrader5Widget from "@/components/MetaTrader5Widget";
+import { useAuth } from "@/hooks/use-auth";
 import {
   useCryptoPrices,
   useForexRates,
@@ -52,6 +55,7 @@ import {
 } from "lucide-react";
 
 export default function TradingNew() {
+  const { user, updateBalance } = useAuth();
   const [selectedSymbol, setSelectedSymbol] = useState("BINANCE:BTCUSDT");
   const [orderType, setOrderType] = useState("market");
   const [tradeType, setTradeType] = useState("buy");
@@ -59,9 +63,51 @@ export default function TradingNew() {
   const [price, setPrice] = useState("");
   const [stopLoss, setStopLoss] = useState("");
   const [takeProfit, setTakeProfit] = useState("");
+  const [isTrading, setIsTrading] = useState(false);
+  const [tradeError, setTradeError] = useState("");
+  const [tradeSuccess, setTradeSuccess] = useState("");
+  const [showCalculator, setShowCalculator] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [favoriteSymbols, setFavoriteSymbols] = useState<Set<string>>(new Set());
 
+  // Function to toggle favorite symbols
+  const toggleFavorite = (symbol: string) => {
+    setFavoriteSymbols(prev => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(symbol)) {
+        newFavorites.delete(symbol);
+      } else {
+        newFavorites.add(symbol);
+      }
+      return newFavorites;
+    });
+  };
+
+  // Function to set quick amounts
+  const setQuickAmount = (percentage: number) => {
+    if (!user || !user.balance || user.balance <= 0) return;
+    const maxAmount = user.balance * (percentage / 100);
+    setAmount(maxAmount.toFixed(2));
+  };
+
+  const location = useLocation();
   const { data: cryptoData, loading: cryptoLoading } = useCryptoPrices();
   const { data: forexData, loading: forexLoading } = useForexRates();
+
+  // Handle URL parameters
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const symbol = params.get('symbol');
+    const action = params.get('action');
+
+    if (symbol) {
+      setSelectedSymbol(symbol);
+    }
+
+    if (action && (action === 'buy' || action === 'sell')) {
+      setTradeType(action);
+    }
+  }, [location]);
 
   // Trading pairs data
   const tradingPairs = [
@@ -159,23 +205,102 @@ export default function TradingNew() {
     ],
   });
 
-  const handleTrade = () => {
-    // Mock trade execution
-    console.log("Executing trade:", {
-      symbol: selectedSymbol,
-      type: tradeType,
-      orderType,
-      amount,
-      price: orderType === "market" ? "market" : price,
-      stopLoss,
-      takeProfit,
-    });
+  const handleTrade = async () => {
+    if (!user) return;
 
-    // Reset form
-    setAmount("");
-    setPrice("");
-    setStopLoss("");
-    setTakeProfit("");
+    setTradeError("");
+    setTradeSuccess("");
+
+    const tradeAmount = parseFloat(amount);
+    if (!tradeAmount || tradeAmount <= 0) {
+      setTradeError("Please enter a valid amount");
+      return;
+    }
+
+    // Get current price for the selected asset
+    if (!cryptoData || !Array.isArray(cryptoData) || cryptoData.length === 0) {
+      setTradeError("Market data not available. Please try again.");
+      return;
+    }
+
+    const currentAsset = cryptoData.find(c => selectedSymbol.includes(c.symbol));
+    if (!currentAsset) {
+      setTradeError("Asset not found");
+      return;
+    }
+
+    const currentPrice = currentAsset.price;
+    const totalCost = tradeType === "buy" ? tradeAmount * currentPrice : 0;
+    const tradingFee = totalCost * 0.001; // 0.1% trading fee
+    const totalRequired = totalCost + tradingFee;
+
+    if (tradeType === "buy" && user.balance < totalRequired) {
+      setTradeError(`Insufficient balance. Required: $${totalRequired.toFixed(2)}, Available: $${user.balance.toFixed(2)}`);
+      return;
+    }
+
+    setIsTrading(true);
+
+    try {
+      // Simulate trade execution
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      let newBalance = user.balance;
+
+      if (tradeType === "buy") {
+        newBalance -= totalRequired;
+        setTradeSuccess(`Successfully bought ${tradeAmount} ${currentAsset.symbol} at $${currentPrice.toFixed(2)}`);
+      } else {
+        // For sell orders, assume user owns the asset and add to balance
+        const sellValue = tradeAmount * currentPrice - tradingFee;
+        newBalance += sellValue;
+        setTradeSuccess(`Successfully sold ${tradeAmount} ${currentAsset.symbol} at $${currentPrice.toFixed(2)}`);
+      }
+
+      // Update user balance
+      const response = await fetch('/api/auth/balance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${typeof localStorage !== 'undefined' ? localStorage.getItem('auth_token') : ''}`
+        },
+        body: JSON.stringify({
+          type: tradeType === "buy" ? 'withdrawal' : 'deposit',
+          amount: tradeType === "buy" ? totalRequired : (tradeAmount * currentPrice - tradingFee)
+        })
+      });
+
+      const data = await response.json();
+      if (data.success && data.user) {
+        updateBalance(data.user.balance);
+      }
+
+      // Add to positions
+      const newPosition = {
+        id: (positions?.length || 0) + 1,
+        symbol: currentAsset.symbol + "/USDT",
+        type: tradeType,
+        size: tradeAmount.toString(),
+        entryPrice: currentPrice,
+        currentPrice: currentPrice,
+        pnl: 0,
+        pnlPercent: 0,
+        margin: totalCost
+      };
+
+      setPositions(prev => [...(prev || []), newPosition]);
+
+      // Reset form
+      setAmount("");
+      setPrice("");
+      setStopLoss("");
+      setTakeProfit("");
+
+    } catch (error) {
+      setTradeError("Trade execution failed. Please try again.");
+    } finally {
+      setIsTrading(false);
+    }
   };
 
   return (
@@ -198,11 +323,15 @@ export default function TradingNew() {
             <Button
               variant="outline"
               className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10"
+              onClick={() => setShowCalculator(!showCalculator)}
             >
               <Calculator className="w-4 h-4 mr-2" />
               Calculator
             </Button>
-            <Button className="crypto-btn-primary">
+            <Button
+              className="crypto-btn-primary"
+              onClick={() => setShowSettings(!showSettings)}
+            >
               <Settings className="w-4 h-4 mr-2" />
               Settings
             </Button>
@@ -234,7 +363,7 @@ export default function TradingNew() {
                 <span className="text-white/80 text-sm">Available Balance</span>
               </div>
               <div className="text-xl font-bold text-white mb-1">
-                $45,670.23
+                ${user?.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
               </div>
               <div className="text-sm text-white/60">USDT</div>
             </CardContent>
@@ -339,13 +468,15 @@ export default function TradingNew() {
                       variant="outline"
                       size="sm"
                       className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10"
+                      onClick={() => toggleFavorite(selectedSymbol)}
                     >
-                      <Star className="w-4 h-4" />
+                      <Star className={`w-4 h-4 ${favoriteSymbols.has(selectedSymbol) ? 'fill-crypto-gold text-crypto-gold' : ''}`} />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10"
+                      onClick={() => alert('Price alerts coming soon!')}
                     >
                       <Bell className="w-4 h-4" />
                     </Button>
@@ -607,6 +738,17 @@ export default function TradingNew() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                {tradeError && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{tradeError}</AlertDescription>
+                  </Alert>
+                )}
+
+                {tradeSuccess && (
+                  <Alert className="border-crypto-green/20 bg-crypto-green/10">
+                    <AlertDescription className="text-crypto-green">{tradeSuccess}</AlertDescription>
+                  </Alert>
+                )}
                 {/* Buy/Sell Toggle */}
                 <div className="grid grid-cols-2 gap-2">
                   <Button
@@ -660,6 +802,40 @@ export default function TradingNew() {
                     onChange={(e) => setAmount(e.target.value)}
                     className="bg-crypto-dark-100 border-crypto-gold/20 text-white"
                   />
+                  <div className="grid grid-cols-4 gap-2 mt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10"
+                      onClick={() => setQuickAmount(25)}
+                    >
+                      25%
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10"
+                      onClick={() => setQuickAmount(50)}
+                    >
+                      50%
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10"
+                      onClick={() => setQuickAmount(75)}
+                    >
+                      75%
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10"
+                      onClick={() => setQuickAmount(100)}
+                    >
+                      Max
+                    </Button>
+                  </div>
                 </div>
 
                 {/* Price (for limit orders) */}
@@ -710,7 +886,7 @@ export default function TradingNew() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-white/60">Available:</span>
-                    <span className="text-white">$45,670.23</span>
+                    <span className="text-white">${user?.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}</span>
                   </div>
                 </div>
 
@@ -722,9 +898,9 @@ export default function TradingNew() {
                       ? "bg-crypto-green hover:bg-crypto-green/90"
                       : "bg-crypto-red hover:bg-crypto-red/90"
                   } text-white`}
-                  disabled={!amount}
+                  disabled={!amount || isTrading || !user}
                 >
-                  {tradeType === "buy" ? "Place Buy Order" : "Place Sell Order"}
+                  {isTrading ? "Executing..." : (tradeType === "buy" ? "Place Buy Order" : "Place Sell Order")}
                 </Button>
               </CardContent>
             </Card>

@@ -29,6 +29,25 @@ import {
 
 export default function Staking() {
   const [selectedValidator, setSelectedValidator] = useState(null);
+  const [favoriteStakes, setFavoriteStakes] = useState<Set<string>>(new Set());
+
+  // Function to handle staking
+  const handleStake = (poolSymbol: string, poolName: string) => {
+    alert(`Staking for ${poolName} (${poolSymbol}) will be available soon!`);
+  };
+
+  // Function to toggle favorite staking pools
+  const toggleFavoriteStake = (poolSymbol: string) => {
+    setFavoriteStakes(prev => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(poolSymbol)) {
+        newFavorites.delete(poolSymbol);
+      } else {
+        newFavorites.add(poolSymbol);
+      }
+      return newFavorites;
+    });
+  };
 
   const stakingPools = [
     {
@@ -322,7 +341,10 @@ export default function Staking() {
                     </div>
 
                     <div className="flex space-x-2">
-                      <Button className="crypto-btn-primary flex-1">
+                      <Button
+                        className="crypto-btn-primary flex-1"
+                        onClick={() => handleStake(pool.symbol, pool.name)}
+                      >
                         <Zap className="w-4 h-4 mr-2" />
                         Stake {pool.symbol}
                       </Button>
@@ -330,8 +352,9 @@ export default function Staking() {
                         variant="outline"
                         className="border-crypto-gold/20 text-crypto-gold hover:bg-crypto-gold/10"
                         size="sm"
+                        onClick={() => toggleFavoriteStake(pool.symbol)}
                       >
-                        <Star className="w-4 h-4" />
+                        <Star className={`w-4 h-4 ${favoriteStakes.has(pool.symbol) ? 'fill-crypto-gold text-crypto-gold' : ''}`} />
                       </Button>
                     </div>
                   </CardContent>

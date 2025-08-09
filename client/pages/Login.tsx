@@ -1,13 +1,43 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, AlertCircle } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/dashboard";
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const result = await login({ email, password });
+      if (result.success) {
+        navigate(from, { replace: true });
+      } else {
+        setError(result.message || "Login failed");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-crypto-dark flex items-center justify-center relative overflow-hidden">
@@ -40,7 +70,14 @@ export default function Login() {
           </CardHeader>
 
           <CardContent className="space-y-6">
-            <form className="space-y-4">
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label
                   htmlFor="email"
@@ -52,6 +89,9 @@ export default function Login() {
                   id="email"
                   type="email"
                   placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                   className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-12"
                 />
               </div>
@@ -68,6 +108,9 @@ export default function Login() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
                     className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-12 pr-12"
                   />
                   <button
@@ -100,8 +143,12 @@ export default function Login() {
                 </Link>
               </div>
 
-              <Button className="forex-btn-primary w-full h-12 text-lg font-semibold">
-                Sign In
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="forex-btn-primary w-full h-12 text-lg font-semibold"
+              >
+                {isLoading ? "Signing In..." : "Sign In"}
               </Button>
             </form>
 

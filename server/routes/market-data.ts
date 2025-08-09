@@ -33,22 +33,81 @@ export interface MarketNews {
   sentiment: "positive" | "negative" | "neutral";
 }
 
+// Store price state for realistic movement
+const priceState: { [key: string]: { price: number, lastUpdate: number, trend: number } } = {};
+let isInitialized = false;
+
+// Initialize price state
+const initializePriceState = () => {
+  if (isInitialized) return;
+
+  Object.entries(basePrices).forEach(([symbol, price]) => {
+    if (!priceState[symbol]) {
+      priceState[symbol] = {
+        price,
+        lastUpdate: Date.now(),
+        trend: (Math.random() - 0.5) * 0.01 // Initial trend
+      };
+    }
+  });
+
+  isInitialized = true;
+};
+
 // Simulated crypto data with realistic fluctuations
 const generateCryptoPrice = (
   basePrice: number,
   symbol: string,
 ): CryptoPrice => {
-  const variance = (Math.random() - 0.5) * 0.1; // ±5% variance
-  const price = basePrice * (1 + variance);
-  const change24h = (Math.random() - 0.5) * 20; // ±10% daily change
+  // Ensure state is initialized
+  if (!isInitialized) {
+    initializePriceState();
+  }
+
+  const now = Date.now();
+  let state = priceState[symbol];
+
+  if (!state) {
+    priceState[symbol] = {
+      price: basePrice,
+      lastUpdate: now,
+      trend: (Math.random() - 0.5) * 0.01
+    };
+    state = priceState[symbol];
+  }
+
+  const timeDiff = now - state.lastUpdate;
+
+  // Only update price every 5 seconds for more realistic movement
+  if (timeDiff > 5000) {
+    // Small random walk with momentum
+    const momentum = state.trend * 0.8; // Carry 80% of previous trend
+    const randomChange = (Math.random() - 0.5) * 0.002; // ±0.1% random change
+    const newTrend = momentum + randomChange;
+
+    // Limit extreme movements
+    const boundedTrend = Math.max(-0.01, Math.min(0.01, newTrend));
+
+    // Apply price change
+    const newPrice = state.price * (1 + boundedTrend);
+
+    priceState[symbol] = {
+      price: newPrice,
+      lastUpdate: now,
+      trend: boundedTrend
+    };
+  }
+
+  const currentPrice = priceState[symbol].price;
+  const change24h = ((currentPrice - basePrice) / basePrice) * 100;
 
   return {
     symbol,
     name: getCryptoName(symbol),
-    price: Math.round(price * 100) / 100,
+    price: Math.round(currentPrice * 100) / 100,
     change24h: Math.round(change24h * 100) / 100,
-    volume24h: Math.random() * 1000000000,
-    marketCap: price * Math.random() * 1000000000,
+    volume24h: Math.random() * 1000000000 + 500000000, // More realistic volume
+    marketCap: currentPrice * (1000000000 + Math.random() * 500000000), // More realistic market cap
     timestamp: Date.now(),
   };
 };
@@ -85,7 +144,7 @@ const getCryptoName = (symbol: string): string => {
   return names[symbol] || symbol;
 };
 
-// Base prices for simulation
+// Base prices for simulation (realistic current market prices)
 const basePrices = {
   BTC: 67234.52,
   ETH: 3456.78,
@@ -112,6 +171,11 @@ const baseForexRates = {
 
 export const getCryptoPrices: RequestHandler = (req, res) => {
   try {
+    // Initialize price state if needed
+    if (!isInitialized) {
+      initializePriceState();
+    }
+
     const symbols = req.query.symbols as string;
     const requestedSymbols = symbols
       ? symbols.split(",")
@@ -131,6 +195,7 @@ export const getCryptoPrices: RequestHandler = (req, res) => {
       timestamp: Date.now(),
     });
   } catch (error) {
+    console.error('Error in getCryptoPrices:', error);
     res.status(400).json({
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

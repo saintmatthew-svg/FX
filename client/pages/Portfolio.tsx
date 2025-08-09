@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -35,7 +36,32 @@ import {
 } from "lucide-react";
 
 export default function Portfolio() {
+  const navigate = useNavigate();
   const [balanceVisible, setBalanceVisible] = useState(true);
+  const [favoriteAssets, setFavoriteAssets] = useState<Set<string>>(new Set());
+
+  // Function to handle buying an asset
+  const handleBuyAsset = (assetSymbol: string) => {
+    navigate(`/trading?symbol=BINANCE:${assetSymbol}USDT&action=buy`);
+  };
+
+  // Function to handle selling an asset
+  const handleSellAsset = (assetSymbol: string) => {
+    navigate(`/trading?symbol=BINANCE:${assetSymbol}USDT&action=sell`);
+  };
+
+  // Function to toggle favorite status
+  const toggleFavorite = (assetSymbol: string) => {
+    setFavoriteAssets(prev => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(assetSymbol)) {
+        newFavorites.delete(assetSymbol);
+      } else {
+        newFavorites.add(assetSymbol);
+      }
+      return newFavorites;
+    });
+  };
   const [portfolioData, setPortfolioData] = useState([
     {
       name: "Bitcoin",
@@ -295,7 +321,11 @@ export default function Portfolio() {
                     </div>
 
                     <div className="flex space-x-2 mt-6">
-                      <Button className="crypto-btn-primary flex-1" size="sm">
+                      <Button
+                        className="crypto-btn-primary flex-1"
+                        size="sm"
+                        onClick={() => handleBuyAsset(asset.symbol)}
+                      >
                         <Plus className="w-4 h-4 mr-1" />
                         Buy
                       </Button>
@@ -303,6 +333,7 @@ export default function Portfolio() {
                         variant="outline"
                         className="flex-1 border-crypto-red text-crypto-red hover:bg-crypto-red/10"
                         size="sm"
+                        onClick={() => handleSellAsset(asset.symbol)}
                       >
                         <Minus className="w-4 h-4 mr-1" />
                         Sell

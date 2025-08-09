@@ -68,6 +68,15 @@ const TradingViewWidget = memo(
         "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
       script.type = "text/javascript";
       script.async = true;
+
+      // Add error handling for script loading
+      script.onerror = () => {
+        console.warn('TradingView script failed to load, falling back to basic chart');
+        if (container.current) {
+          container.current.innerHTML = '<div class="text-white text-center p-8">Chart loading...</div>';
+        }
+      };
+
       script.innerHTML = JSON.stringify({
         autosize: true,
         symbol: symbol,
@@ -98,8 +107,10 @@ const TradingViewWidget = memo(
         support_host: "https://www.tradingview.com",
       });
 
-      container.current.appendChild(script);
-      scriptRef.current = script;
+      if (container.current) {
+        container.current.appendChild(script);
+        scriptRef.current = script;
+      }
 
       return () => {
         if (scriptRef.current) {

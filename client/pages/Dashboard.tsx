@@ -1,8 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Navigation from "@/components/Navigation";
+import { useAuth } from "@/hooks/use-auth";
 import {
   TrendingUp,
   TrendingDown,
@@ -31,8 +36,143 @@ import {
 } from "lucide-react";
 
 export default function Dashboard() {
+  const { user, updateBalance } = useAuth();
+  const navigate = useNavigate();
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
+  const [depositAmount, setDepositAmount] = useState('');
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [isDepositOpen, setIsDepositOpen] = useState(false);
+  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [recentTransactions, setRecentTransactions] = useState<Array<{
+    id: string;
+    type: 'buy' | 'sell' | 'deposit' | 'withdrawal';
+    asset: string;
+    amount: string;
+    value: string;
+    time: string;
+    status: string;
+  }>>([]);
+  const [favoriteAssets, setFavoriteAssets] = useState<Set<string>>(new Set());
+
+  // Function to handle buying an asset
+  const handleBuyAsset = (assetSymbol: string, assetName: string) => {
+    try {
+      // Navigate to trading page with the asset pre-selected
+      navigate(`/trading?symbol=BINANCE:${assetSymbol}USDT&action=buy`);
+    } catch (error) {
+      console.error('Navigation error:', error);
+    }
+  };
+
+  // Function to handle selling an asset
+  const handleSellAsset = (assetSymbol: string, assetName: string) => {
+    try {
+      // Navigate to trading page with the asset pre-selected
+      navigate(`/trading?symbol=BINANCE:${assetSymbol}USDT&action=sell`);
+    } catch (error) {
+      console.error('Navigation error:', error);
+    }
+  };
+
+  // Function to toggle favorite status
+  const toggleFavorite = (assetSymbol: string) => {
+    setFavoriteAssets(prev => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(assetSymbol)) {
+        newFavorites.delete(assetSymbol);
+      } else {
+        newFavorites.add(assetSymbol);
+      }
+      return newFavorites;
+    });
+  };
+
+  // Function to handle export
+  const handleExport = () => {
+    try {
+      const portfolioData = {
+        balance: user?.balance || 0,
+        transactions: recentTransactions,
+        timestamp: new Date().toISOString()
+      };
+
+      const dataStr = JSON.stringify(portfolioData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `portfolio-export-${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Failed to export data. Please try again.');
+    }
+  };
+
+  const handleDeposit = async () => {
+    if (!depositAmount || parseFloat(depositAmount) <= 0) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/auth/balance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${typeof localStorage !== 'undefined' ? localStorage.getItem('auth_token') : ''}`
+        },
+        body: JSON.stringify({
+          type: 'deposit',
+          amount: parseFloat(depositAmount)
+        })
+      });
+
+      const data = await response.json();
+      if (data.success && data.user) {
+        updateBalance(data.user.balance);
+        addTransaction('deposit', 'USD', parseFloat(depositAmount));
+        setDepositAmount('');
+        setIsDepositOpen(false);
+      }
+    } catch (error) {
+      console.error('Deposit error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleWithdrawal = async () => {
+    if (!withdrawAmount || parseFloat(withdrawAmount) <= 0) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/auth/balance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${typeof localStorage !== 'undefined' ? localStorage.getItem('auth_token') : ''}`
+        },
+        body: JSON.stringify({
+          type: 'withdrawal',
+          amount: parseFloat(withdrawAmount)
+        })
+      });
+
+      const data = await response.json();
+      if (data.success && data.user) {
+        updateBalance(data.user.balance);
+        addTransaction('withdrawal', 'USD', parseFloat(withdrawAmount));
+        setWithdrawAmount('');
+        setIsWithdrawOpen(false);
+      }
+    } catch (error) {
+      console.error('Withdrawal error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const portfolioData = [
     {
@@ -77,40 +217,32 @@ export default function Dashboard() {
     },
   ];
 
-  const recentTransactions = [
-    {
-      type: "buy",
-      asset: "BTC",
-      amount: "0.5",
-      value: "$33,617.26",
-      time: "2 hours ago",
-      status: "completed",
-    },
-    {
-      type: "sell",
-      asset: "ETH",
-      amount: "2.5",
-      value: "$8,642.15",
-      time: "1 day ago",
-      status: "completed",
-    },
-    {
-      type: "stake",
-      asset: "ADA",
-      amount: "1,000",
-      value: "$483.00",
-      time: "3 days ago",
-      status: "completed",
-    },
-    {
-      type: "buy",
-      asset: "SOL",
-      amount: "10",
-      value: "$1,563.40",
-      time: "1 week ago",
-      status: "completed",
-    },
-  ];
+  // Function to format relative time
+  const formatRelativeTime = (timestamp: string) => {
+    const now = new Date();
+    const transactionTime = new Date(timestamp);
+    const diffInMinutes = Math.floor((now.getTime() - transactionTime.getTime()) / (1000 * 60));
+
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} hours ago`;
+    return `${Math.floor(diffInMinutes / 1440)} days ago`;
+  };
+
+  // Function to add a new transaction
+  const addTransaction = (type: 'buy' | 'sell' | 'deposit' | 'withdrawal', asset: string, amount: number, price?: number) => {
+    const newTransaction = {
+      id: Date.now().toString(),
+      type,
+      asset,
+      amount: amount.toString(),
+      value: price ? `$${(amount * price).toFixed(2)}` : `$${amount.toFixed(2)}`,
+      time: formatRelativeTime(new Date().toISOString()),
+      status: 'completed'
+    };
+
+    setRecentTransactions(prev => [newTransaction, ...prev.slice(0, 9)]); // Keep only last 10 transactions
+  };
 
   const marketData = [
     {
@@ -155,9 +287,10 @@ export default function Dashboard() {
     },
   ];
 
-  const totalBalance = balanceVisible ? "$246,189.13" : "•••••••••";
+  const userBalance = user?.balance || 0;
+  const totalBalance = balanceVisible ? `$${userBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "•••••••••";
   const totalChange = balanceVisible
-    ? "+$10,228.43 (+4.34%)"
+    ? "+$0.00 (+0.00%)"
     : "•••••••••••••••";
 
   return (
@@ -170,21 +303,83 @@ export default function Dashboard() {
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
             <p className="text-white/70">
-              Welcome back! Here's what's happening with your crypto portfolio.
+              Welcome back, {user?.firstName}! Here's what's happening with your crypto portfolio.
             </p>
           </div>
           <div className="flex items-center space-x-4 mt-4 md:mt-0">
-            <Button
-              variant="outline"
-              className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-            <Button className="crypto-btn-primary">
-              <Plus className="w-4 h-4 mr-2" />
-              Buy Crypto
-            </Button>
+            <Dialog open={isWithdrawOpen} onOpenChange={setIsWithdrawOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="border-crypto-red/20 text-crypto-red hover:bg-crypto-red/10"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Withdraw
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-crypto-dark border-crypto-gold/20">
+                <DialogHeader>
+                  <DialogTitle className="text-white">Withdraw Funds</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="withdraw-amount" className="text-white">Amount (USD)</Label>
+                    <Input
+                      id="withdraw-amount"
+                      type="number"
+                      placeholder="0.00"
+                      value={withdrawAmount}
+                      onChange={(e) => setWithdrawAmount(e.target.value)}
+                      className="bg-crypto-dark-100 border-crypto-gold/30 text-white"
+                    />
+                  </div>
+                  <div className="text-white/70 text-sm">
+                    Available balance: ${userBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                  <Button
+                    onClick={handleWithdrawal}
+                    disabled={isLoading || !withdrawAmount || parseFloat(withdrawAmount) > userBalance}
+                    className="w-full crypto-btn-primary"
+                  >
+                    {isLoading ? "Processing..." : "Withdraw"}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog open={isDepositOpen} onOpenChange={setIsDepositOpen}>
+              <DialogTrigger asChild>
+                <Button className="crypto-btn-primary">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Deposit
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-crypto-dark border-crypto-gold/20">
+                <DialogHeader>
+                  <DialogTitle className="text-white">Deposit Funds</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="deposit-amount" className="text-white">Amount (USD)</Label>
+                    <Input
+                      id="deposit-amount"
+                      type="number"
+                      placeholder="0.00"
+                      value={depositAmount}
+                      onChange={(e) => setDepositAmount(e.target.value)}
+                      className="bg-crypto-dark-100 border-crypto-gold/30 text-white"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleDeposit}
+                    disabled={isLoading || !depositAmount || parseFloat(depositAmount) <= 0}
+                    className="w-full crypto-btn-primary"
+                  >
+                    {isLoading ? "Processing..." : "Deposit"}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
@@ -356,48 +551,54 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {recentTransactions.map((tx, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-3 rounded-lg bg-crypto-dark/50"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              tx.type === "buy"
-                                ? "bg-crypto-green/20"
-                                : tx.type === "sell"
-                                  ? "bg-crypto-red/20"
-                                  : "bg-crypto-accent/20"
-                            }`}
-                          >
-                            {tx.type === "buy" ? (
-                              <ArrowDownRight className="w-4 h-4 text-crypto-green" />
-                            ) : tx.type === "sell" ? (
-                              <ArrowUpRight className="w-4 h-4 text-crypto-red" />
-                            ) : (
-                              <Coins className="w-4 h-4 text-crypto-accent" />
-                            )}
-                          </div>
-                          <div>
-                            <div className="text-white font-medium capitalize">
-                              {tx.type} {tx.asset}
-                            </div>
-                            <div className="text-white/60 text-sm">
-                              {tx.time}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-white font-medium">
-                            {tx.value}
-                          </div>
-                          <div className="text-crypto-green text-sm">
-                            {tx.status}
-                          </div>
-                        </div>
+                    {recentTransactions.length === 0 ? (
+                      <div className="text-center text-white/60 py-8">
+                        No recent transactions
                       </div>
-                    ))}
+                    ) : (
+                      recentTransactions.map((tx) => (
+                        <div
+                          key={tx.id}
+                          className="flex items-center justify-between p-3 rounded-lg bg-crypto-dark/50"
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div
+                              className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                tx.type === "buy" || tx.type === "deposit"
+                                  ? "bg-crypto-green/20"
+                                  : "bg-crypto-red/20"
+                              }`}
+                            >
+                              {tx.type === "buy" ? (
+                                <ArrowDownRight className="w-4 h-4 text-crypto-green" />
+                              ) : tx.type === "sell" ? (
+                                <ArrowUpRight className="w-4 h-4 text-crypto-red" />
+                              ) : tx.type === "deposit" ? (
+                                <Plus className="w-4 h-4 text-crypto-green" />
+                              ) : (
+                                <Minus className="w-4 h-4 text-crypto-red" />
+                              )}
+                            </div>
+                            <div>
+                              <div className="text-white font-medium capitalize">
+                                {tx.type} {tx.asset}
+                              </div>
+                              <div className="text-white/60 text-sm">
+                                {tx.time}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-white font-medium">
+                              {tx.value}
+                            </div>
+                            <div className="text-crypto-green text-sm">
+                              {tx.status}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -474,7 +675,11 @@ export default function Dashboard() {
                             {asset.volume}
                           </td>
                           <td className="text-right">
-                            <Button size="sm" className="crypto-btn-primary">
+                            <Button
+                              size="sm"
+                              className="crypto-btn-primary"
+                              onClick={() => navigate(`/trading?symbol=BINANCE:${asset.symbol}USDT`)}
+                            >
                               Trade
                             </Button>
                           </td>
@@ -543,7 +748,11 @@ export default function Dashboard() {
                     </div>
 
                     <div className="flex space-x-2 mt-6">
-                      <Button className="crypto-btn-primary flex-1" size="sm">
+                      <Button
+                        className="crypto-btn-primary flex-1"
+                        size="sm"
+                        onClick={() => handleBuyAsset(asset.symbol, asset.name)}
+                      >
                         <Plus className="w-4 h-4 mr-1" />
                         Buy
                       </Button>
@@ -551,6 +760,7 @@ export default function Dashboard() {
                         variant="outline"
                         className="flex-1 border-crypto-red text-crypto-red hover:bg-crypto-red/10"
                         size="sm"
+                        onClick={() => handleSellAsset(asset.symbol, asset.name)}
                       >
                         <Minus className="w-4 h-4 mr-1" />
                         Sell
@@ -574,7 +784,10 @@ export default function Dashboard() {
                     <p className="text-white/70 mb-4">
                       Trade cryptocurrencies instantly
                     </p>
-                    <Button className="crypto-btn-primary w-full">
+                    <Button
+                      className="crypto-btn-primary w-full"
+                      onClick={() => navigate('/trading')}
+                    >
                       <TrendingUp className="w-4 h-4 mr-2" />
                       Open Trading Interface
                     </Button>
@@ -591,7 +804,10 @@ export default function Dashboard() {
                     <p className="text-white/70 mb-4">
                       Professional trading tools and charts
                     </p>
-                    <Button className="crypto-btn-cyan w-full">
+                    <Button
+                      className="crypto-btn-accent w-full"
+                      onClick={() => navigate('/trading')}
+                    >
                       <LineChart className="w-4 h-4 mr-2" />
                       Pro Trading View
                     </Button>
@@ -642,7 +858,10 @@ export default function Dashboard() {
                     <p className="text-white/70 mb-4">
                       Earn rewards by staking your crypto
                     </p>
-                    <Button className="crypto-btn-cyan w-full">
+                    <Button
+                      className="crypto-btn-accent w-full"
+                      onClick={() => navigate('/staking')}
+                    >
                       <Zap className="w-4 h-4 mr-2" />
                       Explore Staking Options
                     </Button>

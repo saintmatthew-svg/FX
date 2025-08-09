@@ -1,11 +1,13 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Eye, EyeOff, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '@/hooks/use-auth';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const countries = [
   { code: 'ar', name: 'Argentina', phoneCode: '+54', format: '+54 XX XXXX XXXX' },
@@ -96,6 +98,16 @@ export default function Signup() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [tradingExperience, setTradingExperience] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { register } = useAuth();
+  const navigate = useNavigate();
 
   const currentCountry = countries.find(country => country.code === selectedCountry);
 
@@ -117,6 +129,46 @@ export default function Signup() {
       }
     } else {
       setPhoneNumber(value);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const countryName = countries.find(c => c.code === selectedCountry)?.name;
+      const result = await register({
+        firstName,
+        lastName,
+        email,
+        password,
+        phoneNumber: phoneNumber || undefined,
+        country: countryName || undefined,
+        tradingExperience: tradingExperience || undefined
+      });
+
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        setError(result.message || 'Registration failed');
+      }
+    } catch (err) {
+      setError('An unexpected error occurred');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -148,16 +200,26 @@ export default function Signup() {
           </CardHeader>
           
           <CardContent className="space-y-6">
-            <form className="space-y-4">
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstName" className="text-white text-sm font-medium">
                     First Name
                   </Label>
-                  <Input 
+                  <Input
                     id="firstName"
                     type="text"
                     placeholder="John"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
                     className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-11"
                   />
                 </div>
@@ -165,10 +227,13 @@ export default function Signup() {
                   <Label htmlFor="lastName" className="text-white text-sm font-medium">
                     Last Name
                   </Label>
-                  <Input 
+                  <Input
                     id="lastName"
                     type="text"
                     placeholder="Doe"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
                     className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-11"
                   />
                 </div>
@@ -178,10 +243,13 @@ export default function Signup() {
                 <Label htmlFor="email" className="text-white text-sm font-medium">
                   Email Address
                 </Label>
-                <Input 
+                <Input
                   id="email"
                   type="email"
                   placeholder="john.doe@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                   className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-11"
                 />
               </div>
@@ -227,7 +295,7 @@ export default function Signup() {
                 <Label htmlFor="experience" className="text-white text-sm font-medium">
                   Trading Experience
                 </Label>
-                <Select>
+                <Select onValueChange={setTradingExperience} value={tradingExperience}>
                   <SelectTrigger className="bg-forex-dark-100 border-forex-cyan/30 text-white h-11">
                     <SelectValue placeholder="Select your experience level" />
                   </SelectTrigger>
@@ -245,10 +313,13 @@ export default function Signup() {
                   Password
                 </Label>
                 <div className="relative">
-                  <Input 
+                  <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Create a strong password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
                     className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-11 pr-12"
                   />
                   <button
@@ -266,10 +337,13 @@ export default function Signup() {
                   Confirm Password
                 </Label>
                 <div className="relative">
-                  <Input 
+                  <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm your password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
                     className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-11 pr-12"
                   />
                   <button
@@ -339,8 +413,12 @@ export default function Signup() {
                 </label>
               </div>
 
-              <Button className="forex-btn-primary w-full h-12 text-lg font-semibold">
-                Create Account
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="forex-btn-primary w-full h-12 text-lg font-semibold"
+              >
+                {isLoading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
 

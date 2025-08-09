@@ -3,6 +3,11 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import {
+  handleLogin,
+  handleRegister,
+  handleLogout,
+  handleGetProfile,
+  handleUpdateBalance,
   handleGoogleAuth,
   handleGoogleCallback,
   handleFacebookAuth,
@@ -23,6 +28,7 @@ import {
   getAccountInfo,
 } from "./routes/trading";
 
+
 export function createServer() {
   const app = express();
 
@@ -37,10 +43,20 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
 
+  // User authentication routes
+  app.post("/api/auth/register", handleRegister);
+  app.post("/api/auth/login", handleLogin);
+  app.post("/api/auth/logout", handleLogout);
+  app.get("/api/auth/profile", handleGetProfile);
+  app.post("/api/auth/balance", handleUpdateBalance);
+
+  // OAuth routes
   app.get("/api/auth/google", handleGoogleAuth);
   app.get("/api/auth/google/callback", handleGoogleCallback);
   app.get("/api/auth/facebook", handleFacebookAuth);
   app.get("/api/auth/facebook/callback", handleFacebookCallback);
+
+
 
   // Market data routes
   app.get("/api/crypto/prices", getCryptoPrices);

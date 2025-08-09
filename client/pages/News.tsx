@@ -36,6 +36,35 @@ import {
 export default function News() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [favoriteArticles, setFavoriteArticles] = useState<Set<number>>(new Set());
+  const [followedSources, setFollowedSources] = useState<Set<string>>(new Set());
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Function to toggle favorite articles
+  const toggleFavoriteArticle = (articleId: number) => {
+    setFavoriteArticles(prev => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(articleId)) {
+        newFavorites.delete(articleId);
+      } else {
+        newFavorites.add(articleId);
+      }
+      return newFavorites;
+    });
+  };
+
+  // Function to toggle followed sources
+  const toggleFollowSource = (source: string) => {
+    setFollowedSources(prev => {
+      const newFollowed = new Set(prev);
+      if (newFollowed.has(source)) {
+        newFollowed.delete(source);
+      } else {
+        newFollowed.add(source);
+      }
+      return newFollowed;
+    });
+  };
 
   const {
     data: liveNews,
@@ -227,11 +256,15 @@ export default function News() {
             <Button
               variant="outline"
               className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10"
+              onClick={() => alert('News alerts coming soon!')}
             >
               <Bell className="w-4 h-4 mr-2" />
               Alerts
             </Button>
-            <Button className="crypto-btn-primary">
+            <Button
+              className="crypto-btn-primary"
+              onClick={() => setActiveCategory('favorites')}
+            >
               <Star className="w-4 h-4 mr-2" />
               My Feed
             </Button>
