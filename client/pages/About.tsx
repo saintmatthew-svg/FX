@@ -1,51 +1,26 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import Navigation from '@/components/Navigation';
 import { Shield, Users, Award, TrendingUp, Globe, Clock } from 'lucide-react';
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-forex-dark">
-      <nav className="bg-forex-dark/95 backdrop-blur-md border-b border-forex-cyan/20 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-forex-cyan rounded transform rotate-45"></div>
-              <span className="text-xl font-bold text-white">
-                MEGA FX<br />
-                <span className="text-sm">MARKET</span>
-              </span>
-            </Link>
-            <div className="hidden md:flex items-center space-x-8">
-              <Link to="/accounts" className="text-white hover:text-forex-cyan transition-colors">Accounts</Link>
-              <Link to="/about" className="text-forex-cyan font-semibold">About</Link>
-              <Link to="/trading" className="text-white hover:text-forex-cyan transition-colors">Trading</Link>
-              <Link to="/platforms" className="text-white hover:text-forex-cyan transition-colors">Platforms</Link>
-              <Link to="/tools" className="text-white hover:text-forex-cyan transition-colors">Tools</Link>
-              <Link to="/education" className="text-white hover:text-forex-cyan transition-colors">News & Education</Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link to="/login" className="text-white hover:text-forex-cyan transition-colors">Sign In</Link>
-              <Link to="/signup">
-                <Button className="forex-btn-primary">Get Started</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-crypto-dark">
+      <Navigation currentPage="about" />
 
-      <section className="py-20 bg-gradient-to-b from-forex-dark to-forex-dark-100">
+      <section className="py-20 bg-gradient-to-b from-crypto-dark to-crypto-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">About Mega FX Market</h1>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">About CryptoFuture</h1>
             <p className="text-xl text-white/80 max-w-3xl mx-auto">
-              We are a leading proprietary trading firm committed to empowering talented traders worldwide with capital and cutting-edge technology.
+              We are a leading cryptocurrency and forex trading platform committed to empowering traders worldwide with advanced tools, real-time data, and institutional-grade security.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="py-20 bg-forex-dark-100">
+      <section className="py-20 bg-crypto-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
