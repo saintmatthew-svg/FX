@@ -259,7 +259,7 @@ export default function Index() {
                 <p className="text-sm text-crypto-purple/80 mb-4">
                   $100 - $1,000
                 </p>
-                <div className="text-3xl font-bold text-crypto-cyan mb-4">
+                <div className="text-3xl font-bold text-crypto-gold mb-4">
                   8% APY
                 </div>
                 <p className="text-white/80 mb-8 leading-relaxed">
@@ -290,7 +290,7 @@ export default function Index() {
                 <p className="text-sm text-crypto-cyan/80 mb-4">
                   $1,000 - $10,000
                 </p>
-                <div className="text-3xl font-bold text-crypto-purple mb-4">
+                <div className="text-3xl font-bold text-crypto-accent mb-4">
                   12% APY
                 </div>
                 <p className="text-white/80 mb-8 leading-relaxed">
@@ -319,7 +319,7 @@ export default function Index() {
                   Elite Plan
                 </h3>
                 <p className="text-sm text-crypto-purple/80 mb-4">$10,000+</p>
-                <div className="text-3xl font-bold text-crypto-cyan mb-4">
+                <div className="text-3xl font-bold text-crypto-gold mb-4">
                   18% APY
                 </div>
                 <p className="text-white/80 mb-8 leading-relaxed">
