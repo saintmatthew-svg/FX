@@ -11,7 +11,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Accounts from "./pages/Accounts";
 import About from "./pages/About";
-import Trading from "./pages/Trading";
+import Trading from "./pages/TradingNew";
 import Platforms from "./pages/Platforms";
 import Tools from "./pages/Tools";
 import Education from "./pages/Education";
