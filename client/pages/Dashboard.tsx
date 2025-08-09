@@ -247,10 +247,10 @@ export default function Dashboard() {
                 <Activity className="w-5 h-5 text-crypto-accent" />
                 <span className="text-white/80">Staking Rewards</span>
               </div>
-              <div className="text-2xl font-bold text-crypto-cyan mb-1">
+              <div className="text-2xl font-bold text-crypto-gold mb-1">
                 $1,234.56
               </div>
-              <div className="text-sm text-crypto-cyan">+12.5% APY</div>
+              <div className="text-sm text-crypto-gold">+12.5% APY</div>
             </CardContent>
           </Card>
         </div>
@@ -261,28 +261,28 @@ export default function Dashboard() {
           onValueChange={setActiveTab}
           className="space-y-6"
         >
-          <TabsList className="bg-crypto-dark-100 border border-crypto-purple/20">
+          <TabsList className="bg-crypto-dark-100 border border-crypto-gold/20">
             <TabsTrigger
               value="overview"
-              className="data-[state=active]:bg-crypto-purple data-[state=active]:text-white"
+              className="data-[state=active]:bg-crypto-gold data-[state=active]:text-white"
             >
               Overview
             </TabsTrigger>
             <TabsTrigger
               value="portfolio"
-              className="data-[state=active]:bg-crypto-purple data-[state=active]:text-white"
+              className="data-[state=active]:bg-crypto-gold data-[state=active]:text-white"
             >
               Portfolio
             </TabsTrigger>
             <TabsTrigger
               value="trading"
-              className="data-[state=active]:bg-crypto-purple data-[state=active]:text-white"
+              className="data-[state=active]:bg-crypto-gold data-[state=active]:text-white"
             >
               Trading
             </TabsTrigger>
             <TabsTrigger
               value="staking"
-              className="data-[state=active]:bg-crypto-purple data-[state=active]:text-white"
+              className="data-[state=active]:bg-crypto-gold data-[state=active]:text-white"
             >
               Staking
             </TabsTrigger>
@@ -295,7 +295,7 @@ export default function Dashboard() {
               <Card className="crypto-card-gradient border-crypto-gold/20">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
-                    <PieChart className="w-5 h-5 mr-2 text-crypto-purple" />
+                    <PieChart className="w-5 h-5 mr-2 text-crypto-gold" />
                     Portfolio Allocation
                   </CardTitle>
                 </CardHeader>
@@ -307,8 +307,8 @@ export default function Dashboard() {
                         className="flex items-center justify-between"
                       >
                         <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-crypto-purple/20 rounded-full flex items-center justify-center">
-                            <span className="text-xs font-bold text-crypto-purple">
+                          <div className="w-8 h-8 bg-crypto-gold/20 rounded-full flex items-center justify-center">
+                            <span className="text-xs font-bold text-crypto-gold">
                               {asset.symbol[0]}
                             </span>
                           </div>
@@ -342,13 +342,13 @@ export default function Dashboard() {
                 <CardHeader>
                   <CardTitle className="text-white flex items-center justify-between">
                     <div className="flex items-center">
-                      <Activity className="w-5 h-5 mr-2 text-crypto-cyan" />
+                      <Activity className="w-5 h-5 mr-2 text-crypto-accent" />
                       Recent Transactions
                     </div>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-crypto-cyan hover:bg-crypto-cyan/10"
+                      className="text-crypto-accent hover:bg-crypto-accent/10"
                     >
                       View All
                     </Button>
@@ -368,7 +368,7 @@ export default function Dashboard() {
                                 ? "bg-crypto-green/20"
                                 : tx.type === "sell"
                                   ? "bg-crypto-red/20"
-                                  : "bg-crypto-cyan/20"
+                                  : "bg-crypto-accent/20"
                             }`}
                           >
                             {tx.type === "buy" ? (
@@ -376,7 +376,7 @@ export default function Dashboard() {
                             ) : tx.type === "sell" ? (
                               <ArrowUpRight className="w-4 h-4 text-crypto-red" />
                             ) : (
-                              <Coins className="w-4 h-4 text-crypto-cyan" />
+                              <Coins className="w-4 h-4 text-crypto-accent" />
                             )}
                           </div>
                           <div>
@@ -408,13 +408,13 @@ export default function Dashboard() {
               <CardHeader>
                 <CardTitle className="text-white flex items-center justify-between">
                   <div className="flex items-center">
-                    <BarChart3 className="w-5 h-5 mr-2 text-crypto-purple" />
+                    <BarChart3 className="w-5 h-5 mr-2 text-crypto-gold" />
                     Market Overview
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-crypto-purple hover:bg-crypto-purple/10"
+                    className="text-crypto-gold hover:bg-crypto-gold/10"
                   >
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Refresh
@@ -447,8 +447,8 @@ export default function Dashboard() {
                         >
                           <td className="py-3">
                             <div className="flex items-center space-x-3">
-                              <div className="w-8 h-8 bg-crypto-purple/20 rounded-full flex items-center justify-center">
-                                <span className="text-xs font-bold text-crypto-purple">
+                              <div className="w-8 h-8 bg-crypto-gold/20 rounded-full flex items-center justify-center">
+                                <span className="text-xs font-bold text-crypto-gold">
                                   {asset.symbol[0]}
                                 </span>
                               </div>
@@ -498,8 +498,8 @@ export default function Dashboard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-crypto-purple/20 rounded-full flex items-center justify-center">
-                          <span className="font-bold text-crypto-purple">
+                        <div className="w-10 h-10 bg-crypto-gold/20 rounded-full flex items-center justify-center">
+                          <span className="font-bold text-crypto-gold">
                             {asset.symbol[0]}
                           </span>
                         </div>
@@ -611,8 +611,8 @@ export default function Dashboard() {
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between p-3 rounded-lg bg-crypto-dark/50">
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-crypto-cyan/20 rounded-full flex items-center justify-center">
-                        <span className="text-xs font-bold text-crypto-cyan">
+                      <div className="w-8 h-8 bg-crypto-accent/20 rounded-full flex items-center justify-center">
+                        <span className="text-xs font-bold text-crypto-accent">
                           A
                         </span>
                       </div>
@@ -624,7 +624,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-crypto-cyan">5.2% APY</div>
+                      <div className="text-crypto-accent">5.2% APY</div>
                       <div className="text-white/60 text-sm">$1,207.50</div>
                     </div>
                   </div>
