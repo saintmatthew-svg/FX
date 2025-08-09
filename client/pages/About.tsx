@@ -6,7 +6,6 @@ import { Shield, Users, Award, TrendingUp, Globe, Clock } from 'lucide-react';
 export default function About() {
   return (
     <div className="min-h-screen bg-forex-dark">
-      {/* Navigation */}
       <nav className="bg-forex-dark/95 backdrop-blur-md border-b border-forex-cyan/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -35,7 +34,6 @@ export default function About() {
         </div>
       </nav>
 
-      {/* Hero Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark to-forex-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -47,7 +45,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Our Story */}
       <section className="py-20 bg-forex-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -102,7 +99,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Our Values */}
       <section className="py-20 bg-forex-dark-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -186,7 +182,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Leadership Team */}
       <section className="py-20 bg-forex-dark-300">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -237,7 +232,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Join Us Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark-300 to-forex-dark">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold text-white mb-6">Join Our Success Story</h2>

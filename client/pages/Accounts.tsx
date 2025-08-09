@@ -6,7 +6,6 @@ import { CheckCircle, ArrowRight, TrendingUp, Shield, Users, Zap } from 'lucide-
 export default function Accounts() {
   return (
     <div className="min-h-screen bg-forex-dark">
-      {/* Navigation - Same as homepage */}
       <nav className="bg-forex-dark/95 backdrop-blur-md border-b border-forex-cyan/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -35,7 +34,6 @@ export default function Accounts() {
         </div>
       </nav>
 
-      {/* Hero Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark to-forex-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -47,12 +45,10 @@ export default function Accounts() {
         </div>
       </section>
 
-      {/* Account Types */}
       <section className="py-20 bg-forex-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid lg:grid-cols-3 gap-8">
             
-            {/* Challenge Account */}
             <Card className="forex-card-gradient border-forex-cyan/20 relative">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -97,7 +93,6 @@ export default function Accounts() {
               </CardContent>
             </Card>
 
-            {/* Instant Funding */}
             <Card className="forex-card-gradient border-forex-cyan/20 relative ring-2 ring-forex-cyan/30">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span className="bg-forex-cyan text-forex-dark px-4 py-1 rounded-full text-sm font-semibold">
@@ -147,7 +142,6 @@ export default function Accounts() {
               </CardContent>
             </Card>
 
-            {/* Professional Account */}
             <Card className="forex-card-gradient border-forex-cyan/20 relative">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -195,7 +189,6 @@ export default function Accounts() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-20 bg-forex-dark-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -239,7 +232,6 @@ export default function Accounts() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark-200 to-forex-dark">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold text-white mb-6">Ready to Start Trading?</h2>

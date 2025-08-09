@@ -23,7 +23,6 @@ export default function Navigation({ currentPage }: NavigationProps) {
     <nav className="bg-forex-dark/95 backdrop-blur-md border-b border-forex-cyan/20 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-forex-cyan rounded transform rotate-45"></div>
             <span className="text-xl font-bold text-white">
@@ -32,7 +31,6 @@ export default function Navigation({ currentPage }: NavigationProps) {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
             {navItems.map((item) => (
               <Link
@@ -49,7 +47,6 @@ export default function Navigation({ currentPage }: NavigationProps) {
             ))}
           </div>
 
-          {/* Desktop Auth Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
             <Link to="/login" className="text-white hover:text-forex-cyan transition-colors">
               Sign In
@@ -59,7 +56,6 @@ export default function Navigation({ currentPage }: NavigationProps) {
             </Link>
           </div>
 
-          {/* Mobile menu button */}
           <div className="lg:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -70,7 +66,6 @@ export default function Navigation({ currentPage }: NavigationProps) {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="lg:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 bg-forex-dark-100 rounded-lg mt-2 border border-forex-cyan/20">
@@ -89,7 +84,6 @@ export default function Navigation({ currentPage }: NavigationProps) {
                 </Link>
               ))}
               
-              {/* Mobile Auth Links */}
               <div className="border-t border-forex-cyan/20 pt-4 mt-4">
                 <Link
                   to="/login"

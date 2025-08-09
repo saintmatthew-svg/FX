@@ -9,7 +9,6 @@ export default function Education() {
     <div className="min-h-screen bg-forex-dark">
       <Navigation currentPage="news-education" />
 
-      {/* Hero Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark to-forex-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -21,7 +20,6 @@ export default function Education() {
         </div>
       </section>
 
-      {/* Learning Paths */}
       <section className="py-20 bg-forex-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -30,7 +28,6 @@ export default function Education() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Beginner */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -69,7 +66,6 @@ export default function Education() {
               </CardContent>
             </Card>
 
-            {/* Intermediate */}
             <Card className="forex-card-gradient border-forex-cyan/20 ring-2 ring-forex-cyan/30">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span className="bg-forex-cyan text-forex-dark px-4 py-1 rounded-full text-sm font-semibold">
@@ -113,7 +109,6 @@ export default function Education() {
               </CardContent>
             </Card>
 
-            {/* Advanced */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -155,7 +150,6 @@ export default function Education() {
         </div>
       </section>
 
-      {/* Market News */}
       <section className="py-20 bg-forex-dark-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -164,7 +158,6 @@ export default function Education() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* News Article 1 */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardContent className="p-6">
                 <div className="mb-4">
@@ -185,7 +178,6 @@ export default function Education() {
               </CardContent>
             </Card>
 
-            {/* News Article 2 */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardContent className="p-6">
                 <div className="mb-4">
@@ -206,7 +198,6 @@ export default function Education() {
               </CardContent>
             </Card>
 
-            {/* News Article 3 */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardContent className="p-6">
                 <div className="mb-4">
@@ -234,7 +225,6 @@ export default function Education() {
         </div>
       </section>
 
-      {/* Video Tutorials */}
       <section className="py-20 bg-forex-dark-300">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -243,7 +233,6 @@ export default function Education() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Video 1 */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardContent className="p-0">
                 <div className="bg-gradient-to-br from-forex-cyan/20 to-forex-teal/20 h-48 rounded-t-lg flex items-center justify-center">
@@ -264,7 +253,6 @@ export default function Education() {
               </CardContent>
             </Card>
 
-            {/* Video 2 */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardContent className="p-0">
                 <div className="bg-gradient-to-br from-forex-cyan/20 to-forex-teal/20 h-48 rounded-t-lg flex items-center justify-center">
@@ -285,7 +273,6 @@ export default function Education() {
               </CardContent>
             </Card>
 
-            {/* Video 3 */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardContent className="p-0">
                 <div className="bg-gradient-to-br from-forex-cyan/20 to-forex-teal/20 h-48 rounded-t-lg flex items-center justify-center">
@@ -313,7 +300,6 @@ export default function Education() {
         </div>
       </section>
 
-      {/* Webinars & Events */}
       <section className="py-20 bg-forex-dark-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -391,7 +377,6 @@ export default function Education() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark-100 to-forex-dark">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold text-white mb-6">Start Your Learning Journey</h2>

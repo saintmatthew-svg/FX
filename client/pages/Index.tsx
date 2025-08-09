@@ -23,31 +23,25 @@ export default function Index() {
     <div className="min-h-screen bg-forex-dark">
       <Navigation />
 
-      {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center forex-hero-gradient overflow-hidden">
-        {/* Network Animation Background */}
         <div className="absolute inset-0 forex-network-animation"></div>
         
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
-          {/* Tagline */}
           <div className="mb-8">
             <p className="text-white/80 text-lg mb-2">Our Capital, Your Expertise</p>
             <div className="section-divider"></div>
           </div>
 
-          {/* Main Heading */}
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
             The Market<br />
             Awaits You
           </h1>
 
-          {/* Subtext */}
           <p className="text-xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">
             Trade up to $100,000 on CTC Account. Receive up to 90% of profits. Join GNC: the 
             founder of the modern prop trading industry.
           </p>
 
-          {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/signup">
               <Button className="forex-btn-primary text-lg px-12 py-4">
@@ -62,11 +56,9 @@ export default function Index() {
           </div>
         </div>
 
-        {/* Decorative Elements */}
         <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-forex-dark to-transparent"></div>
       </section>
 
-      {/* About Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark to-forex-dark-100">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold text-white mb-4">Trade for Modern Prop Trading Firm</h2>
@@ -88,8 +80,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Evaluation Process Section */}
-      <section className="bg-forex-dark-100" style={{paddingTop: "80px", marginBottom: "-1px"}}>
+      <section className="bg-forex-dark-100" style={{paddingTop: "80px", marginBottom: "-250px"}}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">Evaluation Process</h2>
@@ -97,9 +88,8 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8" style={{marginBottom: "128px"}}>
-            {/* Beginner Trials */}
-            <Card className="forex-card-gradient border-forex-cyan/20" style={{ margin: "4px 0 101px", paddingBottom: "140px"}}>
-              <CardContent className="p-8 text-center">
+            <Card className="forex-card-gradient border-forex-cyan/20" style={{ marginBottom: "167px", paddingBottom: "20px"}}>
+              <CardContent className="p-8 text-center" style={{marginBottom: "50px"}}>
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
                   <TrendingUp className="w-8 h-8 text-forex-cyan" />
                 </div>
@@ -113,9 +103,8 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Evaluation */}
-            <Card className="forex-card-gradient border-forex-cyan/20" style={{marginBottom: "93px", paddingBottom: "140px"}}>
-              <CardContent className="p-8 text-center">
+            <Card className="forex-card-gradient border-forex-cyan/20" style={{marginBottom: "167px", paddingBottom: "20px"}}>
+              <CardContent className="p-8 text-center" style={{marginBottom: "50px"}}>
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
                   <BarChart3 className="w-8 h-8 text-forex-cyan" />
                 </div>
@@ -129,9 +118,8 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Live Trader */}
-            <Card className="forex-card-gradient border-forex-cyan/20" style={{ marginBottom: "167px", paddingBottom: "140px"}}>
-              <CardContent className="p-8 text-center" style={{marginBottom: "82px"}}>
+            <Card className="forex-card-gradient border-forex-cyan/20" style={{ marginBottom: "167px", paddingBottom: "20px"}}>
+              <CardContent className="p-8 text-center" style={{marginBottom: "50px"}}>
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
                   <Award className="w-8 h-8 text-forex-cyan" />
                 </div>
@@ -149,7 +137,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Platform Features Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark-100 to-forex-dark-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -159,7 +146,6 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Fast Payments */}
             <div className="text-center">
               <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Zap className="w-8 h-8 text-forex-cyan" />
@@ -170,7 +156,6 @@ export default function Index() {
               </p>
             </div>
 
-            {/* Layered Security */}
             <div className="text-center">
               <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Shield className="w-8 h-8 text-forex-cyan" />
@@ -181,7 +166,6 @@ export default function Index() {
               </p>
             </div>
 
-            {/* Revolutionary Technology */}
             <div className="text-center">
               <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <BarChart3 className="w-8 h-8 text-forex-cyan" />
@@ -192,7 +176,6 @@ export default function Index() {
               </p>
             </div>
 
-            {/* Transparent Reporting */}
             <div className="text-center">
               <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle className="w-8 h-8 text-forex-cyan" />
@@ -203,19 +186,9 @@ export default function Index() {
               </p>
             </div>
           </div>
-
-          {/* Platform Image */}
-          <div className="mt-16 text-center">
-            <div className="inline-block p-8 bg-gradient-to-br from-forex-dark-200/50 to-forex-dark-300/50 rounded-2xl border border-forex-cyan/20">
-              <div className="w-96 h-64 bg-forex-dark-300 rounded-lg border border-forex-cyan/30 flex items-center justify-center">
-                <BarChart3 className="w-24 h-24 text-forex-cyan/50" />
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
       <section className="py-20 bg-forex-dark-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -230,7 +203,6 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Select Your Platform */}
             <div className="text-center">
               <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <BarChart3 className="w-8 h-8 text-forex-cyan" />
@@ -241,7 +213,6 @@ export default function Index() {
               </p>
             </div>
 
-            {/* Always By Your Side */}
             <div className="text-center">
               <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Users className="w-8 h-8 text-forex-cyan" />
@@ -252,7 +223,6 @@ export default function Index() {
               </p>
             </div>
 
-            {/* Community */}
             <div className="text-center">
               <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Users className="w-8 h-8 text-forex-cyan" />
@@ -263,7 +233,6 @@ export default function Index() {
               </p>
             </div>
 
-            {/* Automated FOREX */}
             <div className="text-center">
               <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Award className="w-8 h-8 text-forex-cyan" />
@@ -277,7 +246,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Why Mega Fx Market Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark-200 to-forex-dark-300">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -291,7 +259,6 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Phases Profits */}
             <Card className="forex-card-gradient border-forex-cyan/20 h-80">
               <CardContent className="p-8 h-full flex flex-col">
                 <div className="flex-1">
@@ -313,7 +280,6 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* First Profit Split Refund */}
             <Card className="forex-card-gradient border-forex-cyan/20 h-80">
               <CardContent className="p-8 h-full flex flex-col">
                 <div className="flex-1">
@@ -328,7 +294,6 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* VIP Trader */}
             <Card className="forex-card-gradient border-forex-cyan/20 h-80">
               <CardContent className="p-8 h-full flex flex-col">
                 <div className="flex-1">
@@ -347,7 +312,6 @@ export default function Index() {
             </Card>
           </div>
 
-          {/* Additional Benefits */}
           <div className="grid md:grid-cols-3 gap-8 mt-8">
             <div className="bg-forex-dark-300 p-6 rounded-lg border border-forex-cyan/20">
               <h4 className="text-white font-semibold mb-2">● Earn from Phase 1!</h4>
@@ -374,7 +338,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Experience Level Section */}
       <section className="py-20 bg-forex-dark-300">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -387,7 +350,6 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Rapid */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardContent className="p-8">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
@@ -422,7 +384,6 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Evaluation */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardContent className="p-8">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
@@ -457,7 +418,6 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Accelerated */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardContent className="p-8">
                 <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
@@ -495,7 +455,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
       <section className="py-20 bg-gradient-to-b from-forex-dark-300 to-forex-dark">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -504,7 +463,6 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Testimonial 1 */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardContent className="p-8">
                 <div className="text-forex-cyan text-4xl mb-4">"</div>
@@ -526,7 +484,6 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Testimonial 2 */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardContent className="p-8">
                 <div className="text-forex-cyan text-4xl mb-4">"</div>
@@ -548,7 +505,6 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Testimonial 3 */}
             <Card className="forex-card-gradient border-forex-cyan/20">
               <CardContent className="p-8">
                 <div className="text-forex-cyan text-4xl mb-4">"</div>
@@ -573,10 +529,9 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="bg-forex-dark py-16 border-t border-forex-cyan/20">
         <div className="max-w-7xl mx-auto px-4">
-          {/* Mission Statement */}
+
           <div className="bg-gradient-to-r from-forex-teal to-forex-cyan p-8 rounded-lg mb-12">
             <p className="text-white leading-relaxed">
               With great power comes great responsibility. Having the interest of traders growth at heart inspired us to take things into 
@@ -591,9 +546,7 @@ export default function Index() {
             </div>
           </div>
 
-          {/* Footer Links */}
           <div className="grid md:grid-cols-4 gap-8 mb-8">
-            {/* Logo & Brand */}
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-forex-cyan rounded transform rotate-45"></div>
@@ -604,7 +557,6 @@ export default function Index() {
               </div>
             </div>
 
-            {/* Menu Links */}
             <div>
               <h4 className="text-white font-semibold mb-4">Menu</h4>
               <ul className="space-y-2 text-white/70">
@@ -612,7 +564,6 @@ export default function Index() {
               </ul>
             </div>
 
-            {/* Account Links */}
             <div>
               <h4 className="text-white font-semibold mb-4">Accounts</h4>
               <ul className="space-y-2 text-white/70">
@@ -622,7 +573,6 @@ export default function Index() {
               </ul>
             </div>
 
-            {/* Platform Links */}
             <div>
               <h4 className="text-white font-semibold mb-4">Platforms</h4>
               <div className="flex space-x-4">
@@ -645,7 +595,6 @@ export default function Index() {
             </div>
           </div>
 
-          {/* Copyright */}
           <div className="border-t border-forex-cyan/20 pt-8 text-center">
             <p className="text-white/60 text-sm leading-relaxed">
               At OUR FOREX CAPITALS, we understand how fear of the internet tools and the biggest 3 years in local trading journey as every media mentions should think reviews in our market to reach their goal. We are pioneers trading in to have traders to get their trading skills test during our 1 
