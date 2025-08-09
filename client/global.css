@@ -3,70 +3,67 @@
 @tailwind utilities;
 
 @layer base {
-
   :root {
-
-    --background: 220 30% 6%;
+    --background: 225 30% 8%;
     --foreground: 210 40% 98%;
 
-    --card: 220 30% 8%;
+    --card: 225 30% 10%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 220 30% 8%;
+    --popover: 225 30% 10%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 191 100% 50%;
-    --primary-foreground: 220 30% 6%;
+    --primary: 262 80% 60%;
+    --primary-foreground: 225 30% 8%;
 
-    --secondary: 220 30% 12%;
+    --secondary: 225 30% 14%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 220 30% 12%;
+    --muted: 225 30% 14%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 191 84% 68%;
-    --accent-foreground: 220 30% 6%;
+    --accent: 188 86% 53%;
+    --accent-foreground: 225 30% 8%;
 
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 30% 18%;
-    --input: 220 30% 18%;
-    --ring: 191 100% 50%;
+    --border: 225 30% 20%;
+    --input: 225 30% 20%;
+    --ring: 262 80% 60%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 220 30% 8%;
+    --sidebar-background: 225 30% 10%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 191 100% 50%;
-    --sidebar-primary-foreground: 220 30% 6%;
-    --sidebar-accent: 220 30% 15%;
+    --sidebar-primary: 262 80% 60%;
+    --sidebar-primary-foreground: 225 30% 8%;
+    --sidebar-accent: 225 30% 17%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 220 30% 18%;
-    --sidebar-ring: 191 100% 50%;
+    --sidebar-border: 225 30% 20%;
+    --sidebar-ring: 262 80% 60%;
   }
 
   .light {
-
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 191 100% 30%;
+    --primary: 262 80% 50%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 191 84% 68%;
+    --accent: 188 86% 53%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 191 100% 30%;
+    --ring: 262 80% 50%;
   }
 }
 
@@ -77,72 +74,139 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
   }
 }
 
 @layer components {
-  .forex-gradient-bg {
-    background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 50%, #252a3a 100%);
+  .crypto-gradient-bg {
+    background: linear-gradient(135deg, #0a0d1f 0%, #131729 50%, #1a1f3a 100%);
   }
 
-  .forex-hero-gradient {
-    background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 30%, #2d3447 100%);
+  .crypto-hero-gradient {
+    background: linear-gradient(135deg, #0a0d1f 0%, #131729 30%, #222847 100%);
   }
 
-  .forex-card-gradient {
-    background: linear-gradient(135deg, rgba(26, 31, 46, 0.8) 0%, rgba(37, 42, 58, 0.8) 100%);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(77, 184, 216, 0.2);
+  .crypto-card-gradient {
+    background: linear-gradient(
+      135deg,
+      rgba(19, 23, 41, 0.9) 0%,
+      rgba(26, 31, 58, 0.9) 100%
+    );
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    box-shadow: 0 8px 32px rgba(139, 92, 246, 0.1);
   }
 
-  .forex-btn-primary {
-    @apply bg-forex-cyan hover:bg-forex-cyan/90 text-forex-dark font-semibold px-8 py-3 rounded-lg transition-all duration-300;
-    box-shadow: 0 4px 20px rgba(0, 217, 255, 0.3);
+  .crypto-glassmorphism {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 
-  .forex-btn-secondary {
-    @apply bg-transparent border-2 border-forex-cyan text-forex-cyan hover:bg-forex-cyan hover:text-forex-dark font-semibold px-8 py-3 rounded-lg transition-all duration-300;
+  .crypto-btn-primary {
+    @apply bg-crypto-purple hover:bg-crypto-purple/90 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300;
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
   }
 
-  .forex-network-animation {
+  .crypto-btn-secondary {
+    @apply bg-transparent border-2 border-crypto-purple text-crypto-purple hover:bg-crypto-purple hover:text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300;
+  }
+
+  .crypto-btn-cyan {
+    @apply bg-crypto-cyan hover:bg-crypto-cyan/90 text-crypto-dark font-semibold px-8 py-3 rounded-xl transition-all duration-300;
+    box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
+  }
+
+  .crypto-network-animation {
     background-image:
-      radial-gradient(circle at 20% 50%, rgba(0, 217, 255, 0.15) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(77, 184, 216, 0.15) 0%, transparent 50%),
-      radial-gradient(circle at 40% 80%, rgba(0, 217, 255, 0.1) 0%, transparent 50%);
-    animation: networkPulse 4s ease-in-out infinite;
+      radial-gradient(
+        circle at 20% 50%,
+        rgba(139, 92, 246, 0.15) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 20%,
+        rgba(6, 182, 212, 0.15) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 40% 80%,
+        rgba(139, 92, 246, 0.1) 0%,
+        transparent 50%
+      );
+    animation: cryptoPulse 6s ease-in-out infinite;
   }
 
-  @keyframes networkPulse {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
+  @keyframes cryptoPulse {
+    0%,
+    100% {
+      opacity: 0.8;
+    }
+    33% {
+      opacity: 1;
+    }
+    66% {
+      opacity: 0.9;
+    }
   }
 
-  .section-divider {
-    width: 100px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent 0%, #00ff4c 50%, transparent 100%);
-    margin: 1rem auto;
+  .crypto-divider {
+    width: 120px;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      #8b5cf6 30%,
+      #06b6d4 70%,
+      transparent 100%
+    );
+    margin: 1.5rem auto;
+    border-radius: 2px;
   }
 
-  .section-divider::before,
-  .section-divider::after {
-    content: '';
+  .crypto-divider::before,
+  .crypto-divider::after {
+    content: "";
     display: block;
-    width: 8px;
-    height: 8px;
-    background: #00ff4c;
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(45deg, #8b5cf6, #06b6d4);
     border-radius: 50%;
     position: relative;
-    top: -3px;
+    top: -4px;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
   }
 
-  .section-divider::before {
-    left: 46px;
+  .crypto-divider::before {
+    left: 55px;
   }
 
-  .section-divider::after {
-    left: 46px;
-    top: -11px;
+  .crypto-divider::after {
+    left: 55px;
+    top: -14px;
+  }
+
+  .crypto-price-up {
+    @apply text-crypto-green;
+  }
+
+  .crypto-price-down {
+    @apply text-crypto-red;
+  }
+
+  .crypto-glow {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  }
+
+  .crypto-glow-cyan {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
   }
 }
