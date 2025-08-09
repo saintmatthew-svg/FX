@@ -19,6 +19,7 @@ import Dashboard from "./pages/Dashboard";
 import Portfolio from "./pages/Portfolio";
 import Staking from "./pages/Staking";
 import News from "./pages/News";
+import TestPage from "./pages/TestPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/tools" element={<Tools />} />
           <Route path="/education" element={<Education />} />
           <Route path="/news" element={<News />} />
+          <Route path="/test" element={<TestPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
