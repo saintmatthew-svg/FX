@@ -15,468 +15,413 @@ import {
   Instagram,
   Youtube,
   Twitter,
-  Linkedin
+  Linkedin,
+  Wallet,
+  DollarSign,
+  PiggyBank,
+  Coins,
+  TrendingDown,
+  Lock,
+  Globe,
+  Smartphone,
+  Activity,
+  CreditCard,
+  ArrowUpRight,
+  ArrowDownRight,
+  Bitcoin,
+  Banknote
 } from 'lucide-react';
 
 export default function Index() {
+  const cryptoPrices = [
+    { name: 'Bitcoin', symbol: 'BTC', price: '$67,234.52', change: '+2.47%', up: true },
+    { name: 'Ethereum', symbol: 'ETH', price: '$3,456.78', change: '+1.83%', up: true },
+    { name: 'Cardano', symbol: 'ADA', price: '$0.4823', change: '-0.92%', up: false },
+    { name: 'Solana', symbol: 'SOL', price: '$156.34', change: '+5.24%', up: true },
+    { name: 'Polkadot', symbol: 'DOT', price: '$7.891', change: '+3.16%', up: true }
+  ];
+
   return (
-    <div className="min-h-screen bg-forex-dark">
+    <div className="min-h-screen bg-crypto-dark">
       <Navigation />
 
-      <section className="relative min-h-screen flex items-center justify-center forex-hero-gradient overflow-hidden">
-        <div className="absolute inset-0 forex-network-animation"></div>
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center crypto-hero-gradient overflow-hidden">
+        <div className="absolute inset-0 crypto-network-animation"></div>
         
-        <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
+        <div className="relative z-10 text-center max-w-6xl mx-auto px-4">
           <div className="mb-8">
-            <p className="text-white/80 text-lg mb-2">Our Capital, Your Expertise</p>
-            <div className="section-divider"></div>
+            <p className="text-white/80 text-lg mb-2">Next Generation Crypto Investment Platform</p>
+            <div className="crypto-divider"></div>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            The Market<br />
-            Awaits You
+            <span className="bg-gradient-to-r from-crypto-purple to-crypto-cyan bg-clip-text text-transparent">
+              Crypto Future
+            </span><br />
+            Starts Here
           </h1>
 
-          <p className="text-xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Trade up to $100,000 on CTC Account. Receive up to 90% of profits. Join GNC: the 
-            founder of the modern prop trading industry.
+          <p className="text-xl text-white/80 mb-12 max-w-4xl mx-auto leading-relaxed">
+            Trade, invest, and earn with the world's most advanced cryptocurrency platform. 
+            Access DeFi, staking, NFTs, and institutional-grade trading tools all in one place.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Link to="/signup">
-              <Button className="forex-btn-primary text-lg px-12 py-4">
-                Register
+              <Button className="crypto-btn-primary text-lg px-12 py-4">
+                <Wallet className="w-5 h-5 mr-2" />
+                Create Account
               </Button>
             </Link>
-            <Link to="/login">
-              <Button className="forex-btn-secondary text-lg px-12 py-4">
-                Login
+            <Link to="/dashboard">
+              <Button className="crypto-btn-secondary text-lg px-12 py-4">
+                <BarChart3 className="w-5 h-5 mr-2" />
+                View Dashboard
               </Button>
             </Link>
           </div>
+
+          {/* Live Crypto Prices Ticker */}
+          <div className="crypto-glassmorphism rounded-2xl p-6 mb-8">
+            <div className="flex items-center justify-center mb-4">
+              <Activity className="w-5 h-5 text-crypto-cyan mr-2" />
+              <span className="text-white font-semibold">Live Crypto Prices</span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              {cryptoPrices.map((crypto) => (
+                <div key={crypto.symbol} className="text-center">
+                  <div className="text-white font-medium">{crypto.symbol}</div>
+                  <div className="text-crypto-cyan text-sm">{crypto.price}</div>
+                  <div className={`text-xs flex items-center justify-center ${crypto.up ? 'crypto-price-up' : 'crypto-price-down'}`}>
+                    {crypto.up ? <ArrowUpRight className="w-3 h-3 mr-1" /> : <ArrowDownRight className="w-3 h-3 mr-1" />}
+                    {crypto.change}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-forex-dark to-transparent"></div>
+        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-crypto-dark to-transparent"></div>
       </section>
 
-      <section className="py-20 bg-gradient-to-b from-forex-dark to-forex-dark-100">
+      {/* Platform Features */}
+      <section className="py-20 bg-gradient-to-b from-crypto-dark to-crypto-dark-100">
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">Trade for Modern Prop Trading Firm</h2>
-          <div className="section-divider mb-8"></div>
+          <h2 className="text-4xl font-bold text-white mb-4">All-in-One Crypto Platform</h2>
+          <div className="crypto-divider mb-8"></div>
           
-          <div className="max-w-4xl mx-auto text-white/80 leading-relaxed space-y-4">
+          <div className="max-w-4xl mx-auto text-white/80 leading-relaxed space-y-4 mb-16">
             <p>
-              Our Forex Capital developed a unique 2-step Evaluation Process for traders. This 
-              Evaluation Process consists of an Beginner Trials and a Verification and is specifically 
-              designed to identify people with great trading abilities.
+              Our comprehensive cryptocurrency investment platform combines cutting-edge technology 
+              with institutional-grade security to provide you with everything you need to succeed in crypto.
             </p>
             <p>
-              Upon successful completion of the Evaluation Process, you are offered to trade on an 
-              Account with a balance of up to 100,000 USD. Your journey to get there might be 
-              challenging, but our Performance Coaches are here to help you on the endeavour to 
-              financial independence.
+              From spot trading and futures to DeFi yield farming and NFT marketplace access, 
+              we've built the ultimate crypto ecosystem for both beginners and professionals.
             </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-crypto-purple/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow">
+                <Coins className="w-8 h-8 text-crypto-purple" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-4">Spot & Futures Trading</h3>
+              <p className="text-white/70 text-sm leading-relaxed">
+                Trade 500+ cryptocurrencies with advanced charting tools, limit orders, and professional-grade features.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-crypto-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow-cyan">
+                <PiggyBank className="w-8 h-8 text-crypto-cyan" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-4">DeFi Staking & Yield</h3>
+              <p className="text-white/70 text-sm leading-relaxed">
+                Earn up to 20% APY through our curated DeFi protocols and automated yield farming strategies.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-crypto-purple/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow">
+                <Wallet className="w-8 h-8 text-crypto-purple" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-4">Multi-Chain Wallet</h3>
+              <p className="text-white/70 text-sm leading-relaxed">
+                Securely store and manage assets across Ethereum, Binance Smart Chain, Polygon, and more.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-crypto-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow-cyan">
+                <Shield className="w-8 h-8 text-crypto-cyan" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-4">Bank-Grade Security</h3>
+              <p className="text-white/70 text-sm leading-relaxed">
+                Military-grade encryption, multi-signature wallets, and insurance coverage for your digital assets.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-forex-dark-100" style={{paddingTop: "80px", marginBottom: "-250px"}}>
+      {/* Investment Plans */}
+      <section className="bg-crypto-dark-100" style={{paddingTop: "80px", marginBottom: "-250px"}}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Evaluation Process</h2>
-            <div className="section-divider"></div>
+            <h2 className="text-4xl font-bold text-white mb-4">Investment Plans</h2>
+            <div className="crypto-divider"></div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8" style={{marginBottom: "128px"}}>
-            <Card className="forex-card-gradient border-forex-cyan/20" style={{ marginBottom: "167px", paddingBottom: "20px"}}>
+            <Card className="crypto-card-gradient border-crypto-purple/20" style={{ marginBottom: "167px", paddingBottom: "20px"}}>
               <CardContent className="p-8 text-center" style={{marginBottom: "50px"}}>
-                <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
-                  <TrendingUp className="w-8 h-8 text-forex-cyan" />
+                <div className="w-16 h-16 bg-crypto-purple/20 rounded-lg flex items-center justify-center mx-auto mb-6">
+                  <TrendingUp className="w-8 h-8 text-crypto-purple" />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Beginner Trials</h3>
-                <p className="text-sm text-forex-cyan/80 mb-4">(Come knowledge)</p>
+                <h3 className="text-2xl font-bold text-white mb-2">Starter Plan</h3>
+                <p className="text-sm text-crypto-purple/80 mb-4">$100 - $1,000</p>
+                <div className="text-3xl font-bold text-crypto-cyan mb-4">8% APY</div>
                 <p className="text-white/80 mb-8 leading-relaxed">
-                  This stage is the first step of the Evaluation Process. You need to succeed here to advance into 
-                  the Verification stage. Prove your trading skills and discipline in observing the Trading Objectives.
+                  Perfect for beginners looking to enter the crypto market. Get exposure to top cryptocurrencies 
+                  with automated portfolio rebalancing and educational resources.
                 </p>
-                <Button className="forex-btn-primary w-full">Start Now</Button>
+                <Button className="crypto-btn-primary w-full">Start Investing</Button>
               </CardContent>
             </Card>
 
-            <Card className="forex-card-gradient border-forex-cyan/20" style={{marginBottom: "167px", paddingBottom: "20px"}}>
+            <Card className="crypto-card-gradient border-crypto-purple/20" style={{marginBottom: "167px", paddingBottom: "20px"}}>
               <CardContent className="p-8 text-center" style={{marginBottom: "50px"}}>
-                <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
-                  <BarChart3 className="w-8 h-8 text-forex-cyan" />
+                <div className="w-16 h-16 bg-crypto-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
+                  <BarChart3 className="w-8 h-8 text-crypto-cyan" />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Evaluation</h3>
-                <p className="text-sm text-forex-cyan/80 mb-4">(Experience)</p>
+                <h3 className="text-2xl font-bold text-white mb-2">Growth Plan</h3>
+                <p className="text-sm text-crypto-cyan/80 mb-4">$1,000 - $10,000</p>
+                <div className="text-3xl font-bold text-crypto-purple mb-4">12% APY</div>
                 <p className="text-white/80 mb-8 leading-relaxed">
-                  A Verification is the second and final step towards becoming a trader. Once you pass a Verification 
-                  stage and your results are verified, you will be offered to trade on an Account.
+                  Advanced strategies including DeFi protocols, yield farming, and access to exclusive 
+                  investment opportunities with higher potential returns.
                 </p>
-                <Button className="forex-btn-primary w-full">Start Now</Button>
+                <Button className="crypto-btn-cyan w-full">Start Investing</Button>
               </CardContent>
             </Card>
 
-            <Card className="forex-card-gradient border-forex-cyan/20" style={{ marginBottom: "167px", paddingBottom: "20px"}}>
+            <Card className="crypto-card-gradient border-crypto-cyan/20" style={{ marginBottom: "167px", paddingBottom: "20px"}}>
               <CardContent className="p-8 text-center" style={{marginBottom: "50px"}}>
-                <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
-                  <Award className="w-8 h-8 text-forex-cyan" />
+                <div className="w-16 h-16 bg-crypto-purple/20 rounded-lg flex items-center justify-center mx-auto mb-6">
+                  <Award className="w-8 h-8 text-crypto-purple" />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Live Trader</h3>
-                <p className="text-sm text-forex-cyan/80 mb-4">(Trade full time for a living)</p>
+                <h3 className="text-2xl font-bold text-white mb-2">Elite Plan</h3>
+                <p className="text-sm text-crypto-purple/80 mb-4">$10,000+</p>
+                <div className="text-3xl font-bold text-crypto-cyan mb-4">18% APY</div>
                 <p className="text-white/80 mb-8 leading-relaxed">
-                  YOU are becoming a Live Trader with a fully Loaded Account. Trade responsibly and consistently and 
-                  receive up to 90% of your profits. If you consistently generate profits on your Account, we can scale your 
-                  account according to our Scaling Plan.
+                  VIP treatment with dedicated account manager, access to private sales, institutional-grade 
+                  strategies, and priority customer support.
                 </p>
-                <Button className="forex-btn-primary w-full">Start Now</Button>
+                <Button className="crypto-btn-primary w-full">Start Investing</Button>
               </CardContent>
             </Card>
           </div>
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-b from-forex-dark-100 to-forex-dark-200">
+      {/* Why Choose Us */}
+      <section className="py-20 bg-gradient-to-b from-crypto-dark-100 to-crypto-dark-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Something New.</h2>
-            <p className="text-xl text-white/80 mb-4">Key Platform features that set us apart</p>
-            <p className="text-white/60">in the forex marketplace</p>
+            <h2 className="text-4xl font-bold text-white mb-4">Why Choose CryptoFuture</h2>
+            <p className="text-xl text-white/80 mb-4">The most advanced crypto platform</p>
+            <p className="text-white/60">built for the next generation of investors</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Zap className="w-8 h-8 text-forex-cyan" />
+              <div className="w-16 h-16 bg-crypto-purple/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Zap className="w-8 h-8 text-crypto-purple" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-4">Fast Payments</h3>
+              <h3 className="text-xl font-semibold text-white mb-4">Lightning Fast</h3>
               <p className="text-white/70 text-sm leading-relaxed">
-                Experience lightning fast payment processing in less than 24 hours. No delays, no waiting. Have your earnings in record time giving payouts. It is one of all times.
+                Execute trades in milliseconds with our high-performance matching engine and global server infrastructure.
               </p>
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Shield className="w-8 h-8 text-forex-cyan" />
+              <div className="w-16 h-16 bg-crypto-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Lock className="w-8 h-8 text-crypto-cyan" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-4">Layered Security</h3>
+              <h3 className="text-xl font-semibold text-white mb-4">Ultra Secure</h3>
               <p className="text-white/70 text-sm leading-relaxed">
-                Your data, your trades and your funds are all protected with state-of-the-art cyber security. We deploy our marketplace.
+                Your funds are protected by multi-signature wallets, cold storage, and comprehensive insurance coverage.
               </p>
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <BarChart3 className="w-8 h-8 text-forex-cyan" />
+              <div className="w-16 h-16 bg-crypto-purple/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Globe className="w-8 h-8 text-crypto-purple" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-4">Revolutionary Technology</h3>
+              <h3 className="text-xl font-semibold text-white mb-4">Global Access</h3>
               <p className="text-white/70 text-sm leading-relaxed">
-                Our team built our platform. As one of the most innovative and advanced trading platforms ever designed.
+                Trade 24/7 from anywhere in the world with support for 50+ fiat currencies and multiple languages.
               </p>
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-8 h-8 text-forex-cyan" />
+              <div className="w-16 h-16 bg-crypto-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Smartphone className="w-8 h-8 text-crypto-cyan" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-4">Transparent Reporting</h3>
+              <h3 className="text-xl font-semibold text-white mb-4">Mobile First</h3>
               <p className="text-white/70 text-sm leading-relaxed">
-                Track results, with up to date trade tickets. Your member position in everything knows! Currently and precisely to not confuse.
+                Full-featured mobile apps for iOS and Android with biometric security and offline portfolio tracking.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-20 bg-forex-dark-200">
+      {/* Benefits Section */}
+      <section className="py-20 bg-crypto-dark-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Mega Fx Market Benefits</h2>
-            <div className="section-divider mb-8"></div>
+            <h2 className="text-4xl font-bold text-white mb-4">CryptoFuture Benefits</h2>
+            <div className="crypto-divider mb-8"></div>
             <p className="text-white/80 max-w-4xl mx-auto leading-relaxed">
-              At Mega Fx Market, we care about your Success. By joining us you'll get the opportunity to 
-              trade with the world's leading prop trading firm that makes a real difference to the 
-              industry. We constantly strive on increasing in cutting-edge technologies in order to create 
-              the best possible trading environment for our traders.
+              Join millions of users who trust CryptoFuture for their cryptocurrency investments. 
+              Our platform combines institutional-grade security with user-friendly features to make 
+              crypto investing accessible to everyone, from beginners to professional traders.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <BarChart3 className="w-8 h-8 text-forex-cyan" />
+              <div className="w-16 h-16 bg-crypto-purple/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CreditCard className="w-8 h-8 text-crypto-purple" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-4">Select Your Platform!</h3>
+              <h3 className="text-xl font-semibold text-white mb-4">Multiple Payment Methods</h3>
               <p className="text-white/70 text-sm leading-relaxed">
-                Our 24/7 multilingual team is available for all your FOREX funded account needs, day or night we are there for you. When you need us we are always there to assist.
+                Buy crypto with credit cards, bank transfers, PayPal, and 20+ other payment methods instantly.
               </p>
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="w-8 h-8 text-forex-cyan" />
+              <div className="w-16 h-16 bg-crypto-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Users className="w-8 h-8 text-crypto-cyan" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-4">We are always by your side!</h3>
+              <h3 className="text-xl font-semibold text-white mb-4">24/7 Expert Support</h3>
               <p className="text-white/70 text-sm leading-relaxed">
-                Our 24/7 multilingual team is available for all your FOREX funded account needs, day or night we are there for you. When you need us we are always there to assist.
+                Get help from our crypto experts anytime, anywhere. Live chat, phone support, and dedicated account managers.
               </p>
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="w-8 h-8 text-forex-cyan" />
+              <div className="w-16 h-16 bg-crypto-purple/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Banknote className="w-8 h-8 text-crypto-purple" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-4">We are a community!</h3>
+              <h3 className="text-xl font-semibold text-white mb-4">Earn While You Learn</h3>
               <p className="text-white/70 text-sm leading-relaxed">
-                Talk actively with us, our traders only will, and see free on discord. We provide talks and information in real time to actively promote good behavior in trading. Join our discord and see what all the fuss is about.
+                Complete educational courses and earn free cryptocurrency. Learn about DeFi, NFTs, and trading strategies.
               </p>
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-forex-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Award className="w-8 h-8 text-forex-cyan" />
+              <div className="w-16 h-16 bg-crypto-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Bitcoin className="w-8 h-8 text-crypto-cyan" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-4">Automated FOREX Funded Accounts!</h3>
+              <h3 className="text-xl font-semibold text-white mb-4">Premium Features</h3>
               <p className="text-white/70 text-sm leading-relaxed">
-                Get your funded trader accounts immediately after program purchase. No waiting, get your FOREX funded account instantly upon purchase of your chosen program. You no longer need to wait!
+                Access advanced analytics, API trading, portfolio insights, and exclusive market research reports.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-b from-forex-dark-200 to-forex-dark-300">
+      {/* Success Stories */}
+      <section className="py-20 bg-gradient-to-b from-crypto-dark-200 to-crypto-dark-300">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-8">Why Mega Fx Market</h2>
+            <h2 className="text-4xl font-bold text-white mb-8">Success Stories</h2>
             <p className="text-white/80 max-w-6xl mx-auto leading-relaxed">
-              With just 1 phase to get funded, OURFOREXCAPITALS evaluation program is best for enthusiastic forex traders in need of capital to prove their position in the one phase process and join 
-              the league of professionals with our LIVE ACCOUNT. Our evaluation program is a one step process where a Funded Trader can prove their FOREX, CFD or commodities trading skills. 
-              Evaluation Traders have the ability to trade from $10 to $200k with profit split payouts occurring once a month on the first month and then bi-weekly from that point on. A Trader can 
-              have up to 1M in capital from evaluation accounts but only 500k per trading account.
+              Join thousands of successful crypto investors who have achieved their financial goals with CryptoFuture. 
+              Our proven strategies and cutting-edge platform have helped users generate substantial returns across 
+              bull and bear markets. Start your journey today and become the next success story.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="forex-card-gradient border-forex-cyan/20 h-80">
+            <Card className="crypto-card-gradient border-crypto-purple/20 h-80">
               <CardContent className="p-8 h-full flex flex-col">
                 <div className="flex-1">
-                  <div className="w-12 h-12 bg-forex-cyan/20 rounded-lg flex items-center justify-center mb-6">
-                    <TrendingUp className="w-6 h-6 text-forex-cyan" />
+                  <div className="w-12 h-12 bg-crypto-purple/20 rounded-lg flex items-center justify-center mb-6">
+                    <TrendingUp className="w-6 h-6 text-crypto-purple" />
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-4">Phases profits</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-center text-white/80">
-                      <div className="w-2 h-2 bg-forex-cyan rounded-full mr-3"></div>
-                      <span className="text-sm">Phase 1</span>
-                    </div>
-                    <div className="flex items-center text-white/80">
-                      <div className="w-2 h-2 bg-forex-cyan rounded-full mr-3"></div>
-                      <span className="text-sm">Phase 2</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="forex-card-gradient border-forex-cyan/20 h-80">
-              <CardContent className="p-8 h-full flex flex-col">
-                <div className="flex-1">
-                  <div className="w-12 h-12 bg-forex-cyan/20 rounded-lg flex items-center justify-center mb-6">
-                    <Award className="w-6 h-6 text-forex-cyan" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white mb-4">First profit split refund</h3>
+                  <h3 className="text-xl font-semibold text-white mb-4">Portfolio Growth</h3>
                   <div className="text-center">
-                    <div className="text-4xl font-bold text-forex-cyan">19%</div>
+                    <div className="text-4xl font-bold text-crypto-purple">+347%</div>
+                    <p className="text-white/70 text-sm mt-2">Average yearly returns</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="forex-card-gradient border-forex-cyan/20 h-80">
+            <Card className="crypto-card-gradient border-crypto-cyan/20 h-80">
               <CardContent className="p-8 h-full flex flex-col">
                 <div className="flex-1">
-                  <div className="w-12 h-12 bg-forex-cyan/20 rounded-lg flex items-center justify-center mb-6">
-                    <Star className="w-6 h-6 text-forex-cyan" />
+                  <div className="w-12 h-12 bg-crypto-cyan/20 rounded-lg flex items-center justify-center mb-6">
+                    <Award className="w-6 h-6 text-crypto-cyan" />
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-4">VIP Trader</h3>
-                  <div className="space-y-3">
-                    <div className="text-xs text-white/60 bg-forex-dark-100 px-3 py-2 rounded">VIP</div>
-                    <div className="bg-white text-forex-dark px-4 py-2 rounded-full text-sm font-medium">
-                      Withdraw anytime
-                    </div>
+                  <h3 className="text-xl font-semibold text-white mb-4">Satisfied Users</h3>
+                  <div className="text-center">
+                    <div className="text-4xl font-bold text-crypto-cyan">2.5M+</div>
+                    <p className="text-white/70 text-sm mt-2">Active investors</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="crypto-card-gradient border-crypto-purple/20 h-80">
+              <CardContent className="p-8 h-full flex flex-col">
+                <div className="flex-1">
+                  <div className="w-12 h-12 bg-crypto-purple/20 rounded-lg flex items-center justify-center mb-6">
+                    <DollarSign className="w-6 h-6 text-crypto-purple" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-4">Assets Under Management</h3>
+                  <div className="text-center">
+                    <div className="text-4xl font-bold text-crypto-purple">$15B+</div>
+                    <p className="text-white/70 text-sm mt-2">Total value managed</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
-
-          <div className="grid md:grid-cols-3 gap-8 mt-8">
-            <div className="bg-forex-dark-300 p-6 rounded-lg border border-forex-cyan/20">
-              <h4 className="text-white font-semibold mb-2">● Earn from Phase 1!</h4>
-              <p className="text-white/70 text-sm">
-                Get 2% of your trading profits by passing phase 1 and 4% of your trading profits by passing phase 2. 
-                Get paid on your journey to a forex funded account.
-              </p>
-            </div>
-
-            <div className="bg-forex-dark-300 p-6 rounded-lg border border-forex-cyan/20">
-              <h4 className="text-white font-semibold mb-2">● More than a refund!</h4>
-              <p className="text-white/70 text-sm">
-                We pay 8% refund when you pass your first profit split. Why settle for just a refund when you can get paid for reaching a new milestone!
-              </p>
-            </div>
-
-            <div className="bg-forex-dark-300 p-6 rounded-lg border border-forex-cyan/20">
-              <h4 className="text-white font-semibold mb-2">● VIP Reward Program</h4>
-              <p className="text-white/70 text-sm">
-                With a 30% profit split, withdraws at any time with no restrictions, semi-automated payout confirmations, access to a new VIP account.
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 
-      <section className="py-20 bg-forex-dark-300">
+      {/* Testimonials */}
+      <section className="py-20 bg-gradient-to-b from-crypto-dark-300 to-crypto-dark">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">What is your experience level?</h2>
-            <div className="section-divider mb-8"></div>
-            <p className="text-white/80 max-w-4xl mx-auto leading-relaxed">
-              Your success is our business. We provide forex traders with multiple product options to choose from based on your experience. 
-              If you lose, we lose, so choose carefully the program that fits your FOREX and Prop firm trading experience. We will do the rest when it comes to support and trading conditions to ensure your success when trading FOREX with a Prop Firm.
-            </p>
+            <h2 className="text-4xl font-bold text-white mb-4">What Our Users Say</h2>
+            <div className="crypto-divider"></div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="forex-card-gradient border-forex-cyan/20">
+            <Card className="crypto-card-gradient border-crypto-purple/20">
               <CardContent className="p-8">
-                <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
-                  <TrendingUp className="w-8 h-8 text-forex-cyan" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-2 text-center">Rapid</h3>
-                <p className="text-sm text-forex-cyan/80 mb-6 text-center">(Some knowledge)</p>
-                
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center text-white/80">
-                    <CheckCircle className="w-5 h-5 text-forex-cyan mr-3" />
-                    <span className="text-sm">Get to see how prop firms work</span>
-                  </div>
-                  <div className="flex items-center text-white/80">
-                    <CheckCircle className="w-5 h-5 text-forex-cyan mr-3" />
-                    <span className="text-sm">Get paid as you gain experience</span>
-                  </div>
-                  <div className="flex items-center text-white/80">
-                    <CheckCircle className="w-5 h-5 text-forex-cyan mr-3" />
-                    <span className="text-sm">Low entry cost</span>
-                  </div>
-                  <div className="flex items-center text-white/80">
-                    <CheckCircle className="w-5 h-5 text-forex-cyan mr-3" />
-                    <span className="text-sm">Progress into a professional trader</span>
-                  </div>
-                </div>
-
-                <div className="flex gap-2">
-                  <Button className="forex-btn-primary flex-1">Start Now</Button>
-                  <Button className="forex-btn-secondary flex-1">Learn More</Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="forex-card-gradient border-forex-cyan/20">
-              <CardContent className="p-8">
-                <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
-                  <BarChart3 className="w-8 h-8 text-forex-cyan" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-2 text-center">Evaluation</h3>
-                <p className="text-sm text-forex-cyan/80 mb-6 text-center">(Experience)</p>
-                
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center text-white/80">
-                    <CheckCircle className="w-5 h-5 text-forex-cyan mr-3" />
-                    <span className="text-sm">Prove your experience with our Evaluation Account!</span>
-                  </div>
-                  <div className="flex items-center text-white/80">
-                    <CheckCircle className="w-5 h-5 text-forex-cyan mr-3" />
-                    <span className="text-sm">Quick 2 phase evaluation process</span>
-                  </div>
-                  <div className="flex items-center text-white/80">
-                    <CheckCircle className="w-5 h-5 text-forex-cyan mr-3" />
-                    <span className="text-sm">Generous drawdown limits</span>
-                  </div>
-                  <div className="flex items-center text-white/80">
-                    <CheckCircle className="w-5 h-5 text-forex-cyan mr-3" />
-                    <span className="text-sm">Profit split up to 85%</span>
-                  </div>
-                </div>
-
-                <div className="flex gap-2">
-                  <Button className="forex-btn-primary flex-1">Start Now</Button>
-                  <Button className="forex-btn-secondary flex-1">Learn More</Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="forex-card-gradient border-forex-cyan/20">
-              <CardContent className="p-8">
-                <div className="w-16 h-16 bg-forex-cyan/20 rounded-lg flex items-center justify-center mx-auto mb-6">
-                  <Award className="w-8 h-8 text-forex-cyan" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-2 text-center">Accelerated</h3>
-                <p className="text-sm text-forex-cyan/80 mb-6 text-center">(Traders full time for a living)</p>
-                
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center text-white/80">
-                    <CheckCircle className="w-5 h-5 text-forex-cyan mr-3" />
-                    <span className="text-sm">Get started immediately with our Accelerated Funding</span>
-                  </div>
-                  <div className="flex items-center text-white/80">
-                    <CheckCircle className="w-5 h-5 text-forex-cyan mr-3" />
-                    <span className="text-sm">Industry leading profit split</span>
-                  </div>
-                  <div className="flex items-center text-white/80">
-                    <CheckCircle className="w-5 h-5 text-forex-cyan mr-3" />
-                    <span className="text-sm">Speedy upscaling</span>
-                  </div>
-                  <div className="flex items-center text-white/80">
-                    <CheckCircle className="w-5 h-5 text-forex-cyan mr-3" />
-                    <span className="text-sm">Multiple sizes to choose from</span>
-                  </div>
-                </div>
-
-                <div className="flex gap-2">
-                  <Button className="forex-btn-primary flex-1">Start Now</Button>
-                  <Button className="forex-btn-secondary flex-1">Learn More</Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-gradient-to-b from-forex-dark-300 to-forex-dark">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Hear what people are saying about us!</h2>
-            <div className="section-divider"></div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="forex-card-gradient border-forex-cyan/20">
-              <CardContent className="p-8">
-                <div className="text-forex-cyan text-4xl mb-4">"</div>
+                <div className="text-crypto-purple text-4xl mb-4">"</div>
                 <p className="text-white/80 mb-6 leading-relaxed">
-                  Mega Fx Market has had the best traders and accounts managers we have ever come across as trading veterans, this is the gotta platform.
+                  CryptoFuture changed my life. I started with $500 and now have a diversified portfolio worth over $50K. 
+                  The platform is incredibly user-friendly and the returns are amazing.
                 </p>
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-forex-cyan/20 rounded-full flex items-center justify-center mr-4">
-                    <Users className="w-6 h-6 text-forex-cyan" />
+                  <div className="w-12 h-12 bg-crypto-purple/20 rounded-full flex items-center justify-center mr-4">
+                    <Users className="w-6 h-6 text-crypto-purple" />
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold">Roberto *****</h4>
-                    <p className="text-forex-cyan text-sm">Investor</p>
-                    <div className="flex text-forex-cyan">
+                    <h4 className="text-white font-semibold">Sarah M.</h4>
+                    <p className="text-crypto-purple text-sm">Software Engineer</p>
+                    <div className="flex text-crypto-purple">
                       {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
                     </div>
                   </div>
@@ -484,20 +429,21 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            <Card className="forex-card-gradient border-forex-cyan/20">
+            <Card className="crypto-card-gradient border-crypto-cyan/20">
               <CardContent className="p-8">
-                <div className="text-forex-cyan text-4xl mb-4">"</div>
+                <div className="text-crypto-cyan text-4xl mb-4">"</div>
                 <p className="text-white/80 mb-6 leading-relaxed">
-                  I've always loved to invest but with a verified trading system. This platform gave me an opportunity to invest with less stress.
+                  The DeFi staking features are incredible. I'm earning 15% APY on my stablecoins while learning about 
+                  new protocols. The educational content is top-notch.
                 </p>
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-forex-cyan/20 rounded-full flex items-center justify-center mr-4">
-                    <Users className="w-6 h-6 text-forex-cyan" />
+                  <div className="w-12 h-12 bg-crypto-cyan/20 rounded-full flex items-center justify-center mr-4">
+                    <Users className="w-6 h-6 text-crypto-cyan" />
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold">Tyler ******</h4>
-                    <p className="text-forex-cyan text-sm">Investor</p>
-                    <div className="flex text-forex-cyan">
+                    <h4 className="text-white font-semibold">Michael R.</h4>
+                    <p className="text-crypto-cyan text-sm">Financial Advisor</p>
+                    <div className="flex text-crypto-cyan">
                       {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
                     </div>
                   </div>
@@ -505,20 +451,21 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            <Card className="forex-card-gradient border-forex-cyan/20">
+            <Card className="crypto-card-gradient border-crypto-purple/20">
               <CardContent className="p-8">
-                <div className="text-forex-cyan text-4xl mb-4">"</div>
+                <div className="text-crypto-purple text-4xl mb-4">"</div>
                 <p className="text-white/80 mb-6 leading-relaxed">
-                  Mega Fx Market has developed a personal plan for me that allows me to take much greater control of my financial affairs, and plan for the future.
+                  As a beginner, I was intimidated by crypto. CryptoFuture made it simple with guided tutorials and 
+                  automated investing. I've already seen 200% growth in just 8 months.
                 </p>
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-forex-cyan/20 rounded-full flex items-center justify-center mr-4">
-                    <Users className="w-6 h-6 text-forex-cyan" />
+                  <div className="w-12 h-12 bg-crypto-purple/20 rounded-full flex items-center justify-center mr-4">
+                    <Users className="w-6 h-6 text-crypto-purple" />
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold">Martha ******</h4>
-                    <p className="text-forex-cyan text-sm">Investor</p>
-                    <div className="flex text-forex-cyan">
+                    <h4 className="text-white font-semibold">Lisa K.</h4>
+                    <p className="text-crypto-purple text-sm">Marketing Manager</p>
+                    <div className="flex text-crypto-purple">
                       {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
                     </div>
                   </div>
@@ -529,79 +476,93 @@ export default function Index() {
         </div>
       </section>
 
-      <footer className="bg-forex-dark py-16 border-t border-forex-cyan/20">
+      {/* Footer */}
+      <footer className="bg-crypto-dark py-16 border-t border-crypto-purple/20">
         <div className="max-w-7xl mx-auto px-4">
-
-          <div className="bg-gradient-to-r from-forex-teal to-forex-cyan p-8 rounded-lg mb-12">
-            <p className="text-white leading-relaxed">
-              With great power comes great responsibility. Having the interest of traders growth at heart inspired us to take things into 
-              our own hands and create OURFOREXCAPITALS. We know that we have the best insights in the prop space as we have 
-              received multiple prop firm payouts as our goal is to make sure that we create the best conditions for traders to ensure that 
-              they have the best tools to succeed so we are committed to changing the lives of others through OURFOREXCAPITALS.
-            </p>
-            <div className="mt-6">
-              <Button className="bg-white text-forex-dark hover:bg-white/90">
-                Talk to us Today
-              </Button>
+          <div className="bg-gradient-to-r from-crypto-purple to-crypto-cyan p-8 rounded-2xl mb-12">
+            <div className="text-center">
+              <h3 className="text-2xl font-bold text-white mb-4">Ready to Start Your Crypto Journey?</h3>
+              <p className="text-white/90 leading-relaxed mb-6">
+                Join millions of users worldwide who trust CryptoFuture for their cryptocurrency investments. 
+                Get started today with as little as $10 and access professional-grade trading tools, 
+                educational resources, and 24/7 expert support.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button className="bg-white text-crypto-dark hover:bg-white/90 font-semibold px-8 py-3">
+                  <Wallet className="w-4 h-4 mr-2" />
+                  Create Free Account
+                </Button>
+                <Button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-crypto-dark font-semibold px-8 py-3">
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  Explore Platform
+                </Button>
+              </div>
             </div>
           </div>
 
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-forex-cyan rounded transform rotate-45"></div>
+                <div className="w-8 h-8 bg-crypto-purple rounded transform rotate-45"></div>
                 <span className="text-xl font-bold text-white">
-                  MEGA FX<br />
-                  <span className="text-sm">MARKET</span>
+                  CRYPTO<br />
+                  <span className="text-sm">FUTURE</span>
                 </span>
               </div>
+              <p className="text-white/70 text-sm">
+                The next generation cryptocurrency investment platform.
+              </p>
             </div>
 
             <div>
-              <h4 className="text-white font-semibold mb-4">Menu</h4>
+              <h4 className="text-white font-semibold mb-4">Trading</h4>
               <ul className="space-y-2 text-white/70">
-                <li><a href="#" className="hover:text-forex-cyan transition-colors">Trading</a></li>
+                <li><Link to="/trading" className="hover:text-crypto-purple transition-colors">Spot Trading</Link></li>
+                <li><Link to="/trading" className="hover:text-crypto-purple transition-colors">Futures</Link></li>
+                <li><Link to="/staking" className="hover:text-crypto-purple transition-colors">Staking</Link></li>
+                <li><Link to="/defi" className="hover:text-crypto-purple transition-colors">DeFi</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="text-white font-semibold mb-4">Accounts</h4>
+              <h4 className="text-white font-semibold mb-4">Learn</h4>
               <ul className="space-y-2 text-white/70">
-                <li><a href="#" className="hover:text-forex-cyan transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-forex-cyan transition-colors">Tools</a></li>
-                <li><a href="#" className="hover:text-forex-cyan transition-colors">Contact us</a></li>
+                <li><Link to="/education" className="hover:text-crypto-purple transition-colors">Crypto Academy</Link></li>
+                <li><Link to="/news" className="hover:text-crypto-purple transition-colors">Market News</Link></li>
+                <li><Link to="/tools" className="hover:text-crypto-purple transition-colors">Trading Tools</Link></li>
+                <li><Link to="/about" className="hover:text-crypto-purple transition-colors">About Us</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="text-white font-semibold mb-4">Platforms</h4>
+              <h4 className="text-white font-semibold mb-4">Connect</h4>
               <div className="flex space-x-4">
-                <a href="#" className="text-forex-cyan hover:text-forex-cyan/80">
+                <a href="#" className="text-crypto-purple hover:text-crypto-purple/80">
                   <Facebook className="w-6 h-6" />
                 </a>
-                <a href="#" className="text-forex-cyan hover:text-forex-cyan/80">
+                <a href="#" className="text-crypto-purple hover:text-crypto-purple/80">
                   <Instagram className="w-6 h-6" />
                 </a>
-                <a href="#" className="text-forex-cyan hover:text-forex-cyan/80">
+                <a href="#" className="text-crypto-purple hover:text-crypto-purple/80">
                   <Youtube className="w-6 h-6" />
                 </a>
-                <a href="#" className="text-forex-cyan hover:text-forex-cyan/80">
+                <a href="#" className="text-crypto-purple hover:text-crypto-purple/80">
                   <Twitter className="w-6 h-6" />
                 </a>
-                <a href="#" className="text-forex-cyan hover:text-forex-cyan/80">
+                <a href="#" className="text-crypto-purple hover:text-crypto-purple/80">
                   <Linkedin className="w-6 h-6" />
                 </a>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-forex-cyan/20 pt-8 text-center">
+          <div className="border-t border-crypto-purple/20 pt-8 text-center">
             <p className="text-white/60 text-sm leading-relaxed">
-              At OUR FOREX CAPITALS, we understand how fear of the internet tools and the biggest 3 years in local trading journey as every media mentions should think reviews in our market to reach their goal. We are pioneers trading in to have traders to get their trading skills test during our 1 
-              account to make us about them or social media all and up giving you the first and cheapest options for the site and the industry. OurForexCapitals is open to traders worldwide.
+              CryptoFuture is a leading cryptocurrency investment platform providing secure, user-friendly access to 
+              digital assets and DeFi protocols. Trade responsibly and never invest more than you can afford to lose.
             </p>
             <p className="text-white/60 text-xs mt-4">
-              2021 - 2025 © All Time High Profit Forex Sc.
+              © 2024 CryptoFuture. All rights reserved. | Licensed and regulated financial services provider.
             </p>
           </div>
         </div>
