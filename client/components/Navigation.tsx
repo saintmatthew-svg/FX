@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Menu, X, BarChart3, Wallet, TrendingUp } from 'lucide-react';
-import { useState } from 'react';
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Menu, X, BarChart3, Wallet, TrendingUp } from "lucide-react";
+import { useState } from "react";
 
 interface NavigationProps {
   currentPage?: string;
@@ -11,12 +11,12 @@ export default function Navigation({ currentPage }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
-    { name: 'Trading', href: '/trading', icon: TrendingUp },
-    { name: 'Portfolio', href: '/portfolio', icon: Wallet },
-    { name: 'Staking', href: '/staking', icon: TrendingUp },
-    { name: 'Learn', href: '/education', icon: BarChart3 },
-    { name: 'News', href: '/news', icon: BarChart3 },
+    { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
+    { name: "Trading", href: "/trading", icon: TrendingUp },
+    { name: "Portfolio", href: "/portfolio", icon: Wallet },
+    { name: "Staking", href: "/staking", icon: TrendingUp },
+    { name: "Learn", href: "/education", icon: BarChart3 },
+    { name: "News", href: "/news", icon: BarChart3 },
   ];
 
   return (
@@ -26,7 +26,8 @@ export default function Navigation({ currentPage }: NavigationProps) {
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-crypto-purple rounded transform rotate-45"></div>
             <span className="text-xl font-bold text-white">
-              CRYPTO<br />
+              CRYPTO
+              <br />
               <span className="text-sm">FUTURE</span>
             </span>
           </Link>
@@ -40,8 +41,8 @@ export default function Navigation({ currentPage }: NavigationProps) {
                   to={item.href}
                   className={`flex items-center space-x-1 transition-colors ${
                     currentPage === item.name.toLowerCase()
-                      ? 'text-crypto-purple font-semibold'
-                      : 'text-white hover:text-crypto-purple'
+                      ? "text-crypto-purple font-semibold"
+                      : "text-white hover:text-crypto-purple"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -52,7 +53,10 @@ export default function Navigation({ currentPage }: NavigationProps) {
           </div>
 
           <div className="hidden lg:flex items-center space-x-4">
-            <Link to="/login" className="text-white hover:text-crypto-purple transition-colors">
+            <Link
+              to="/login"
+              className="text-white hover:text-crypto-purple transition-colors"
+            >
               Sign In
             </Link>
             <Link to="/signup">
@@ -68,7 +72,11 @@ export default function Navigation({ currentPage }: NavigationProps) {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-white hover:text-crypto-purple transition-colors"
             >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -84,8 +92,8 @@ export default function Navigation({ currentPage }: NavigationProps) {
                     to={item.href}
                     className={`flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors ${
                       currentPage === item.name.toLowerCase()
-                        ? 'text-crypto-purple bg-crypto-purple/10'
-                        : 'text-white hover:text-crypto-purple hover:bg-crypto-purple/5'
+                        ? "text-crypto-purple bg-crypto-purple/10"
+                        : "text-white hover:text-crypto-purple hover:bg-crypto-purple/5"
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
@@ -94,7 +102,7 @@ export default function Navigation({ currentPage }: NavigationProps) {
                   </Link>
                 );
               })}
-              
+
               <div className="border-t border-crypto-purple/20 pt-4 mt-4">
                 <Link
                   to="/login"
