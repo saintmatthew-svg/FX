@@ -176,7 +176,7 @@ export default function Dashboard() {
           <div className="flex items-center space-x-4 mt-4 md:mt-0">
             <Button
               variant="outline"
-              className="border-crypto-purple/20 text-white hover:bg-crypto-purple/10"
+              className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10"
             >
               <Download className="w-4 h-4 mr-2" />
               Export
@@ -190,11 +190,11 @@ export default function Dashboard() {
 
         {/* Portfolio Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="crypto-card-gradient border-crypto-purple/20">
+          <Card className="crypto-card-gradient border-crypto-gold/20">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2">
-                  <Wallet className="w-5 h-5 text-crypto-purple" />
+                  <Wallet className="w-5 h-5 text-crypto-gold" />
                   <span className="text-white/80">Total Balance</span>
                 </div>
                 <button
@@ -215,10 +215,10 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="crypto-card-gradient border-crypto-cyan/20">
+          <Card className="crypto-card-gradient border-crypto-accent/20">
             <CardContent className="p-6">
               <div className="flex items-center space-x-2 mb-4">
-                <TrendingUp className="w-5 h-5 text-crypto-cyan" />
+                <TrendingUp className="w-5 h-5 text-crypto-accent" />
                 <span className="text-white/80">24h P&L</span>
               </div>
               <div className="text-2xl font-bold text-crypto-green mb-1">
@@ -228,10 +228,10 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="crypto-card-gradient border-crypto-purple/20">
+          <Card className="crypto-card-gradient border-crypto-gold/20">
             <CardContent className="p-6">
               <div className="flex items-center space-x-2 mb-4">
-                <BarChart3 className="w-5 h-5 text-crypto-purple" />
+                <BarChart3 className="w-5 h-5 text-crypto-gold" />
                 <span className="text-white/80">Portfolio Assets</span>
               </div>
               <div className="text-2xl font-bold text-white mb-1">12</div>
@@ -241,10 +241,10 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="crypto-card-gradient border-crypto-cyan/20">
+          <Card className="crypto-card-gradient border-crypto-accent/20">
             <CardContent className="p-6">
               <div className="flex items-center space-x-2 mb-4">
-                <Activity className="w-5 h-5 text-crypto-cyan" />
+                <Activity className="w-5 h-5 text-crypto-accent" />
                 <span className="text-white/80">Staking Rewards</span>
               </div>
               <div className="text-2xl font-bold text-crypto-cyan mb-1">
@@ -292,7 +292,7 @@ export default function Dashboard() {
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Portfolio Allocation */}
-              <Card className="crypto-card-gradient border-crypto-purple/20">
+              <Card className="crypto-card-gradient border-crypto-gold/20">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
                     <PieChart className="w-5 h-5 mr-2 text-crypto-purple" />
@@ -338,7 +338,7 @@ export default function Dashboard() {
               </Card>
 
               {/* Recent Transactions */}
-              <Card className="crypto-card-gradient border-crypto-cyan/20">
+              <Card className="crypto-card-gradient border-crypto-accent/20">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center justify-between">
                     <div className="flex items-center">
@@ -404,7 +404,7 @@ export default function Dashboard() {
             </div>
 
             {/* Market Overview */}
-            <Card className="crypto-card-gradient border-crypto-purple/20">
+            <Card className="crypto-card-gradient border-crypto-gold/20">
               <CardHeader>
                 <CardTitle className="text-white flex items-center justify-between">
                   <div className="flex items-center">
@@ -565,7 +565,7 @@ export default function Dashboard() {
           {/* Trading Tab */}
           <TabsContent value="trading" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="crypto-card-gradient border-crypto-purple/20">
+              <Card className="crypto-card-gradient border-crypto-gold/20">
                 <CardHeader>
                   <CardTitle className="text-white">Quick Trade</CardTitle>
                 </CardHeader>
@@ -582,7 +582,7 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
 
-              <Card className="crypto-card-gradient border-crypto-cyan/20">
+              <Card className="crypto-card-gradient border-crypto-accent/20">
                 <CardHeader>
                   <CardTitle className="text-white">Advanced Trading</CardTitle>
                 </CardHeader>
@@ -604,7 +604,7 @@ export default function Dashboard() {
           {/* Staking Tab */}
           <TabsContent value="staking" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="crypto-card-gradient border-crypto-purple/20">
+              <Card className="crypto-card-gradient border-crypto-gold/20">
                 <CardHeader>
                   <CardTitle className="text-white">Active Stakes</CardTitle>
                 </CardHeader>
@@ -631,7 +631,7 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
 
-              <Card className="crypto-card-gradient border-crypto-cyan/20">
+              <Card className="crypto-card-gradient border-crypto-accent/20">
                 <CardHeader>
                   <CardTitle className="text-white">
                     Available for Staking
