@@ -3,6 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
 import {
+  useCryptoPrices,
+  formatPriceChange,
+  formatCurrency,
+} from "@/hooks/use-market-data";
+import {
   TrendingUp,
   Shield,
   Zap,
@@ -33,7 +38,16 @@ import {
 } from "lucide-react";
 
 export default function Index() {
-  const cryptoPrices = [
+  const { data: liveData, loading: pricesLoading } = useCryptoPrices([
+    "BTC",
+    "ETH",
+    "ADA",
+    "SOL",
+    "DOT",
+  ]);
+
+  // Fallback data while loading or if API fails
+  const fallbackData = [
     {
       name: "Bitcoin",
       symbol: "BTC",
@@ -71,6 +85,21 @@ export default function Index() {
     },
   ];
 
+  // Use live data if available, otherwise fallback
+  const cryptoPrices =
+    liveData.length > 0
+      ? liveData.map((crypto) => {
+          const changeInfo = formatPriceChange(crypto.change24h);
+          return {
+            name: crypto.name,
+            symbol: crypto.symbol,
+            price: formatCurrency(crypto.price),
+            change: changeInfo.text,
+            up: changeInfo.isPositive,
+          };
+        })
+      : fallbackData;
+
   return (
     <div className="min-h-screen bg-crypto-dark">
       <Navigation />
@@ -88,7 +117,7 @@ export default function Index() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-crypto-purple to-crypto-cyan bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-crypto-gold to-crypto-accent bg-clip-text text-transparent">
               Crypto Future
             </span>
             <br />
@@ -119,16 +148,21 @@ export default function Index() {
           {/* Live Crypto Prices Ticker */}
           <div className="crypto-glassmorphism rounded-2xl p-6 mb-8">
             <div className="flex items-center justify-center mb-4">
-              <Activity className="w-5 h-5 text-crypto-cyan mr-2" />
+              <Activity className="w-5 h-5 text-crypto-gold mr-2" />
               <span className="text-white font-semibold">
-                Live Crypto Prices
+                Live Crypto Prices{" "}
+                {pricesLoading && (
+                  <span className="text-crypto-accent text-sm ml-2">
+                    (Updating...)
+                  </span>
+                )}
               </span>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {cryptoPrices.map((crypto) => (
                 <div key={crypto.symbol} className="text-center">
                   <div className="text-white font-medium">{crypto.symbol}</div>
-                  <div className="text-crypto-cyan text-sm">{crypto.price}</div>
+                  <div className="text-crypto-gold text-sm">{crypto.price}</div>
                   <div
                     className={`text-xs flex items-center justify-center ${crypto.up ? "crypto-price-up" : "crypto-price-down"}`}
                   >
@@ -171,8 +205,8 @@ export default function Index() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-crypto-purple/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow">
-                <Coins className="w-8 h-8 text-crypto-purple" />
+              <div className="w-16 h-16 bg-crypto-gold/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow">
+                <Coins className="w-8 h-8 text-crypto-gold" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-4">
                 Spot & Futures Trading
@@ -184,8 +218,8 @@ export default function Index() {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-crypto-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow-cyan">
-                <PiggyBank className="w-8 h-8 text-crypto-cyan" />
+              <div className="w-16 h-16 bg-crypto-accent/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow-accent">
+                <PiggyBank className="w-8 h-8 text-crypto-accent" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-4">
                 DeFi Staking & Yield
@@ -197,8 +231,8 @@ export default function Index() {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-crypto-purple/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow">
-                <Wallet className="w-8 h-8 text-crypto-purple" />
+              <div className="w-16 h-16 bg-crypto-gold/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow">
+                <Wallet className="w-8 h-8 text-crypto-gold" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-4">
                 Multi-Chain Wallet
@@ -210,8 +244,8 @@ export default function Index() {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-crypto-cyan/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow-cyan">
-                <Shield className="w-8 h-8 text-crypto-cyan" />
+              <div className="w-16 h-16 bg-crypto-accent/20 rounded-full flex items-center justify-center mx-auto mb-6 crypto-glow-accent">
+                <Shield className="w-8 h-8 text-crypto-accent" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-4">
                 Bank-Grade Security
@@ -259,7 +293,7 @@ export default function Index() {
                 <p className="text-sm text-crypto-purple/80 mb-4">
                   $100 - $1,000
                 </p>
-                <div className="text-3xl font-bold text-crypto-cyan mb-4">
+                <div className="text-3xl font-bold text-crypto-gold mb-4">
                   8% APY
                 </div>
                 <p className="text-white/80 mb-8 leading-relaxed">
@@ -290,7 +324,7 @@ export default function Index() {
                 <p className="text-sm text-crypto-cyan/80 mb-4">
                   $1,000 - $10,000
                 </p>
-                <div className="text-3xl font-bold text-crypto-purple mb-4">
+                <div className="text-3xl font-bold text-crypto-accent mb-4">
                   12% APY
                 </div>
                 <p className="text-white/80 mb-8 leading-relaxed">
@@ -298,7 +332,7 @@ export default function Index() {
                   and access to exclusive investment opportunities with higher
                   potential returns.
                 </p>
-                <Button className="crypto-btn-cyan w-full">
+                <Button className="crypto-btn-accent w-full">
                   Start Investing
                 </Button>
               </CardContent>
@@ -319,7 +353,7 @@ export default function Index() {
                   Elite Plan
                 </h3>
                 <p className="text-sm text-crypto-purple/80 mb-4">$10,000+</p>
-                <div className="text-3xl font-bold text-crypto-cyan mb-4">
+                <div className="text-3xl font-bold text-crypto-gold mb-4">
                   18% APY
                 </div>
                 <p className="text-white/80 mb-8 leading-relaxed">
