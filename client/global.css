@@ -121,7 +121,7 @@
   .section-divider {
     width: 100px;
     height: 2px;
-    background: linear-gradient(90deg, transparent 0%, #00d9ff 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, #00ff4c 50%, transparent 100%);
     margin: 1rem auto;
   }
 
@@ -131,7 +131,7 @@
     display: block;
     width: 8px;
     height: 8px;
-    background: #00d9ff;
+    background: #00ff4c;
     border-radius: 50%;
     position: relative;
     top: -3px;

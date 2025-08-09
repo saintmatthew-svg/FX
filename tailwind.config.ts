@@ -3,7 +3,7 @@ import type { Config } from "tailwindcss";
 export default {
   darkMode: ["class"],
   screens: {
-    'xs': '380px',
+    'xs': '780px',
   },
   content: ["./client/**/*.{ts,tsx}"],
   prefix: "",
@@ -12,7 +12,7 @@ export default {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1200px",
+        "2xl": "1400px",
       },
     },
     extend: {
