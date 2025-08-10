@@ -484,7 +484,7 @@ export default function TradingNew() {
                 <TradingViewWidget
                   symbol={selectedSymbol}
                   theme="dark"
-                  height={800}
+                  height={600}
                   interval="15"
                   style="candles"
                   hide_side_toolbar={false}
