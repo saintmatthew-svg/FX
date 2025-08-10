@@ -6,6 +6,7 @@
 
 [functions]
   external_node_modules = ["express"]
+  directory = "netlify/functions"
   node_bundler = "esbuild"
   
 [[redirects]]
