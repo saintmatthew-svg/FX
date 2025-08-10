@@ -51,7 +51,7 @@ export default function Index() {
     {
       name: "Bitcoin",
       symbol: "BTC",
-      price: "$67,234.52",
+      price: "$107,234.52",
       change: "+2.47%",
       up: true,
     },
@@ -291,7 +291,7 @@ export default function Index() {
                   Starter Plan
                 </h3>
                 <p className="text-sm text-crypto-purple/80 mb-4">
-                  $100 - $1,000
+                  $1000 - $10,000
                 </p>
                 <div className="text-3xl font-bold text-crypto-gold mb-4">
                   8% APY
@@ -322,7 +322,7 @@ export default function Index() {
                   Growth Plan
                 </h3>
                 <p className="text-sm text-crypto-cyan/80 mb-4">
-                  $1,000 - $10,000
+                  $10,000 - $100,000
                 </p>
                 <div className="text-3xl font-bold text-crypto-accent mb-4">
                   12% APY
@@ -352,7 +352,7 @@ export default function Index() {
                 <h3 className="text-2xl font-bold text-white mb-2">
                   Elite Plan
                 </h3>
-                <p className="text-sm text-crypto-purple/80 mb-4">$10,000+</p>
+                <p className="text-sm text-crypto-purple/80 mb-4">$100,000+</p>
                 <div className="text-3xl font-bold text-crypto-gold mb-4">
                   18% APY
                 </div>
