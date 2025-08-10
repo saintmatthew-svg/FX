@@ -220,7 +220,7 @@ export default function Signup() {
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
-                    className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-11"
+                    className="bg-forex-dark-100 border-forex-cyan/30 text-black placeholder:text-black/50 focus:border-forex-cyan focus:ring-forex-cyan h-11"
                   />
                 </div>
                 <div className="space-y-2">
@@ -234,7 +234,7 @@ export default function Signup() {
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     required
-                    className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-11"
+                    className="bg-forex-dark-100 border-forex-cyan/30 text-black placeholder:text-black/50 focus:border-forex-cyan focus:ring-forex-cyan h-11"
                   />
                 </div>
               </div>
@@ -250,7 +250,7 @@ export default function Signup() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-11"
+                  className="bg-forex-dark-100 border-forex-cyan/30 text-black placeholder:text-black/50 focus:border-forex-cyan focus:ring-forex-cyan h-11"
                 />
               </div>
 
@@ -264,7 +264,7 @@ export default function Signup() {
                   value={phoneNumber}
                   onChange={handlePhoneChange}
                   placeholder={currentCountry ? currentCountry.format : "+1 (555) 123-4567"}
-                  className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-11"
+                  className="bg-forex-dark-100 border-forex-cyan/30 text-black placeholder:text-black/50 focus:border-forex-cyan focus:ring-forex-cyan h-11"
                 />
                 {currentCountry && (
                   <p className="text-xs text-white/60">
@@ -281,7 +281,7 @@ export default function Signup() {
                   <SelectTrigger className="bg-forex-dark-100 border-forex-cyan/30 text-white h-11">
                     <SelectValue placeholder="Select your country" />
                   </SelectTrigger>
-                  <SelectContent className="bg-forex-dark-100 border-forex-cyan/30 text-white max-h-48 overflow-y-auto">
+                  <SelectContent className="bg-forex-dark-100 border-forex-cyan/30 text-black max-h-48 overflow-y-auto">
                     {countries.map((country) => (
                       <SelectItem key={country.code} value={country.code}>
                         {country.name} ({country.phoneCode})
@@ -320,7 +320,7 @@ export default function Signup() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-11 pr-12"
+                    className="bg-forex-dark-100 border-forex-cyan/30 text-black placeholder:text-black/50 focus:border-forex-cyan focus:ring-forex-cyan h-11 pr-12"
                   />
                   <button
                     type="button"
@@ -344,7 +344,7 @@ export default function Signup() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-11 pr-12"
+                    className="bg-forex-dark-100 border-forex-cyan/30 text-black placeholder:text-black/50 focus:border-forex-cyan focus:ring-forex-cyan h-11 pr-12"
                   />
                   <button
                     type="button"

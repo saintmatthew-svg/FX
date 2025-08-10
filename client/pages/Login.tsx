@@ -92,7 +92,7 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-12"
+                  className="bg-forex-dark-100 border-forex-cyan/30 text-black placeholder:text-black/50 focus:border-forex-cyan focus:ring-forex-cyan h-12"
                 />
               </div>
 
@@ -111,7 +111,7 @@ export default function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="bg-forex-dark-100 border-forex-cyan/30 text-white placeholder:text-white/50 focus:border-forex-cyan focus:ring-forex-cyan h-12 pr-12"
+                    className="bg-forex-dark-100 border-forex-cyan/30 text-black placeholder:text-black/50 focus:border-forex-cyan focus:ring-forex-cyan h-12 pr-12"
                   />
                   <button
                     type="button"

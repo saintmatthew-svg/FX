@@ -58,7 +58,7 @@ export default function Index() {
     {
       name: "Ethereum",
       symbol: "ETH",
-      price: "$3,456.78",
+      price: "$4,456.78",
       change: "+1.83%",
       up: true,
     },
