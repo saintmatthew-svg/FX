@@ -125,21 +125,45 @@ export default function Navigation({ currentPage }: NavigationProps) {
               })}
 
               <div className="border-t border-crypto-gold/20 pt-4 mt-4">
-                <Link
-                  to="/login"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-crypto-gold hover:bg-crypto-gold/5 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign In
-                </Link>
-                <div className="px-3 py-2">
-                  <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="crypto-btn-primary w-full">
-                      <Wallet className="w-4 h-4 mr-2" />
-                      Get Started
-                    </Button>
-                  </Link>
-                </div>
+                {isAuthenticated && user ? (
+                  <>
+                    <div className="flex items-center space-x-2 px-3 py-2 text-white">
+                      <User className="w-4 h-4" />
+                      <span className="text-sm">Welcome, {user.firstName}</span>
+                    </div>
+                    <div className="px-3 py-2">
+                      <Button
+                        onClick={() => {
+                          logout();
+                          setIsMenuOpen(false);
+                        }}
+                        variant="outline"
+                        className="border-crypto-red/20 text-crypto-red hover:bg-crypto-red/10 w-full"
+                      >
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Logout
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      className="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-crypto-gold hover:bg-crypto-gold/5 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                    <div className="px-3 py-2">
+                      <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
+                        <Button className="crypto-btn-primary w-full">
+                          <Wallet className="w-4 h-4 mr-2" />
+                          Get Started
+                        </Button>
+                      </Link>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
