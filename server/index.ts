@@ -12,6 +12,8 @@ import {
   handleGoogleCallback,
   handleFacebookAuth,
   handleFacebookCallback,
+  handleForgotPassword,
+  handleResetPassword,
 } from "./routes/auth";
 import {
   getCryptoPrices,
@@ -49,6 +51,8 @@ export function createServer() {
   app.post("/api/auth/logout", handleLogout);
   app.get("/api/auth/profile", handleGetProfile);
   app.post("/api/auth/balance", handleUpdateBalance);
+  app.post("/api/auth/forgot-password", handleForgotPassword);
+  app.post("/api/auth/reset-password", handleResetPassword);
 
   // OAuth routes
   app.get("/api/auth/google", handleGoogleAuth);
