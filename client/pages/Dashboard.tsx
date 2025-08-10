@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navigation from "@/components/Navigation";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -45,6 +46,8 @@ export default function Dashboard() {
   const [isDepositOpen, setIsDepositOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState('USDT');
+  const [showWalletAddress, setShowWalletAddress] = useState(false);
   const [recentTransactions, setRecentTransactions] = useState<Array<{
     id: string;
     type: 'buy' | 'sell' | 'deposit' | 'withdrawal';
@@ -259,6 +262,33 @@ export default function Dashboard() {
     return `${Math.floor(diffInMinutes / 1440)} days ago`;
   };
 
+  // Wallet addresses for different currencies
+  const walletAddresses = {
+    USDT: 'TUvDY4bBhXX1x2YKZp7KfYp8gW1TvH1234',
+    BTC: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+    ETH: '0x742d35Cc6634C0532925a3b8D000B2b77cFE4567',
+    ADA: 'addr1qxy2lpan99fcnhhhy8heycw0lk9aydaddaer2v4ka68z3c4gkdyqs6z2hnyq',
+    SOL: '7xKXtg2CW87d97TXJSDpbD8HCN98iF5M2z6WcKGKP1dz',
+    DOT: '15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9K1N3UaNe5k1234',
+    MATIC: '0x8ba1f109551bD432803012645Hac136c770077f8',
+    AVAX: 'X-avax1yr9d8jy4lk6qvh6qw2h2r8t7x7j3k8j4v9d3c2',
+    NEAR: 'wallet.near',
+    ATOM: 'cosmos1234567890abcdefghijklmnopqrstuvwxyz1234'
+  };
+
+  const cryptoCurrencies = [
+    { symbol: 'USDT', name: 'Tether USD', network: 'TRC20' },
+    { symbol: 'BTC', name: 'Bitcoin', network: 'Bitcoin' },
+    { symbol: 'ETH', name: 'Ethereum', network: 'ERC20' },
+    { symbol: 'ADA', name: 'Cardano', network: 'Cardano' },
+    { symbol: 'SOL', name: 'Solana', network: 'Solana' },
+    { symbol: 'DOT', name: 'Polkadot', network: 'Polkadot' },
+    { symbol: 'MATIC', name: 'Polygon', network: 'Polygon' },
+    { symbol: 'AVAX', name: 'Avalanche', network: 'Avalanche' },
+    { symbol: 'NEAR', name: 'Near Protocol', network: 'Near' },
+    { symbol: 'ATOM', name: 'Cosmos', network: 'Cosmos' }
+  ];
+
   // Function to add a new transaction
   const addTransaction = (type: 'buy' | 'sell' | 'deposit' | 'withdrawal', asset: string, amount: number, price?: number) => {
     const newTransaction = {
@@ -384,29 +414,102 @@ export default function Dashboard() {
                   Deposit
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-crypto-dark border-crypto-gold/20">
+              <DialogContent className="crypto-card-gradient border-crypto-gold/20 max-w-md">
                 <DialogHeader>
-                  <DialogTitle className="text-white">Deposit Funds</DialogTitle>
+                  <DialogTitle className="text-white flex items-center">
+                    <Plus className="w-5 h-5 mr-2 text-crypto-gold" />
+                    Deposit Crypto
+                  </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="deposit-amount" className="text-white">Amount (USD)</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="currency" className="text-white">Select Currency</Label>
+                    <Select value={selectedCurrency} onValueChange={(value) => {
+                      setSelectedCurrency(value);
+                      setShowWalletAddress(false);
+                    }}>
+                      <SelectTrigger className="bg-crypto-dark border-crypto-gold/20 text-white">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-crypto-dark border-crypto-gold/20">
+                        {cryptoCurrencies.map((currency) => (
+                          <SelectItem key={currency.symbol} value={currency.symbol} className="text-white hover:bg-crypto-gold/10">
+                            {currency.symbol} - {currency.name} ({currency.network})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="deposit-amount" className="text-white">Amount ({selectedCurrency})</Label>
                     <Input
                       id="deposit-amount"
                       type="number"
                       placeholder="0.00"
                       value={depositAmount}
                       onChange={(e) => setDepositAmount(e.target.value)}
-                      className="bg-crypto-dark-100 border-crypto-gold/30 text-white"
+                      className="bg-crypto-dark border-crypto-gold/20 text-white"
                     />
                   </div>
-                  <Button
-                    onClick={handleDeposit}
-                    disabled={isLoading || !depositAmount || parseFloat(depositAmount) <= 0}
-                    className="w-full crypto-btn-primary"
-                  >
-                    {isLoading ? "Processing..." : "Deposit"}
-                  </Button>
+
+                  {!showWalletAddress ? (
+                    <Button
+                      onClick={() => setShowWalletAddress(true)}
+                      disabled={!depositAmount || parseFloat(depositAmount) <= 0}
+                      className="w-full crypto-btn-primary"
+                    >
+                      Get Deposit Address
+                    </Button>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="bg-crypto-dark/50 p-4 rounded-lg border border-crypto-gold/20">
+                        <div className="text-white/70 text-sm mb-2">Send exactly:</div>
+                        <div className="text-crypto-gold font-bold text-lg mb-3">
+                          {depositAmount} {selectedCurrency}
+                        </div>
+                        <div className="text-white/70 text-sm mb-2">To this address:</div>
+                        <div className="bg-crypto-dark-100 p-3 rounded border border-crypto-gold/30 break-all">
+                          <code className="text-crypto-accent text-sm">
+                            {walletAddresses[selectedCurrency as keyof typeof walletAddresses]}
+                          </code>
+                        </div>
+                        <div className="text-white/60 text-xs mt-2">
+                          Network: {cryptoCurrencies.find(c => c.symbol === selectedCurrency)?.network}
+                        </div>
+                      </div>
+
+                      <div className="bg-crypto-dark/30 p-3 rounded border border-crypto-red/20">
+                        <div className="text-crypto-red text-sm font-medium mb-1">⚠️ Important:</div>
+                        <ul className="text-white/70 text-xs space-y-1">
+                          <li>• Send only {selectedCurrency} to this address</li>
+                          <li>• Minimum deposit: 0.001 {selectedCurrency}</li>
+                          <li>• Funds will be credited after 1 confirmation</li>
+                          <li>• Do not send from smart contracts</li>
+                        </ul>
+                      </div>
+
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowWalletAddress(false)}
+                          className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10 flex-1"
+                        >
+                          Back
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            // Copy address to clipboard
+                            navigator.clipboard.writeText(walletAddresses[selectedCurrency as keyof typeof walletAddresses]);
+                            alert('Address copied to clipboard!');
+                          }}
+                          className="crypto-btn-primary flex-1"
+                        >
+                          Copy Address
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </DialogContent>
             </Dialog>

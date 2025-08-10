@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, BarChart3, Wallet, TrendingUp } from "lucide-react";
+import { Menu, X, BarChart3, Wallet, TrendingUp, LogOut, User } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
 
 interface NavigationProps {
   currentPage?: string;
@@ -9,6 +10,7 @@ interface NavigationProps {
 
 export default function Navigation({ currentPage }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, logout, isAuthenticated } = useAuth();
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
@@ -53,18 +55,37 @@ export default function Navigation({ currentPage }: NavigationProps) {
           </div>
 
           <div className="hidden lg:flex items-center space-x-4">
-            <Link
-              to="/login"
-              className="text-white hover:text-crypto-gold transition-colors"
-            >
-              Sign In
-            </Link>
-            <Link to="/signup">
-              <Button className="crypto-btn-primary">
-                <Wallet className="w-4 h-4 mr-2" />
-                Get Started
-              </Button>
-            </Link>
+            {isAuthenticated && user ? (
+              <>
+                <div className="flex items-center space-x-2 text-white">
+                  <User className="w-4 h-4" />
+                  <span className="text-sm">Welcome, {user.firstName}</span>
+                </div>
+                <Button
+                  onClick={logout}
+                  variant="outline"
+                  className="border-crypto-red/20 text-crypto-red hover:bg-crypto-red/10"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-white hover:text-crypto-gold transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link to="/signup">
+                  <Button className="crypto-btn-primary">
+                    <Wallet className="w-4 h-4 mr-2" />
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           <div className="lg:hidden">

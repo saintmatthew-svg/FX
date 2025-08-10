@@ -7,7 +7,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (credentials: LoginRequest) => Promise<AuthResponse>;
   register: (userData: RegisterRequest) => Promise<AuthResponse>;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateBalance: (newBalance: number) => void;
 }
 
@@ -56,6 +56,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (typeof localStorage !== 'undefined') {
           localStorage.setItem('auth_token', data.token);
           localStorage.setItem('user_data', JSON.stringify(data.user));
+          // Initialize empty portfolio for new sessions
+          if (!localStorage.getItem('user_portfolio')) {
+            localStorage.setItem('user_portfolio', JSON.stringify({}));
+          }
         }
       }
 
@@ -86,6 +90,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (typeof localStorage !== 'undefined') {
           localStorage.setItem('auth_token', data.token);
           localStorage.setItem('user_data', JSON.stringify(data.user));
+          // Initialize empty portfolio for new registrations
+          localStorage.setItem('user_portfolio', JSON.stringify({}));
         }
       }
 
@@ -99,11 +105,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('user_data');
+  const logout = async () => {
+    try {
+      // Call server to invalidate session
+      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('auth_token') : null;
+      if (token) {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Clear local state regardless of server response
+      setUser(null);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('user_data');
+        localStorage.removeItem('user_portfolio');
+      }
     }
   };
 

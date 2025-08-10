@@ -39,6 +39,11 @@ export default function Staking() {
   const [favoriteStakes, setFavoriteStakes] = useState<Set<string>>(new Set());
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [userStakingHistory, setUserStakingHistory] = useState<any[]>([]);
+  const [isStakeDialogOpen, setIsStakeDialogOpen] = useState(false);
+  const [selectedPool, setSelectedPool] = useState<any>(null);
+  const [stakeAmount, setStakeAmount] = useState('');
+  const [isStaking, setIsStaking] = useState(false);
+  const [userPortfolio, setUserPortfolio] = useState<{[key: string]: number}>({});
   const [calculatorData, setCalculatorData] = useState({
     amount: '',
     apy: '15.5',
@@ -52,21 +57,111 @@ export default function Staking() {
     seconds: 45
   });
 
-  // Function to handle staking
+  // Load user portfolio from localStorage
+  useEffect(() => {
+    if (typeof localStorage !== 'undefined' && user) {
+      const savedPortfolio = localStorage.getItem('user_portfolio');
+      if (savedPortfolio) {
+        try {
+          setUserPortfolio(JSON.parse(savedPortfolio));
+        } catch (error) {
+          console.error('Error loading portfolio:', error);
+          setUserPortfolio({});
+        }
+      }
+    }
+  }, [user]);
+
+  // Function to open staking dialog
   const handleStake = (poolSymbol: string, poolName: string) => {
-    if (user) {
-      // Add to user's staking history when they actually stake
-      const newStakingEntry = {
+    const pool = stakingPools.find(p => p.symbol === poolSymbol);
+    if (pool) {
+      setSelectedPool(pool);
+      setStakeAmount('');
+      setIsStakeDialogOpen(true);
+    }
+  };
+
+  // Function to execute actual staking
+  const executeStake = async () => {
+    if (!selectedPool || !stakeAmount || !user) return;
+
+    const amount = parseFloat(stakeAmount);
+    const userBalance = userPortfolio[selectedPool.symbol as keyof typeof userPortfolio] || 0;
+
+    if (amount <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+
+    if (amount > userBalance) {
+      alert(`Insufficient ${selectedPool.symbol} balance. You have ${userBalance} ${selectedPool.symbol}`);
+      return;
+    }
+
+    const minStake = parseFloat(selectedPool.minimumStake.split(' ')[0]);
+    if (amount < minStake) {
+      alert(`Minimum stake is ${selectedPool.minimumStake}`);
+      return;
+    }
+
+    setIsStaking(true);
+
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // Update user portfolio (deduct staked amount)
+      const updatedPortfolio = {
+        ...userPortfolio,
+        [selectedPool.symbol]: (userPortfolio[selectedPool.symbol] || 0) - amount
+      };
+      setUserPortfolio(updatedPortfolio);
+
+      // Save to localStorage
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('user_portfolio', JSON.stringify(updatedPortfolio));
+      }
+
+      // Add to staking history
+      const historyEntry = {
         date: new Date().toISOString().split('T')[0],
-        asset: poolSymbol,
-        amount: '0',
-        value: '$0.00',
-        validator: poolName,
+        asset: selectedPool.symbol,
+        amount: amount.toString(),
+        value: `$${(amount * getAssetPrice(selectedPool.symbol)).toFixed(2)}`,
+        validator: selectedPool.name,
         type: 'stake'
       };
-      setUserStakingHistory(prev => [newStakingEntry, ...prev]);
+
+      setUserStakingHistory(prev => [historyEntry, ...prev]);
+
+      alert(`Successfully staked ${amount} ${selectedPool.symbol}!`);
+      setIsStakeDialogOpen(false);
+
+    } catch (error) {
+      alert('Staking failed. Please try again.');
+    } finally {
+      setIsStaking(false);
     }
-    alert(`Staking for ${poolName} (${poolSymbol}) will be available soon!`);
+  };
+
+  // Helper function to get asset prices (mock prices)
+  const getAssetPrice = (symbol: string): number => {
+    const prices: { [key: string]: number } = {
+      BTC: 43000,
+      ETH: 2600,
+      ADA: 0.48,
+      SOL: 95,
+      DOT: 7.2,
+      ATOM: 12.5,
+      AVAX: 38,
+      LUNA: 0.85,
+      NEAR: 3.2,
+      ALGO: 0.28,
+      MATIC: 0.85,
+      FTM: 0.42
+    };
+    return prices[symbol] || 1;
   };
 
   // Function to open rewards calculator
@@ -494,6 +589,7 @@ export default function Staking() {
                       <Button
                         className="crypto-btn-primary flex-1"
                         onClick={() => handleStake(pool.symbol, pool.name)}
+                        disabled={!user}
                       >
                         <Zap className="w-4 h-4 mr-2" />
                         Stake {pool.symbol}
@@ -951,6 +1047,136 @@ export default function Staking() {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Staking Dialog */}
+      <Dialog open={isStakeDialogOpen} onOpenChange={setIsStakeDialogOpen}>
+        <DialogContent className="crypto-card-gradient border-crypto-gold/20 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center">
+              <Zap className="w-5 h-5 mr-2 text-crypto-gold" />
+              Stake {selectedPool?.symbol}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedPool && (
+            <div className="space-y-4">
+              <div className="bg-crypto-dark/30 p-4 rounded-lg">
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className="w-10 h-10 bg-crypto-gold/20 rounded-full flex items-center justify-center">
+                    <span className="font-bold text-crypto-gold">
+                      {selectedPool.symbol[0]}
+                    </span>
+                  </div>
+                  <div>
+                    <div className="text-white font-medium">{selectedPool.name}</div>
+                    <div className="text-crypto-gold text-sm">{selectedPool.apy} APY</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="text-white/70">Your Balance:</span>
+                    <div className="text-white font-medium">
+                      {userPortfolio[selectedPool.symbol as keyof typeof userPortfolio] || 0} {selectedPool.symbol}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-white/70">Minimum:</span>
+                    <div className="text-white font-medium">{selectedPool.minimumStake}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="stakeAmount" className="text-white">Amount to Stake</Label>
+                <Input
+                  id="stakeAmount"
+                  type="number"
+                  placeholder="Enter amount"
+                  value={stakeAmount}
+                  onChange={(e) => setStakeAmount(e.target.value)}
+                  className="bg-crypto-dark border-crypto-gold/20 text-white"
+                />
+
+                <div className="flex space-x-2 mt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-crypto-gold/20 text-crypto-gold hover:bg-crypto-gold/10 flex-1"
+                    onClick={() => {
+                      const balance = userPortfolio[selectedPool.symbol as keyof typeof userPortfolio] || 0;
+                      setStakeAmount((balance * 0.25).toString());
+                    }}
+                  >
+                    25%
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-crypto-gold/20 text-crypto-gold hover:bg-crypto-gold/10 flex-1"
+                    onClick={() => {
+                      const balance = userPortfolio[selectedPool.symbol as keyof typeof userPortfolio] || 0;
+                      setStakeAmount((balance * 0.5).toString());
+                    }}
+                  >
+                    50%
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-crypto-gold/20 text-crypto-gold hover:bg-crypto-gold/10 flex-1"
+                    onClick={() => {
+                      const balance = userPortfolio[selectedPool.symbol as keyof typeof userPortfolio] || 0;
+                      setStakeAmount((balance * 0.75).toString());
+                    }}
+                  >
+                    75%
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-crypto-gold/20 text-crypto-gold hover:bg-crypto-gold/10 flex-1"
+                    onClick={() => {
+                      const balance = userPortfolio[selectedPool.symbol as keyof typeof userPortfolio] || 0;
+                      setStakeAmount(balance.toString());
+                    }}
+                  >
+                    Max
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsStakeDialogOpen(false)}
+                  className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10 flex-1"
+                  disabled={isStaking}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="crypto-btn-primary flex-1"
+                  onClick={executeStake}
+                  disabled={isStaking || !stakeAmount || parseFloat(stakeAmount) <= 0}
+                >
+                  {isStaking ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      Staking...
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="w-4 h-4 mr-2" />
+                      Stake Now
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
