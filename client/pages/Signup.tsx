@@ -278,7 +278,7 @@ export default function Signup() {
                   Country
                 </Label>
                 <Select onValueChange={handleCountryChange} value={selectedCountry}>
-                  <SelectTrigger className="bg-forex-dark-100 border-forex-cyan/30 text-white h-11">
+                  <SelectTrigger className="bg-forex-dark-100 border-forex-cyan/100 text-white h-11">
                     <SelectValue placeholder="Select your country" />
                   </SelectTrigger>
                   <SelectContent className="bg-forex-dark-100 border-forex-cyan/30 text-black max-h-48 overflow-y-auto">
