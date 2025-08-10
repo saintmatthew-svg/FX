@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { handleDemo } from "./routes/demo";
+import { handleDemo } from "../server/routes/demo";
 import {
   handleLogin,
   handleRegister,
@@ -14,13 +14,13 @@ import {
   handleFacebookCallback,
   handleForgotPassword,
   handleResetPassword,
-} from "./routes/auth";
+} from "../server/routes/auth";
 import {
   getCryptoPrices,
   getForexRates,
   getMarketNews,
   getMarketSentiment,
-} from "./routes/market-data";
+} from "../server/routes/market-data";
 import {
   placeOrder,
   cancelOrder,
@@ -28,7 +28,7 @@ import {
   getPositions,
   getTrades,
   getAccountInfo,
-} from "./routes/trading";
+} from "../server/routes/trading";
 
 
 export function createServer() {
@@ -78,3 +78,5 @@ export function createServer() {
 
   return app;
 }
+
+export default createServer;
