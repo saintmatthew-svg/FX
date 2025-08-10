@@ -105,7 +105,10 @@ export const useCryptoPrices = (
         }
       }
     } catch (err) {
-      // Silently use fallback data on any error to prevent console spam
+      // Ignore AbortErrors (caused by timeout) and other expected errors
+      if (err instanceof Error && err.name === 'AbortError') {
+        // Request was aborted due to timeout, use fallback data silently
+      }
       setError(null); // Don't show errors to user
       // Only set fallback data if we don't have any data yet
       if (data.length === 0) {
@@ -176,7 +179,10 @@ export const useForexRates = (pairs?: string[], refreshInterval = 15000) => {
         }
       }
     } catch (err) {
-      // Silently use fallback data on any error to prevent console spam
+      // Ignore AbortErrors (caused by timeout) and other expected errors
+      if (err instanceof Error && err.name === 'AbortError') {
+        // Request was aborted due to timeout, use fallback data silently
+      }
       setError(null); // Don't show errors to user
       // Only set fallback data if we don't have any data yet
       if (data.length === 0) {
@@ -249,6 +255,10 @@ export const useMarketNews = (
         setError("News service unavailable");
       }
     } catch (err) {
+      // Ignore AbortErrors (caused by timeout) and other expected errors
+      if (err instanceof Error && err.name === 'AbortError') {
+        // Request was aborted due to timeout, fail silently
+      }
       // Silently fail for news - it's not critical
       setError(null);
     } finally {
@@ -310,6 +320,10 @@ export const useMarketSentiment = (refreshInterval = 60000) => {
         setError("Sentiment service unavailable");
       }
     } catch (err) {
+      // Ignore AbortErrors (caused by timeout) and other expected errors
+      if (err instanceof Error && err.name === 'AbortError') {
+        // Request was aborted due to timeout, fail silently
+      }
       // Silently fail for sentiment - it's not critical
       setError(null);
     } finally {
