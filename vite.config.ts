@@ -14,8 +14,10 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     outDir: "dist/spa",
+    chunkSizeWarningLimit: 1600 // default is 500 KB
   },
   plugins: [react(), expressPlugin()],
+  
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
@@ -35,3 +37,4 @@ function expressPlugin(): Plugin {
     },
   };
 }
+
