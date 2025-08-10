@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import Navigation from "@/components/Navigation";
 import TradingViewWidget from "@/components/TradingViewWidget";
 import MetaTrader5Widget from "@/components/MetaTrader5Widget";
@@ -161,31 +162,8 @@ export default function TradingNew() {
     },
   ];
 
-  // Mock trading positions
-  const [positions, setPositions] = useState([
-    {
-      id: 1,
-      symbol: "BTC/USDT",
-      type: "long",
-      size: "0.5",
-      entryPrice: 66500,
-      currentPrice: 67234,
-      pnl: 367,
-      pnlPercent: 1.1,
-      margin: 1325,
-    },
-    {
-      id: 2,
-      symbol: "ETH/USDT",
-      type: "short",
-      size: "2.0",
-      entryPrice: 3500,
-      currentPrice: 3456,
-      pnl: 88,
-      pnlPercent: 1.26,
-      margin: 1380,
-    },
-  ]);
+  // Mock trading positions - start with empty array so no automatic trades
+  const [positions, setPositions] = useState([]);
 
   // Mock order book data
   const [orderBook, setOrderBook] = useState({
@@ -204,6 +182,13 @@ export default function TradingNew() {
       { price: 67237.0, size: 0.5432, total: 5.4309 },
     ],
   });
+
+  // Function to close a position
+  const closePosition = (positionId: number) => {
+    setPositions(prev => prev.filter(position => position.id !== positionId));
+    setTradeSuccess(`Position closed successfully`);
+    setTimeout(() => setTradeSuccess(""), 3000);
+  };
 
   const handleTrade = async () => {
     if (!user) return;
@@ -225,7 +210,7 @@ export default function TradingNew() {
 
     const currentAsset = cryptoData.find(c => selectedSymbol.includes(c.symbol));
     if (!currentAsset) {
-      setTradeError("Asset not found");
+      setTradeError("Asset not found. Please select a different symbol.");
       return;
     }
 
@@ -384,7 +369,9 @@ export default function TradingNew() {
               <div className="text-xl font-bold text-white mb-1">
                 {positions.length}
               </div>
-              <div className="text-sm text-crypto-green">+$455.00 PnL</div>
+              <div className="text-sm text-white/60">
+                {positions.length > 0 ? `$${positions.reduce((sum, pos) => sum + pos.pnl, 0).toLocaleString()} PnL` : 'No active positions'}
+              </div>
             </CardContent>
           </Card>
 
@@ -403,9 +390,9 @@ export default function TradingNew() {
         </div>
 
         {/* Main Trading Interface */}
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
           {/* Chart and Market Data */}
-          <div className="xl:col-span-3 space-y-6">
+          <div className="xl:col-span-4 space-y-6">
             {/* Trading Pair Selector */}
             <Card className="crypto-card-gradient border-crypto-gold/20">
               <CardContent className="p-4">
@@ -441,7 +428,7 @@ export default function TradingNew() {
                       </SelectContent>
                     </Select>
 
-                    {cryptoData.find((c) =>
+                    {cryptoData && cryptoData.length > 0 && cryptoData.find((c) =>
                       selectedSymbol.includes(c.symbol),
                     ) && (
                       <div className="flex items-center space-x-4">
@@ -454,7 +441,7 @@ export default function TradingNew() {
                             )}
                           </div>
                           <div
-                            className={`text-sm ${cryptoData.find((c) => selectedSymbol.includes(c.symbol))?.change24h >= 0 ? "text-crypto-green" : "text-crypto-red"}`}
+                            className={`text-sm ${(cryptoData.find((c) => selectedSymbol.includes(c.symbol))?.change24h || 0) >= 0 ? "text-crypto-green" : "text-crypto-red"}`}
                           >
                             {
                               formatPriceChange(
@@ -491,13 +478,13 @@ export default function TradingNew() {
               </CardContent>
             </Card>
 
-            {/* TradingView Chart */}
+            {/* TradingView Chart - Larger for better analysis */}
             <Card className="crypto-card-gradient border-crypto-gold/20">
               <CardContent className="p-0">
                 <TradingViewWidget
                   symbol={selectedSymbol}
                   theme="dark"
-                  height={600}
+                  height={800}
                   interval="15"
                   style="candles"
                   hide_side_toolbar={false}
@@ -544,69 +531,76 @@ export default function TradingNew() {
               <TabsContent value="positions" className="mt-4">
                 <Card className="crypto-card-gradient border-crypto-gold/20">
                   <CardContent className="p-4">
-                    <div className="space-y-3">
-                      {positions.map((position) => (
-                        <div
-                          key={position.id}
-                          className="flex items-center justify-between p-3 rounded-lg bg-crypto-dark/50"
-                        >
-                          <div className="flex items-center space-x-4">
-                            <div
-                              className={`w-3 h-3 rounded-full ${
-                                position.type === "long"
-                                  ? "bg-crypto-green"
-                                  : "bg-crypto-red"
-                              }`}
-                            />
-                            <div>
-                              <div className="text-white font-medium">
-                                {position.symbol}
-                              </div>
-                              <div className="text-white/60 text-sm">
-                                {position.type.toUpperCase()} • {position.size}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center space-x-6">
-                            <div className="text-center">
-                              <div className="text-white text-sm">
-                                ${position.entryPrice.toLocaleString()}
-                              </div>
-                              <div className="text-white/60 text-xs">Entry</div>
-                            </div>
-
-                            <div className="text-center">
-                              <div className="text-white text-sm">
-                                ${position.currentPrice.toLocaleString()}
-                              </div>
-                              <div className="text-white/60 text-xs">
-                                Current
-                              </div>
-                            </div>
-
-                            <div className="text-center">
+                    {positions.length === 0 ? (
+                      <div className="text-center text-white/60 py-8">
+                        No open positions. Place your first trade using the order panel.
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {positions.map((position) => (
+                          <div
+                            key={position.id}
+                            className="flex items-center justify-between p-3 rounded-lg bg-crypto-dark/50"
+                          >
+                            <div className="flex items-center space-x-4">
                               <div
-                                className={`text-sm ${position.pnl >= 0 ? "text-crypto-green" : "text-crypto-red"}`}
-                              >
-                                ${position.pnl.toLocaleString()} (
-                                {position.pnlPercent > 0 ? "+" : ""}
-                                {position.pnlPercent}%)
+                                className={`w-3 h-3 rounded-full ${
+                                  position.type === "long"
+                                    ? "bg-crypto-green"
+                                    : "bg-crypto-red"
+                                }`}
+                              />
+                              <div>
+                                <div className="text-white font-medium">
+                                  {position.symbol}
+                                </div>
+                                <div className="text-white/60 text-sm">
+                                  {position.type.toUpperCase()} • {position.size}
+                                </div>
                               </div>
-                              <div className="text-white/60 text-xs">P&L</div>
                             </div>
 
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-crypto-red/20 text-crypto-red hover:bg-crypto-red/10"
-                            >
-                              Close
-                            </Button>
+                            <div className="flex items-center space-x-6">
+                              <div className="text-center">
+                                <div className="text-white text-sm">
+                                  ${position.entryPrice.toLocaleString()}
+                                </div>
+                                <div className="text-white/60 text-xs">Entry</div>
+                              </div>
+
+                              <div className="text-center">
+                                <div className="text-white text-sm">
+                                  ${position.currentPrice.toLocaleString()}
+                                </div>
+                                <div className="text-white/60 text-xs">
+                                  Current
+                                </div>
+                              </div>
+
+                              <div className="text-center">
+                                <div
+                                  className={`text-sm ${position.pnl >= 0 ? "text-crypto-green" : "text-crypto-red"}`}
+                                >
+                                  ${position.pnl.toLocaleString()} (
+                                  {position.pnlPercent > 0 ? "+" : ""}
+                                  {position.pnlPercent}%)
+                                </div>
+                                <div className="text-white/60 text-xs">P&L</div>
+                              </div>
+
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-crypto-red/20 text-crypto-red hover:bg-crypto-red/10"
+                                onClick={() => closePosition(position.id)}
+                              >
+                                Close
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -634,8 +628,13 @@ export default function TradingNew() {
               <TabsContent value="assets" className="mt-4">
                 <Card className="crypto-card-gradient border-crypto-gold/20">
                   <CardContent className="p-4">
-                    <div className="space-y-3">
-                      {cryptoData.slice(0, 5).map((asset) => (
+                    {!cryptoData || cryptoData.length === 0 ? (
+                      <div className="text-center text-white/60 py-8">
+                        Loading asset data...
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {cryptoData.slice(0, 5).map((asset) => (
                         <div
                           key={asset.symbol}
                           className="flex items-center justify-between p-3 rounded-lg bg-crypto-dark/50"
@@ -665,8 +664,9 @@ export default function TradingNew() {
                             </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -912,6 +912,165 @@ export default function TradingNew() {
             </Card>
           </div>
         </div>
+
+        {/* Calculator Modal */}
+        {showCalculator && (
+          <Dialog open={showCalculator} onOpenChange={setShowCalculator}>
+            <DialogContent className="bg-crypto-dark border-crypto-gold/20 text-white max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-crypto-gold">Trading Calculator</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 p-4">
+                <div className="grid grid-cols-4 gap-2">
+                  <div className="col-span-4">
+                    <Input
+                      className="bg-crypto-dark-100 border-crypto-gold/20 text-white text-right text-xl"
+                      placeholder="0"
+                      readOnly
+                      value="0"
+                    />
+                  </div>
+                  {/* Calculator buttons */}
+                  {['C', '±', '%', '÷', '7', '8', '9', '×', '4', '5', '6', '-', '1', '2', '3', '+', '0', '.', '='].map((btn) => (
+                    <Button
+                      key={btn}
+                      variant="outline"
+                      className={`border-crypto-gold/20 text-white hover:bg-crypto-gold/10 ${
+                        btn === '0' ? 'col-span-2' : ''
+                      } ${
+                        ['÷', '×', '-', '+', '='].includes(btn) ? 'bg-crypto-gold/20' : ''
+                      }`}
+                      onClick={() => {
+                        console.log('Calculator button clicked:', btn);
+                      }}
+                    >
+                      {btn}
+                    </Button>
+                  ))}
+                </div>
+                <div className="text-sm text-white/60 text-center">
+                  Position Size Calculator • Risk Management Tool
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Settings Modal */}
+        {showSettings && (
+          <Dialog open={showSettings} onOpenChange={setShowSettings}>
+            <DialogContent className="bg-crypto-dark border-crypto-gold/20 text-white max-w-lg">
+              <DialogHeader>
+                <DialogTitle className="text-crypto-gold">Trading Settings</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-6 p-4">
+                <div className="space-y-4">
+                  <h3 className="text-white font-semibold">Chart Settings</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-white/80">Chart Theme</Label>
+                      <Select>
+                        <SelectTrigger className="w-32 bg-crypto-dark-100 border-crypto-gold/20">
+                          <SelectValue placeholder="Dark" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="dark">Dark</SelectItem>
+                          <SelectItem value="light">Light</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-white/80">Default Timeframe</Label>
+                      <Select>
+                        <SelectTrigger className="w-32 bg-crypto-dark-100 border-crypto-gold/20">
+                          <SelectValue placeholder="15m" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1m">1m</SelectItem>
+                          <SelectItem value="5m">5m</SelectItem>
+                          <SelectItem value="15m">15m</SelectItem>
+                          <SelectItem value="1h">1h</SelectItem>
+                          <SelectItem value="4h">4h</SelectItem>
+                          <SelectItem value="1d">1d</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-white font-semibold">Trading Preferences</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-white/80">Default Order Type</Label>
+                      <Select>
+                        <SelectTrigger className="w-32 bg-crypto-dark-100 border-crypto-gold/20">
+                          <SelectValue placeholder="Market" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="market">Market</SelectItem>
+                          <SelectItem value="limit">Limit</SelectItem>
+                          <SelectItem value="stop">Stop</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-white/80">Risk Level</Label>
+                      <Select>
+                        <SelectTrigger className="w-32 bg-crypto-dark-100 border-crypto-gold/20">
+                          <SelectValue placeholder="Medium" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="low">Low</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="high">High</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-white font-semibold">Notifications</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-white/80">Price Alerts</Label>
+                      <input type="checkbox" defaultChecked className="rounded" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-white/80">Order Notifications</Label>
+                      <input type="checkbox" defaultChecked className="rounded" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-white/80">Market News</Label>
+                      <input type="checkbox" defaultChecked className="rounded" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-4">
+                  <Button
+                    variant="outline"
+                    className="border-crypto-gold/20 text-white hover:bg-crypto-gold/10"
+                    onClick={() => setShowSettings(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="crypto-btn-primary"
+                    onClick={() => {
+                      // Save settings logic would go here
+                      console.log('Settings saved');
+                      setShowSettings(false);
+                    }}
+                  >
+                    Save Settings
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </div>
   );
