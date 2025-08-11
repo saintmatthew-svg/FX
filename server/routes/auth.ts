@@ -25,6 +25,7 @@ const initializeAuth = async () => {
   if (process.env.NODE_ENV !== 'production' && !process.env.DB_HOST && !process.env.DATABASE_URL) {
     console.log('⚠️ Development mode: Database connection skipped (no DB_HOST or DATABASE_URL configured)');
     console.log('📝 Note: User auth will use fallback in-memory storage for development');
+    await checkDatabaseAvailability(); // This will set the fallback mode
     return;
   }
 
@@ -32,11 +33,13 @@ const initializeAuth = async () => {
   if (isConnected) {
     await initializeDatabase();
     console.log('🗄️ PostgreSQL database ready for user management');
+    await checkDatabaseAvailability(); // This will set database as available
   } else {
     if (process.env.NODE_ENV === 'production') {
       throw new Error('Database connection required in production');
     } else {
       console.log('⚠️ Development mode: Database connection failed, using fallback storage');
+      await checkDatabaseAvailability(); // This will set fallback mode
     }
   }
 };
