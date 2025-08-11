@@ -38,6 +38,14 @@ export function createServer() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
+  // Debug middleware for development
+  if (process.env.NODE_ENV !== 'production') {
+    app.use('/api', (req, res, next) => {
+      console.log(`🔄 ${req.method} ${req.path} - Body:`, req.body);
+      next();
+    });
+  }
+
   app.get("/api/ping", (_req, res) => {
     const ping = process.env.PING_MESSAGE ?? "ping";
     res.json({ message: ping });

@@ -49,6 +49,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify(credentials),
       });
 
+      if (!response.ok) {
+        // Handle non-200 status codes
+        let errorMessage = 'Login failed';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          // If JSON parsing fails, use default message
+          errorMessage = `Server error: ${response.status}`;
+        }
+        return {
+          success: false,
+          message: errorMessage,
+        };
+      }
+
       const data: AuthResponse = await response.json();
 
       if (data.success && data.user && data.token) {
@@ -82,6 +98,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         },
         body: JSON.stringify(userData),
       });
+
+      if (!response.ok) {
+        // Handle non-200 status codes
+        let errorMessage = 'Registration failed';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          // If JSON parsing fails, use default message
+          errorMessage = `Server error: ${response.status}`;
+        }
+        return {
+          success: false,
+          message: errorMessage,
+        };
+      }
 
       const data: AuthResponse = await response.json();
 

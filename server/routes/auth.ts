@@ -12,6 +12,43 @@ function hashPassword(password: string): string {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
 
+// Add test users for development
+if (process.env.NODE_ENV !== 'production') {
+  // Test user 1
+  const testUserId = crypto.randomUUID();
+  const testUser: User & { password: string } = {
+    id: testUserId,
+    firstName: 'Test',
+    lastName: 'User',
+    email: 'test@example.com',
+    password: hashPassword('test123'),
+    phoneNumber: '+1234567890',
+    country: 'US',
+    tradingExperience: 'intermediate',
+    balance: 10000,
+    createdAt: new Date().toISOString()
+  };
+  users.set(testUserId, testUser);
+  console.log('🧪 Test user created: test@example.com / test123');
+
+  // User's actual credentials
+  const userId = crypto.randomUUID();
+  const user: User & { password: string } = {
+    id: userId,
+    firstName: 'Onyekachi',
+    lastName: 'Matthew',
+    email: 'onyekachimatthew00@gmail.com',
+    password: hashPassword('Onyekachi16#'),
+    phoneNumber: '+1234567890',
+    country: 'US',
+    tradingExperience: 'advanced',
+    balance: 25000,
+    createdAt: new Date().toISOString()
+  };
+  users.set(userId, user);
+  console.log('🧪 User created: onyekachimatthew00@gmail.com / Onyekachi16#');
+}
+
 function generateToken(): string {
   return crypto.randomBytes(32).toString('hex');
 }
