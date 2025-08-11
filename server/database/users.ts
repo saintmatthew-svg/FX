@@ -115,8 +115,18 @@ export const createUser = async (userData: {
 };
 
 export const findUserByEmail = async (email: string): Promise<DatabaseUser | null> => {
+  if (!isDatabaseAvailable) {
+    // Fallback in-memory storage
+    for (const user of fallbackUsers.values()) {
+      if (user.email === email) {
+        return user;
+      }
+    }
+    return null;
+  }
+
   const client = await pool.connect();
-  
+
   try {
     const result = await client.query(
       'SELECT * FROM users WHERE email = $1',
