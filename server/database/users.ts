@@ -2,6 +2,28 @@ import { pool } from './config';
 import { User } from '@shared/api';
 import crypto from 'crypto';
 
+// Fallback in-memory storage for development
+let isDatabaseAvailable = true;
+const fallbackUsers = new Map<string, DatabaseUser>();
+const fallbackSessions = new Map<string, { userId: string; expiresAt: Date; }>();
+
+// Check if database is available
+export const checkDatabaseAvailability = async (): Promise<boolean> => {
+  try {
+    const client = await pool.connect();
+    await client.query('SELECT 1');
+    client.release();
+    isDatabaseAvailable = true;
+    return true;
+  } catch (error) {
+    isDatabaseAvailable = false;
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('📝 Using fallback in-memory storage for development');
+    }
+    return false;
+  }
+};
+
 export interface DatabaseUser extends User {
   passwordHash: string;
   amountDeposited: number;
