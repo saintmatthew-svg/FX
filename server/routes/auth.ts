@@ -20,16 +20,34 @@ import { testConnection, initializeDatabase } from '../database/config';
 
 // Initialize database connection and tables
 const initializeAuth = async () => {
+  // Skip database initialization in development if no DB config is provided
+  if (process.env.NODE_ENV !== 'production' && !process.env.DB_HOST && !process.env.DATABASE_URL) {
+    console.log('⚠️ Development mode: Database connection skipped (no DB_HOST or DATABASE_URL configured)');
+    console.log('📝 Note: User auth will use fallback in-memory storage for development');
+    return;
+  }
+
   const isConnected = await testConnection();
   if (isConnected) {
     await initializeDatabase();
     console.log('🗄️ PostgreSQL database ready for user management');
   } else {
-    console.error('❌ Failed to connect to PostgreSQL database');
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('Database connection required in production');
+    } else {
+      console.log('⚠️ Development mode: Database connection failed, using fallback storage');
+    }
   }
 };
 
-initializeAuth();
+initializeAuth().catch(error => {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('💥 Critical: Database initialization failed in production:', error);
+    process.exit(1);
+  } else {
+    console.log('⚠️ Development: Database initialization failed, continuing with fallback storage');
+  }
+});
 
 // In-memory storage for password reset tokens (can be moved to DB later)
 const resetTokens: Map<string, { userId: string, expires: number }> = new Map();
