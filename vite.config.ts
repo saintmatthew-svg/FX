@@ -1,9 +1,22 @@
 import { defineConfig, Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { createServer } from "./api";
 
-export default defineConfig(({ mode }) => ({
+// Only import or require backend code in dev mode
+function expressPlugin(): Plugin {
+  return {
+    name: "express-plugin",
+    apply: "serve",
+    configureServer(server) {
+      // Only require createServer during development
+      const { createServer } = require("./api");
+      const app = createServer();
+      server.middlewares.use(app);
+    },
+  };
+}
+
+export default defineConfig(({ command }) => ({
   server: {
     host: "::",
     port: 8080,
@@ -16,8 +29,11 @@ export default defineConfig(({ mode }) => ({
     outDir: "dist/spa",
     chunkSizeWarningLimit: 1600 // default is 500 KB
   },
-  plugins: [react(), expressPlugin()],
-  
+  plugins: [
+    react(),
+    // Only use the expressPlugin in dev server mode
+    command === "serve" && expressPlugin()
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
@@ -25,15 +41,3 @@ export default defineConfig(({ mode }) => ({
     },
   },
 }));
-
-function expressPlugin(): Plugin {
-  return {
-    name: "express-plugin",
-    apply: "serve",
-    configureServer(server) {
-      const app = createServer();
-
-      server.middlewares.use(app);
-    },
-  };
-}
