@@ -294,8 +294,23 @@ export const updateUserDeposit = async (userId: string, amount: number, isDeposi
 };
 
 export const updateUserPassword = async (userId: string, newPassword: string): Promise<boolean> => {
+  if (!isDatabaseAvailable) {
+    // Fallback in-memory storage
+    const user = fallbackUsers.get(userId);
+    if (!user) return false;
+
+    const passwordHash = hashPassword(newPassword);
+    const updatedUser = {
+      ...user,
+      passwordHash,
+      updatedAt: new Date().toISOString()
+    };
+    fallbackUsers.set(userId, updatedUser);
+    return true;
+  }
+
   const client = await pool.connect();
-  
+
   try {
     const passwordHash = hashPassword(newPassword);
     const result = await client.query(
@@ -400,8 +415,20 @@ export const deleteSession = async (token: string): Promise<boolean> => {
 };
 
 export const deleteAllUserSessions = async (userId: string): Promise<number> => {
+  if (!isDatabaseAvailable) {
+    // Fallback in-memory storage
+    let count = 0;
+    for (const [token, session] of fallbackSessions.entries()) {
+      if (session.userId === userId) {
+        fallbackSessions.delete(token);
+        count++;
+      }
+    }
+    return count;
+  }
+
   const client = await pool.connect();
-  
+
   try {
     const result = await client.query(
       'DELETE FROM user_sessions WHERE user_id = $1',
