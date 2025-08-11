@@ -17,6 +17,7 @@ import {
 
 // Initialize database on startup
 import { testConnection, initializeDatabase } from '../database/config';
+import { checkDatabaseAvailability } from '../database/users';
 
 // Initialize database connection and tables
 const initializeAuth = async () => {
