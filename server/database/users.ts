@@ -158,8 +158,13 @@ export const findUserByEmail = async (email: string): Promise<DatabaseUser | nul
 };
 
 export const findUserById = async (id: string): Promise<DatabaseUser | null> => {
+  if (!isDatabaseAvailable) {
+    // Fallback in-memory storage
+    return fallbackUsers.get(id) || null;
+  }
+
   const client = await pool.connect();
-  
+
   try {
     const result = await client.query(
       'SELECT * FROM users WHERE id = $1',
@@ -294,10 +299,20 @@ export const updateUserPassword = async (userId: string, newPassword: string): P
 
 // Session operations
 export const createSession = async (userId: string): Promise<string> => {
+  const token = generateToken();
+
+  if (!isDatabaseAvailable) {
+    // Fallback in-memory storage
+    fallbackSessions.set(token, {
+      userId,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+    });
+    return token;
+  }
+
   const client = await pool.connect();
-  
+
   try {
-    const token = generateToken();
     await client.query(
       'INSERT INTO user_sessions (token, user_id) VALUES ($1, $2)',
       [token, userId]
@@ -309,8 +324,18 @@ export const createSession = async (userId: string): Promise<string> => {
 };
 
 export const findUserByToken = async (token: string): Promise<DatabaseUser | null> => {
+  if (!isDatabaseAvailable) {
+    // Fallback in-memory storage
+    const session = fallbackSessions.get(token);
+    if (!session || session.expiresAt < new Date()) {
+      if (session) fallbackSessions.delete(token);
+      return null;
+    }
+    return fallbackUsers.get(session.userId) || null;
+  }
+
   const client = await pool.connect();
-  
+
   try {
     const result = await client.query(
       `SELECT u.* FROM users u
@@ -344,8 +369,13 @@ export const findUserByToken = async (token: string): Promise<DatabaseUser | nul
 };
 
 export const deleteSession = async (token: string): Promise<boolean> => {
+  if (!isDatabaseAvailable) {
+    // Fallback in-memory storage
+    return fallbackSessions.delete(token);
+  }
+
   const client = await pool.connect();
-  
+
   try {
     const result = await client.query(
       'DELETE FROM user_sessions WHERE token = $1',
