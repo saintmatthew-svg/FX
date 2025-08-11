@@ -346,7 +346,7 @@ export const handleFacebookCallback: RequestHandler = async (req, res) => {
   }
 };
 
-export const handleForgotPassword: RequestHandler = (req, res) => {
+export const handleForgotPassword: RequestHandler = async (req, res) => {
   const { email } = req.body;
 
   if (!email) {
@@ -356,47 +356,55 @@ export const handleForgotPassword: RequestHandler = (req, res) => {
     });
   }
 
-  const user = findUserByEmail(email);
-  if (!user) {
-    // For security, we don't reveal if the email exists or not
-    return res.json({
+  try {
+    const user = await findUserByEmail(email);
+    if (!user) {
+      // For security, we don't reveal if the email exists or not
+      return res.json({
+        success: true,
+        message: 'If an account with that email exists, we have sent a password reset link.'
+      });
+    }
+
+    // Generate reset token
+    const resetToken = generateToken();
+    const expiresAt = Date.now() + (60 * 60 * 1000); // 1 hour from now
+
+    // Store reset token
+    resetTokens.set(resetToken, {
+      userId: user.id,
+      expires: expiresAt
+    });
+
+    // In a real app, you would send an email here
+    // For demo purposes, we'll log the reset link
+    const resetLink = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
+    console.log('\n=== PASSWORD RESET EMAIL (Demo) ===');
+    console.log(`To: ${email}`);
+    console.log(`Subject: Reset Your Crypto Future Password`);
+    console.log(`\nHi ${user.firstName},\n`);
+    console.log(`You requested a password reset for your Crypto Future account.`);
+    console.log(`Click the link below to reset your password:\n`);
+    console.log(`${resetLink}\n`);
+    console.log(`This link will expire in 1 hour for security.`);
+    console.log(`If you didn't request this, please ignore this email.\n`);
+    console.log(`Best regards,`);
+    console.log(`The Crypto Future Team`);
+    console.log('===============================\n');
+
+    res.json({
       success: true,
-      message: 'If an account with that email exists, we have sent a password reset link.'
+      message: 'If an account with that email exists, we have sent a password reset link.',
+      // In demo mode, include the reset link in the response
+      resetLink: process.env.NODE_ENV === 'development' ? resetLink : undefined
+    });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
     });
   }
-
-  // Generate reset token
-  const resetToken = generateToken();
-  const expiresAt = Date.now() + (60 * 60 * 1000); // 1 hour from now
-
-  // Store reset token
-  resetTokens.set(resetToken, {
-    userId: user.id,
-    expires: expiresAt
-  });
-
-  // In a real app, you would send an email here
-  // For demo purposes, we'll log the reset link
-  const resetLink = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
-  console.log('\n=== PASSWORD RESET EMAIL (Demo) ===');
-  console.log(`To: ${email}`);
-  console.log(`Subject: Reset Your Crypto Future Password`);
-  console.log(`\nHi ${user.firstName},\n`);
-  console.log(`You requested a password reset for your Crypto Future account.`);
-  console.log(`Click the link below to reset your password:\n`);
-  console.log(`${resetLink}\n`);
-  console.log(`This link will expire in 1 hour for security.`);
-  console.log(`If you didn't request this, please ignore this email.\n`);
-  console.log(`Best regards,`);
-  console.log(`The Crypto Future Team`);
-  console.log('===============================\n');
-
-  res.json({
-    success: true,
-    message: 'If an account with that email exists, we have sent a password reset link.',
-    // In demo mode, include the reset link in the response
-    resetLink: process.env.NODE_ENV === 'development' ? resetLink : undefined
-  });
 };
 
 export const handleResetPassword: RequestHandler = (req, res) => {
