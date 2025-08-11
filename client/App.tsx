@@ -21,6 +21,7 @@ import Portfolio from "./pages/Portfolio";
 import Staking from "./pages/Staking";
 import News from "./pages/News";
 import TestPage from "./pages/TestPage";
+import Debug from "./pages/Debug";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -62,6 +63,7 @@ function App() {
               <Route path="/education" element={<Education />} />
               <Route path="/news" element={<News />} />
               <Route path="/test" element={<TestPage />} />
+              <Route path="/debug" element={<Debug />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

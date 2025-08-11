@@ -1,256 +1,283 @@
 import { RequestHandler } from "express";
 import { User, AuthResponse, LoginRequest, RegisterRequest } from '@shared/api';
-import crypto from 'crypto';
+import {
+  createUser,
+  findUserByEmail,
+  findUserById,
+  findUserByToken,
+  createSession,
+  deleteSession,
+  deleteAllUserSessions,
+  updateUserDeposit,
+  updateUserPassword,
+  hashPassword,
+  generateToken,
+  DatabaseUser
+} from '../database/users';
 
-// In-memory user storage (replace with a real database)
-const users: Map<string, User & { password: string }> = new Map();
-const sessions: Map<string, string> = new Map(); // token -> userId
-const resetTokens: Map<string, { userId: string, expires: number }> = new Map(); // reset token -> user info
+// Initialize database on startup
+import { testConnection, initializeDatabase } from '../database/config';
 
-// Helper functions
-function hashPassword(password: string): string {
-  return crypto.createHash('sha256').update(password).digest('hex');
-}
-
-// Add test users for development
-if (process.env.NODE_ENV !== 'production') {
-  // Test user 1
-  const testUserId = crypto.randomUUID();
-  const testUser: User & { password: string } = {
-    id: testUserId,
-    firstName: 'Test',
-    lastName: 'User',
-    email: 'test@example.com',
-    password: hashPassword('test123'),
-    phoneNumber: '+1234567890',
-    country: 'US',
-    tradingExperience: 'intermediate',
-    balance: 10000,
-    createdAt: new Date().toISOString()
-  };
-  users.set(testUserId, testUser);
-  console.log('🧪 Test user created: test@example.com / test123');
-
-  // User's actual credentials
-  const userId = crypto.randomUUID();
-  const user: User & { password: string } = {
-    id: userId,
-    firstName: 'Onyekachi',
-    lastName: 'Matthew',
-    email: 'onyekachimatthew00@gmail.com',
-    password: hashPassword('Onyekachi16#'),
-    phoneNumber: '+1234567890',
-    country: 'US',
-    tradingExperience: 'advanced',
-    balance: 25000,
-    createdAt: new Date().toISOString()
-  };
-  users.set(userId, user);
-  console.log('🧪 User created: onyekachimatthew00@gmail.com / Onyekachi16#');
-}
-
-function generateToken(): string {
-  return crypto.randomBytes(32).toString('hex');
-}
-
-function findUserByEmail(email: string): (User & { password: string }) | undefined {
-  for (const user of users.values()) {
-    if (user.email === email) {
-      return user;
-    }
-  }
-  return undefined;
-}
-
-export const handleLogin: RequestHandler<{}, AuthResponse, LoginRequest> = (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: 'Email and password are required'
-    });
-  }
-
-  const user = findUserByEmail(email);
-  if (!user || user.password !== hashPassword(password)) {
-    return res.status(401).json({
-      success: false,
-      message: 'Invalid email or password'
-    });
-  }
-
-  const token = generateToken();
-  sessions.set(token, user.id);
-
-  const { password: _, ...userWithoutPassword } = user;
-  
-  res.json({
-    success: true,
-    message: 'Login successful',
-    user: userWithoutPassword,
-    token
-  });
-};
-
-export const handleRegister: RequestHandler<{}, AuthResponse, RegisterRequest> = (req, res) => {
-  const { firstName, lastName, email, password, phoneNumber, country, tradingExperience } = req.body;
-
-  if (!firstName || !lastName || !email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: 'First name, last name, email, and password are required'
-    });
-  }
-
-  if (findUserByEmail(email)) {
-    return res.status(409).json({
-      success: false,
-      message: 'User with this email already exists'
-    });
-  }
-
-  const userId = crypto.randomUUID();
-  const hashedPassword = hashPassword(password);
-  const now = new Date().toISOString();
-
-  const newUser: User & { password: string } = {
-    id: userId,
-    firstName,
-    lastName,
-    email,
-    password: hashedPassword,
-    phoneNumber,
-    country,
-    tradingExperience,
-    balance: 0, // New users start with 0 balance
-    createdAt: now
-  };
-
-  users.set(userId, newUser);
-
-  const token = generateToken();
-  sessions.set(token, userId);
-
-  const { password: _, ...userWithoutPassword } = newUser;
-  
-  res.status(201).json({
-    success: true,
-    message: 'Registration successful',
-    user: userWithoutPassword,
-    token
-  });
-};
-
-export const handleLogout: RequestHandler = (req, res) => {
-  const token = req.headers.authorization?.replace('Bearer ', '');
-  
-  if (token) {
-    sessions.delete(token);
-  }
-  
-  res.json({
-    success: true,
-    message: 'Logout successful'
-  });
-};
-
-export const handleGetProfile: RequestHandler = (req, res) => {
-  const token = req.headers.authorization?.replace('Bearer ', '');
-  
-  if (!token) {
-    return res.status(401).json({
-      success: false,
-      message: 'No token provided'
-    });
-  }
-  
-  const userId = sessions.get(token);
-  if (!userId) {
-    return res.status(401).json({
-      success: false,
-      message: 'Invalid token'
-    });
-  }
-  
-  const user = users.get(userId);
-  if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: 'User not found'
-    });
-  }
-  
-  const { password: _, ...userWithoutPassword } = user;
-  
-  res.json({
-    success: true,
-    message: 'Profile retrieved successfully',
-    user: userWithoutPassword
-  });
-};
-
-export const handleUpdateBalance: RequestHandler = (req, res) => {
-  const token = req.headers.authorization?.replace('Bearer ', '');
-  const { amount, type } = req.body; // type: 'deposit' | 'withdrawal'
-  
-  if (!token) {
-    return res.status(401).json({
-      success: false,
-      message: 'No token provided'
-    });
-  }
-  
-  const userId = sessions.get(token);
-  if (!userId) {
-    return res.status(401).json({
-      success: false,
-      message: 'Invalid token'
-    });
-  }
-  
-  const user = users.get(userId);
-  if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: 'User not found'
-    });
-  }
-  
-  if (!amount || amount <= 0) {
-    return res.status(400).json({
-      success: false,
-      message: 'Amount must be greater than 0'
-    });
-  }
-  
-  if (type === 'withdrawal' && user.balance < amount) {
-    return res.status(400).json({
-      success: false,
-      message: 'Insufficient balance'
-    });
-  }
-  
-  if (type === 'deposit') {
-    user.balance += amount;
-  } else if (type === 'withdrawal') {
-    user.balance -= amount;
+// Initialize database connection and tables
+const initializeAuth = async () => {
+  const isConnected = await testConnection();
+  if (isConnected) {
+    await initializeDatabase();
+    console.log('🗄️ PostgreSQL database ready for user management');
   } else {
-    return res.status(400).json({
+    console.error('❌ Failed to connect to PostgreSQL database');
+  }
+};
+
+initializeAuth();
+
+// In-memory storage for password reset tokens (can be moved to DB later)
+const resetTokens: Map<string, { userId: string, expires: number }> = new Map();
+
+export const handleLogin: RequestHandler<{}, AuthResponse, LoginRequest> = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and password are required'
+      });
+    }
+
+    const user = await findUserByEmail(email);
+    if (!user || user.passwordHash !== hashPassword(password)) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      });
+    }
+
+    const token = await createSession(user.id);
+
+    const userWithoutPassword: User = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      country: user.country,
+      tradingExperience: user.tradingExperience,
+      balance: user.balance,
+      createdAt: user.createdAt
+    };
+
+    res.json({
+      success: true,
+      message: 'Login successful',
+      user: userWithoutPassword,
+      token
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({
       success: false,
-      message: 'Invalid transaction type'
+      message: 'Internal server error'
     });
   }
-  
-  users.set(userId, user);
-  
-  const { password: _, ...userWithoutPassword } = user;
-  
-  res.json({
-    success: true,
-    message: `${type} successful`,
-    user: userWithoutPassword
-  });
+};
+
+export const handleRegister: RequestHandler<{}, AuthResponse, RegisterRequest> = async (req, res) => {
+  try {
+    const { firstName, lastName, email, password, phoneNumber, country, tradingExperience } = req.body;
+
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'First name, last name, email, and password are required'
+      });
+    }
+
+    const existingUser = await findUserByEmail(email);
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: 'User with this email already exists'
+      });
+    }
+
+    const newUser = await createUser({
+      firstName,
+      lastName,
+      email,
+      password,
+      phoneNumber,
+      country,
+      tradingExperience
+    });
+
+    const token = await createSession(newUser.id);
+
+    const userWithoutPassword: User = {
+      id: newUser.id,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      email: newUser.email,
+      phoneNumber: newUser.phoneNumber,
+      country: newUser.country,
+      tradingExperience: newUser.tradingExperience,
+      balance: newUser.balance,
+      createdAt: newUser.createdAt
+    };
+
+    res.status(201).json({
+      success: true,
+      message: 'Registration successful',
+      user: userWithoutPassword,
+      token
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
+
+export const handleLogout: RequestHandler = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+
+    if (token) {
+      await deleteSession(token);
+    }
+
+    res.json({
+      success: true,
+      message: 'Logout successful'
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
+
+export const handleGetProfile: RequestHandler = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided'
+      });
+    }
+
+    const user = await findUserByToken(token);
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid or expired token'
+      });
+    }
+
+    const userWithoutPassword: User = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      country: user.country,
+      tradingExperience: user.tradingExperience,
+      balance: user.balance,
+      createdAt: user.createdAt
+    };
+
+    res.json({
+      success: true,
+      message: 'Profile retrieved successfully',
+      user: userWithoutPassword
+    });
+  } catch (error) {
+    console.error('Profile error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
+
+export const handleUpdateBalance: RequestHandler = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    const { amount, type } = req.body; // type: 'deposit' | 'withdrawal'
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided'
+      });
+    }
+
+    const user = await findUserByToken(token);
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid or expired token'
+      });
+    }
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Amount must be greater than 0'
+      });
+    }
+
+    if (!['deposit', 'withdrawal'].includes(type)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid transaction type. Must be "deposit" or "withdrawal"'
+      });
+    }
+
+    const updatedUser = await updateUserDeposit(user.id, amount, type === 'deposit');
+    if (!updatedUser) {
+      return res.status(400).json({
+        success: false,
+        message: type === 'withdrawal' ? 'Insufficient balance' : 'Update failed'
+      });
+    }
+
+    const userWithoutPassword: User = {
+      id: updatedUser.id,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      email: updatedUser.email,
+      phoneNumber: updatedUser.phoneNumber,
+      country: updatedUser.country,
+      tradingExperience: updatedUser.tradingExperience,
+      balance: updatedUser.balance,
+      createdAt: updatedUser.createdAt
+    };
+
+    res.json({
+      success: true,
+      message: `${type} successful`,
+      user: userWithoutPassword
+    });
+  } catch (error) {
+    console.error('Balance update error:', error);
+    if (error instanceof Error && error.message === 'Insufficient balance') {
+      return res.status(400).json({
+        success: false,
+        message: 'Insufficient balance'
+      });
+    }
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
 };
 
 export const handleGoogleAuth: RequestHandler = (req, res) => {
