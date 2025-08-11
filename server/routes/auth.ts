@@ -407,7 +407,7 @@ export const handleForgotPassword: RequestHandler = async (req, res) => {
   }
 };
 
-export const handleResetPassword: RequestHandler = (req, res) => {
+export const handleResetPassword: RequestHandler = async (req, res) => {
   const { token, newPassword } = req.body;
 
   if (!token || !newPassword) {
@@ -417,47 +417,50 @@ export const handleResetPassword: RequestHandler = (req, res) => {
     });
   }
 
-  const resetInfo = resetTokens.get(token);
-  if (!resetInfo) {
-    return res.status(400).json({
-      success: false,
-      message: 'Invalid or expired reset token'
-    });
-  }
-
-  if (Date.now() > resetInfo.expires) {
-    resetTokens.delete(token);
-    return res.status(400).json({
-      success: false,
-      message: 'Reset token has expired'
-    });
-  }
-
-  const user = users.get(resetInfo.userId);
-  if (!user) {
-    resetTokens.delete(token);
-    return res.status(404).json({
-      success: false,
-      message: 'User not found'
-    });
-  }
-
-  // Update password
-  user.password = hashPassword(newPassword);
-  users.set(user.id, user);
-
-  // Delete the reset token
-  resetTokens.delete(token);
-
-  // Invalidate all existing sessions for this user
-  for (const [sessionToken, userId] of sessions.entries()) {
-    if (userId === user.id) {
-      sessions.delete(sessionToken);
+  try {
+    const resetInfo = resetTokens.get(token);
+    if (!resetInfo) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired reset token'
+      });
     }
-  }
 
-  res.json({
-    success: true,
-    message: 'Password reset successful. Please log in with your new password.'
-  });
+    if (Date.now() > resetInfo.expires) {
+      resetTokens.delete(token);
+      return res.status(400).json({
+        success: false,
+        message: 'Reset token has expired'
+      });
+    }
+
+    const user = await findUserById(resetInfo.userId);
+    if (!user) {
+      resetTokens.delete(token);
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Update password
+    await updateUserPassword(user.id, newPassword);
+
+    // Delete the reset token
+    resetTokens.delete(token);
+
+    // Invalidate all existing sessions for this user
+    await deleteAllUserSessions(user.id);
+
+    res.json({
+      success: true,
+      message: 'Password reset successful. Please log in with your new password.'
+    });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
 };
