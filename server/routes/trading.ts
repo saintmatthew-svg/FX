@@ -72,10 +72,10 @@ interface Trade {
 // Mock current prices (in production, get from real-time data feed)
 const getCurrentPrice = (symbol: string): number => {
   const prices: { [key: string]: number } = {
-    BTCUSDT: 67234.52,
-    ETHUSDT: 3456.78,
+    BTCUSDT: 107234.52,
+    ETHUSDT: 3756.78,
     ADAUSDT: 0.4823,
-    SOLUSDT: 156.34,
+    SOLUSDT: 17.34,
     EURUSD: 1.0856,
     GBPUSD: 1.2634,
     USDJPY: 149.23,
