@@ -232,31 +232,43 @@ export const updateUserBalance = async (userId: string, balance: number): Promis
 };
 
 export const updateUserDeposit = async (userId: string, amount: number, isDeposit: boolean = true): Promise<DatabaseUser | null> => {
-  const client = await pool.connect();
-  
-  try {
-    // Get current values
-    const currentUser = await findUserById(userId);
-    if (!currentUser) return null;
+  // Get current values
+  const currentUser = await findUserById(userId);
+  if (!currentUser) return null;
 
-    let newBalance = currentUser.balance;
-    let newAmountDeposited = currentUser.amountDeposited;
+  let newBalance = currentUser.balance;
+  let newAmountDeposited = currentUser.amountDeposited;
 
-    if (isDeposit) {
-      newBalance += amount;
-      newAmountDeposited += amount;
-    } else {
-      // Withdrawal
-      if (newBalance < amount) {
-        throw new Error('Insufficient balance');
-      }
-      newBalance -= amount;
+  if (isDeposit) {
+    newBalance += amount;
+    newAmountDeposited += amount;
+  } else {
+    // Withdrawal
+    if (newBalance < amount) {
+      throw new Error('Insufficient balance');
     }
+    newBalance -= amount;
+  }
 
+  if (!isDatabaseAvailable) {
+    // Fallback in-memory storage
+    const updatedUser = {
+      ...currentUser,
+      balance: newBalance,
+      amountDeposited: newAmountDeposited,
+      updatedAt: new Date().toISOString()
+    };
+    fallbackUsers.set(userId, updatedUser);
+    return updatedUser;
+  }
+
+  const client = await pool.connect();
+
+  try {
     const result = await client.query(
-      `UPDATE users 
-       SET balance = $1, amount_deposited = $2, updated_at = CURRENT_TIMESTAMP 
-       WHERE id = $3 
+      `UPDATE users
+       SET balance = $1, amount_deposited = $2, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $3
        RETURNING *`,
       [newBalance, newAmountDeposited, userId]
     );
