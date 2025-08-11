@@ -49,11 +49,36 @@ export const createUser = async (userData: {
   country?: string;
   tradingExperience?: string;
 }): Promise<DatabaseUser> => {
+  if (!isDatabaseAvailable) {
+    // Fallback in-memory storage
+    const id = crypto.randomUUID();
+    const passwordHash = hashPassword(userData.password);
+    const now = new Date().toISOString();
+
+    const user: DatabaseUser = {
+      id,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      passwordHash,
+      phoneNumber: userData.phoneNumber || null,
+      country: userData.country || null,
+      tradingExperience: userData.tradingExperience || null,
+      balance: 0,
+      amountDeposited: 0,
+      createdAt: now,
+      updatedAt: now
+    };
+
+    fallbackUsers.set(id, user);
+    return user;
+  }
+
   const client = await pool.connect();
-  
+
   try {
     const passwordHash = hashPassword(userData.password);
-    
+
     const result = await client.query(
       `INSERT INTO users (first_name, last_name, email, password_hash, phone_number, country, trading_experience)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
