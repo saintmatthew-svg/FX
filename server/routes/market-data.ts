@@ -169,30 +169,93 @@ const baseForexRates = {
   "EUR/GBP": 0.8589,
 };
 
-export const getCryptoPrices: RequestHandler = (req, res) => {
+// Real-time crypto prices with CoinGecko API integration
+export const getCryptoPrices: RequestHandler = async (req, res) => {
   try {
-    // Initialize price state if needed
-    if (!isInitialized) {
-      initializePriceState();
-    }
-
     const symbols = req.query.symbols as string;
     const requestedSymbols = symbols
       ? symbols.split(",")
-      : Object.keys(basePrices);
+      : ["BTC", "ETH", "ADA", "SOL", "DOT"];
 
-    const prices = requestedSymbols.map((symbol) => {
-      const basePrice = basePrices[symbol as keyof typeof basePrices];
-      if (!basePrice) {
-        throw new Error(`Unknown symbol: ${symbol}`);
+    // Map crypto symbols to CoinGecko IDs
+    const coinGeckoIds: { [key: string]: string } = {
+      BTC: "bitcoin",
+      ETH: "ethereum",
+      ADA: "cardano",
+      SOL: "solana",
+      DOT: "polkadot",
+      MATIC: "matic-network",
+      AVAX: "avalanche-2",
+      ATOM: "cosmos",
+      LINK: "chainlink",
+      UNI: "uniswap"
+    };
+
+    const coinIds = requestedSymbols.map(symbol => coinGeckoIds[symbol]).filter(Boolean);
+
+    let prices: CryptoPrice[] = [];
+
+    try {
+      // Try to fetch real data from CoinGecko
+      const response = await fetch(
+        `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds.join(',')}&vs_currencies=usd&include_24hr_change=true&include_market_cap=true&include_24hr_vol=true`,
+        {
+          headers: {
+            'User-Agent': 'CryptoFuture/1.0',
+          },
+          // Add timeout to prevent hanging
+          signal: AbortSignal.timeout(5000)
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+
+        prices = requestedSymbols.map((symbol) => {
+          const coinId = coinGeckoIds[symbol];
+          const coinData = data[coinId];
+
+          if (coinData) {
+            return {
+              symbol,
+              name: getCryptoName(symbol),
+              price: coinData.usd,
+              change24h: coinData.usd_24h_change || 0,
+              volume24h: coinData.usd_24h_vol || 0,
+              marketCap: coinData.usd_market_cap || 0,
+              timestamp: Date.now(),
+            };
+          } else {
+            // Fallback to simulated data for this symbol
+            const basePrice = basePrices[symbol as keyof typeof basePrices];
+            return generateCryptoPrice(basePrice || 1, symbol);
+          }
+        });
+      } else {
+        throw new Error(`API returned ${response.status}`);
       }
-      return generateCryptoPrice(basePrice, symbol);
-    });
+    } catch (apiError) {
+      console.log('CoinGecko API unavailable, using simulated data:', apiError);
+
+      // Fallback to simulated data
+      if (!isInitialized) {
+        initializePriceState();
+      }
+
+      prices = requestedSymbols.map((symbol) => {
+        const basePrice = basePrices[symbol as keyof typeof basePrices];
+        if (!basePrice) {
+          throw new Error(`Unknown symbol: ${symbol}`);
+        }
+        return generateCryptoPrice(basePrice, symbol);
+      });
+    }
 
     res.json({
       success: true,
       data: prices,
       timestamp: Date.now(),
+      source: prices.some(p => p.timestamp === Date.now()) ? 'live' : 'simulated'
     });
   } catch (error) {
     console.error('Error in getCryptoPrices:', error);

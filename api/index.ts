@@ -1,6 +1,11 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+
+// Environment configuration
+const isProduction = process.env.NODE_ENV === 'production';
+const port = process.env.PORT || 3000;
+const corsOrigin = process.env.CORS_ORIGIN || (isProduction ? '*' : 'http://localhost:8080');
 import { handleDemo } from "../server/routes/demo";
 import {
   handleLogin,
@@ -8,10 +13,6 @@ import {
   handleLogout,
   handleGetProfile,
   handleUpdateBalance,
-  handleGoogleAuth,
-  handleGoogleCallback,
-  handleFacebookAuth,
-  handleFacebookCallback,
   handleForgotPassword,
   handleResetPassword,
 } from "../server/routes/auth";
@@ -34,9 +35,16 @@ import {
 export function createServer() {
   const app = express();
 
-  app.use(cors());
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  // Configure CORS for production
+  app.use(cors({
+    origin: corsOrigin,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  }));
+
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
   // Debug middleware for development
   if (process.env.NODE_ENV !== 'production') {
@@ -46,9 +54,20 @@ export function createServer() {
     });
   }
 
+  // Health check endpoint
   app.get("/api/ping", (_req, res) => {
     const ping = process.env.PING_MESSAGE ?? "ping";
-    res.json({ message: ping });
+    res.json({
+      message: ping,
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development'
+    });
+  });
+
+  // Health check for load balancers
+  app.get("/health", (_req, res) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
   app.get("/api/demo", handleDemo);
@@ -62,11 +81,7 @@ export function createServer() {
   app.post("/api/auth/forgot-password", handleForgotPassword);
   app.post("/api/auth/reset-password", handleResetPassword);
 
-  // OAuth routes
-  app.get("/api/auth/google", handleGoogleAuth);
-  app.get("/api/auth/google/callback", handleGoogleCallback);
-  app.get("/api/auth/facebook", handleFacebookAuth);
-  app.get("/api/auth/facebook/callback", handleFacebookCallback);
+  // OAuth routes removed as requested
 
 
 
@@ -83,6 +98,33 @@ export function createServer() {
   app.get("/api/trading/positions", getPositions);
   app.get("/api/trading/trades", getTrades);
   app.get("/api/trading/account", getAccountInfo);
+
+  // Global error handler
+  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error('Global error handler:', err);
+
+    if (res.headersSent) {
+      return next(err);
+    }
+
+    const status = err.status || err.statusCode || 500;
+    const message = isProduction ? 'Internal Server Error' : err.message;
+
+    res.status(status).json({
+      success: false,
+      error: message,
+      ...(isProduction ? {} : { stack: err.stack })
+    });
+  });
+
+  // 404 handler for API routes
+  app.use('/api/*', (req, res) => {
+    res.status(404).json({
+      success: false,
+      error: 'API endpoint not found',
+      path: req.path
+    });
+  });
 
   return app;
 }

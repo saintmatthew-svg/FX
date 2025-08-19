@@ -368,35 +368,7 @@ export default function Staking() {
     },
   ];
 
-  const activeStakes = [
-    {
-      asset: "ETH",
-      amount: "5.2",
-      value: "$17,976.25",
-      apy: "5.2%",
-      earned: "$234.56",
-      validator: "Lido",
-      status: "active",
-    },
-    {
-      asset: "ADA",
-      amount: "25,000",
-      value: "$12,075.00",
-      apy: "4.8%",
-      earned: "$156.78",
-      validator: "AZTEC Pool",
-      status: "active",
-    },
-    {
-      asset: "SOL",
-      amount: "45.6",
-      value: "$7,131.50",
-      apy: "7.1%",
-      earned: "$89.23",
-      validator: "Chorus One",
-      status: "active",
-    },
-  ];
+  const activeStakes = [];
 
   const totalStakedValue = activeStakes.reduce((sum, stake) => {
     return sum + parseFloat(stake.value.replace("$", "").replace(",", ""));
@@ -446,7 +418,7 @@ export default function Staking() {
               <div className="text-2xl font-bold text-white mb-1">
                 ${totalStakedValue.toLocaleString()}
               </div>
-              <div className="text-sm text-crypto-green">3 Active Stakes</div>
+              <div className="text-sm text-crypto-green">Active Stakes</div>
             </CardContent>
           </Card>
 

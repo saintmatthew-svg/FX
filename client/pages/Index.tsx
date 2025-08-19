@@ -301,9 +301,11 @@ export default function Index() {
                   exposure to top cryptocurrencies with automated portfolio
                   rebalancing and educational resources.
                 </p>
-                <Button className="crypto-btn-primary w-full">
-                  Start Investing
-                </Button>
+                <Link to="/investing">
+                  <Button className="crypto-btn-primary w-full">
+                    Start Investing
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -332,9 +334,11 @@ export default function Index() {
                   and access to exclusive investment opportunities with higher
                   potential returns.
                 </p>
-                <Button className="crypto-btn-accent w-full">
-                  Start Investing
-                </Button>
+                <Link to="/investing">
+                  <Button className="crypto-btn-accent w-full">
+                    Start Investing
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -361,9 +365,11 @@ export default function Index() {
                   private sales, institutional-grade strategies, and priority
                   customer support.
                 </p>
-                <Button className="crypto-btn-primary w-full">
-                  Start Investing
-                </Button>
+                <Link to="/investing">
+                  <Button className="crypto-btn-primary w-full">
+                    Start Investing
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>
@@ -707,14 +713,18 @@ export default function Index() {
                 educational resources, and 24/7 expert support.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button className="bg-white text-crypto-dark hover:bg-white/90 font-semibold px-8 py-3">
-                  <Wallet className="w-4 h-4 mr-2" />
-                  Create Free Account
-                </Button>
-                <Button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-crypto-dark font-semibold px-8 py-3">
-                  <BarChart3 className="w-4 h-4 mr-2" />
-                  Explore Platform
-                </Button>
+                <Link to="/signup">
+                  <Button className="bg-white text-crypto-dark hover:bg-white/90 font-semibold px-8 py-3">
+                    <Wallet className="w-4 h-4 mr-2" />
+                    Create Free Account
+                  </Button>
+                </Link>
+                <Link to="/trading">
+                  <Button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-crypto-dark font-semibold px-8 py-3">
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Explore Platform
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

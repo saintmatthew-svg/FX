@@ -1,81 +1,35 @@
 import { RequestHandler } from "express";
 import { User, AuthResponse, LoginRequest, RegisterRequest } from "@shared/api";
-import {
-  createUser,
-  findUserByEmail,
-  findUserById,
-  findUserByToken,
-  createSession,
-  deleteSession,
-  deleteAllUserSessions,
-  updateUserDeposit,
-  updateUserPassword,
-  hashPassword,
-  generateToken,
-  DatabaseUser,
-} from "../database/users";
 
-// Initialize database on startup
-import { testConnection, initializeDatabase } from "../database/config";
-import { checkDatabaseAvailability } from "../database/users";
-
-// Initialize database connection and tables
-const initializeAuth = async () => {
-  // Skip database initialization in development if no DB config is provided
-  if (
-    process.env.NODE_ENV !== "production" &&
-    !process.env.DB_HOST &&
-    !process.env.DATABASE_URL
-  ) {
-    console.log(
-      "⚠️ Development mode: Database connection skipped (no DB_HOST or DATABASE_URL configured)",
-    );
-    console.log(
-      "📝 Note: User auth will use fallback in-memory storage for development",
-    );
-    await checkDatabaseAvailability(); // This will set the fallback mode
-    return;
-  }
-
-  const isConnected = await testConnection();
-  if (isConnected) {
-    await initializeDatabase();
-    console.log("🗄️ PostgreSQL database ready for user management");
-    await checkDatabaseAvailability(); // This will set database as available
-  } else {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("Database connection required in production");
-    } else {
-      console.log(
-        "⚠️ Development mode: Database connection failed, using fallback storage",
-      );
-      await checkDatabaseAvailability(); // This will set fallback mode
-    }
-  }
-};
-
-initializeAuth().catch((error) => {
-  if (process.env.NODE_ENV === "production") {
-    console.error(
-      "💥 Critical: Database initialization failed in production:",
-      error,
-    );
-    process.exit(1);
-  } else {
-    console.log(
-      "⚠️ Development: Database initialization failed, continuing with fallback storage",
-    );
-  }
-});
-
-// In-memory storage for password reset tokens (can be moved to DB later)
+// Simple in-memory storage for demo purposes
+const users: Map<string, User & { passwordHash: string }> = new Map();
+const sessions: Map<string, { userId: string; expires: number }> = new Map();
 const resetTokens: Map<string, { userId: string; expires: number }> = new Map();
+
+// Helper functions
+const generateToken = (): string => `token_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+const hashPassword = (password: string): string => `hash_${password}`; // Simple hash for demo
+const findUserByEmail = (email: string): (User & { passwordHash: string }) | undefined => {
+  for (const user of users.values()) {
+    if (user.email === email) return user;
+  }
+  return undefined;
+};
+const findUserById = (id: string): (User & { passwordHash: string }) | undefined => users.get(id);
+const findUserByToken = (token: string): (User & { passwordHash: string }) | undefined => {
+  const session = sessions.get(token);
+  if (!session || Date.now() > session.expires) {
+    sessions.delete(token);
+    return undefined;
+  }
+  return findUserById(session.userId);
+};
 
 export const handleLogin: RequestHandler<
   {},
   AuthResponse,
   LoginRequest
-> = async (req, res) => {
+> = (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -86,7 +40,7 @@ export const handleLogin: RequestHandler<
       });
     }
 
-    const user = await findUserByEmail(email);
+    const user = findUserByEmail(email);
     if (!user || user.passwordHash !== hashPassword(password)) {
       return res.status(401).json({
         success: false,
@@ -94,7 +48,8 @@ export const handleLogin: RequestHandler<
       });
     }
 
-    const token = await createSession(user.id);
+    const token = generateToken();
+    sessions.set(token, { userId: user.id, expires: Date.now() + 24 * 60 * 60 * 1000 }); // 24 hours
 
     const userWithoutPassword: User = {
       id: user.id,
@@ -127,7 +82,7 @@ export const handleRegister: RequestHandler<
   {},
   AuthResponse,
   RegisterRequest
-> = async (req, res) => {
+> = (req, res) => {
   try {
     const {
       firstName,
@@ -146,7 +101,7 @@ export const handleRegister: RequestHandler<
       });
     }
 
-    const existingUser = await findUserByEmail(email);
+    const existingUser = findUserByEmail(email);
     if (existingUser) {
       return res.status(409).json({
         success: false,
@@ -154,17 +109,24 @@ export const handleRegister: RequestHandler<
       });
     }
 
-    const newUser = await createUser({
+    const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const newUser = {
+      id: userId,
       firstName,
       lastName,
       email,
-      password,
       phoneNumber,
       country,
       tradingExperience,
-    });
+      balance: 0,
+      createdAt: new Date().toISOString(),
+      passwordHash: hashPassword(password),
+    };
 
-    const token = await createSession(newUser.id);
+    users.set(userId, newUser);
+
+    const token = generateToken();
+    sessions.set(token, { userId, expires: Date.now() + 24 * 60 * 60 * 1000 }); // 24 hours
 
     const userWithoutPassword: User = {
       id: newUser.id,
@@ -193,12 +155,12 @@ export const handleRegister: RequestHandler<
   }
 };
 
-export const handleLogout: RequestHandler = async (req, res) => {
+export const handleLogout: RequestHandler = (req, res) => {
   try {
     const token = req.headers.authorization?.replace("Bearer ", "");
 
     if (token) {
-      await deleteSession(token);
+      sessions.delete(token);
     }
 
     res.json({
@@ -214,7 +176,7 @@ export const handleLogout: RequestHandler = async (req, res) => {
   }
 };
 
-export const handleGetProfile: RequestHandler = async (req, res) => {
+export const handleGetProfile: RequestHandler = (req, res) => {
   try {
     const token = req.headers.authorization?.replace("Bearer ", "");
 
@@ -225,7 +187,7 @@ export const handleGetProfile: RequestHandler = async (req, res) => {
       });
     }
 
-    const user = await findUserByToken(token);
+    const user = findUserByToken(token);
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -259,10 +221,10 @@ export const handleGetProfile: RequestHandler = async (req, res) => {
   }
 };
 
-export const handleUpdateBalance: RequestHandler = async (req, res) => {
+export const handleUpdateBalance: RequestHandler = (req, res) => {
   try {
     const token = req.headers.authorization?.replace("Bearer ", "");
-    const { amount, type } = req.body; // type: 'deposit' | 'withdrawal'
+    const { amount, type } = req.body;
 
     if (!token) {
       return res.status(401).json({
@@ -271,7 +233,7 @@ export const handleUpdateBalance: RequestHandler = async (req, res) => {
       });
     }
 
-    const user = await findUserByToken(token);
+    const user = findUserByToken(token);
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -293,29 +255,31 @@ export const handleUpdateBalance: RequestHandler = async (req, res) => {
       });
     }
 
-    const updatedUser = await updateUserDeposit(
-      user.id,
-      amount,
-      type === "deposit",
-    );
-    if (!updatedUser) {
+    if (type === "withdrawal" && user.balance < amount) {
       return res.status(400).json({
         success: false,
-        message:
-          type === "withdrawal" ? "Insufficient balance" : "Update failed",
+        message: "Insufficient balance",
       });
     }
 
+    // Update balance
+    if (type === "deposit") {
+      user.balance += amount;
+    } else {
+      user.balance -= amount;
+    }
+    users.set(user.id, user);
+
     const userWithoutPassword: User = {
-      id: updatedUser.id,
-      firstName: updatedUser.firstName,
-      lastName: updatedUser.lastName,
-      email: updatedUser.email,
-      phoneNumber: updatedUser.phoneNumber,
-      country: updatedUser.country,
-      tradingExperience: updatedUser.tradingExperience,
-      balance: updatedUser.balance,
-      createdAt: updatedUser.createdAt,
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      country: user.country,
+      tradingExperience: user.tradingExperience,
+      balance: user.balance,
+      createdAt: user.createdAt,
     };
 
     res.json({
@@ -325,12 +289,6 @@ export const handleUpdateBalance: RequestHandler = async (req, res) => {
     });
   } catch (error) {
     console.error("Balance update error:", error);
-    if (error instanceof Error && error.message === "Insufficient balance") {
-      return res.status(400).json({
-        success: false,
-        message: "Insufficient balance",
-      });
-    }
     res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -338,49 +296,8 @@ export const handleUpdateBalance: RequestHandler = async (req, res) => {
   }
 };
 
-export const handleGoogleAuth: RequestHandler = (req, res) => {
-  // Demo Google Auth - redirect to login for now
-  res.redirect("/login?demo=google");
-};
-
-export const handleGoogleCallback: RequestHandler = async (req, res) => {
-  try {
-    const { code } = req.query;
-
-    if (!code) {
-      return res.redirect("/login?error=oauth_failed");
-    }
-
-    console.log("Google OAuth callback received code:", code);
-
-    res.redirect("/?success=google_login");
-  } catch (error) {
-    console.error("Google OAuth error:", error);
-    res.redirect("/login?error=oauth_failed");
-  }
-};
-
-export const handleFacebookAuth: RequestHandler = (req, res) => {
-  // Demo Facebook Auth - redirect to login for now
-  res.redirect("/login?demo=facebook");
-};
-
-export const handleFacebookCallback: RequestHandler = async (req, res) => {
-  try {
-    const { code } = req.query;
-
-    if (!code) {
-      return res.redirect("/login?error=oauth_failed");
-    }
-    console.log("Facebook OAuth callback received code:", code);
-    res.redirect("/?success=facebook_login");
-  } catch (error) {
-    console.error("Facebook OAuth error:", error);
-    res.redirect("/login?error=oauth_failed");
-  }
-};
-
-export const handleForgotPassword: RequestHandler = async (req, res) => {
+// Password reset functionality remains but simplified
+export const handleForgotPassword: RequestHandler = (req, res) => {
   const { email } = req.body;
 
   if (!email) {
@@ -391,49 +308,30 @@ export const handleForgotPassword: RequestHandler = async (req, res) => {
   }
 
   try {
-    const user = await findUserByEmail(email);
+    const user = findUserByEmail(email);
     if (!user) {
-      // For security, we don't reveal if the email exists or not
       return res.json({
         success: true,
-        message:
-          "If an account with that email exists, we have sent a password reset link.",
+        message: "If an account with that email exists, we have sent a password reset link.",
       });
     }
 
-    // Generate reset token
     const resetToken = generateToken();
     const expiresAt = Date.now() + 60 * 60 * 1000; // 1 hour from now
 
-    // Store reset token
     resetTokens.set(resetToken, {
       userId: user.id,
       expires: expiresAt,
     });
 
-    // In a real app, you would send an email here
-    // For demo purposes, we'll log the reset link
     const resetLink = `${req.protocol}://${req.get("host")}/reset-password?token=${resetToken}`;
-    console.log("\n=== PASSWORD RESET EMAIL (Demo) ===");
-    console.log(`To: ${email}`);
-    console.log(`Subject: Reset Your Crypto Future Password`);
-    console.log(`\nHi ${user.firstName},\n`);
-    console.log(
-      `You requested a password reset for your Crypto Future account.`,
-    );
-    console.log(`Click the link below to reset your password:\n`);
-    console.log(`${resetLink}\n`);
-    console.log(`This link will expire in 1 hour for security.`);
-    console.log(`If you didn't request this, please ignore this email.\n`);
-    console.log(`Best regards,`);
-    console.log(`The Crypto Future Team`);
-    console.log("===============================\n");
+    console.log(`\n=== PASSWORD RESET LINK ===`);
+    console.log(`Reset link for ${email}: ${resetLink}`);
+    console.log(`==============================\n`);
 
     res.json({
       success: true,
-      message:
-        "If an account with that email exists, we have sent a password reset link.",
-      // In demo mode, include the reset link in the response
+      message: "If an account with that email exists, we have sent a password reset link.",
       resetLink: process.env.NODE_ENV === "development" ? resetLink : undefined,
     });
   } catch (error) {
@@ -445,7 +343,7 @@ export const handleForgotPassword: RequestHandler = async (req, res) => {
   }
 };
 
-export const handleResetPassword: RequestHandler = async (req, res) => {
+export const handleResetPassword: RequestHandler = (req, res) => {
   const { token, newPassword } = req.body;
 
   if (!token || !newPassword) {
@@ -472,7 +370,7 @@ export const handleResetPassword: RequestHandler = async (req, res) => {
       });
     }
 
-    const user = await findUserById(resetInfo.userId);
+    const user = findUserById(resetInfo.userId);
     if (!user) {
       resetTokens.delete(token);
       return res.status(404).json({
@@ -482,18 +380,22 @@ export const handleResetPassword: RequestHandler = async (req, res) => {
     }
 
     // Update password
-    await updateUserPassword(user.id, newPassword);
+    user.passwordHash = hashPassword(newPassword);
+    users.set(user.id, user);
 
     // Delete the reset token
     resetTokens.delete(token);
 
     // Invalidate all existing sessions for this user
-    await deleteAllUserSessions(user.id);
+    for (const [sessionToken, session] of sessions.entries()) {
+      if (session.userId === user.id) {
+        sessions.delete(sessionToken);
+      }
+    }
 
     res.json({
       success: true,
-      message:
-        "Password reset successful. Please log in with your new password.",
+      message: "Password reset successful. Please log in with your new password.",
     });
   } catch (error) {
     console.error("Reset password error:", error);

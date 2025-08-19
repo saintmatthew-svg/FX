@@ -22,6 +22,7 @@ import Staking from "./pages/Staking";
 import News from "./pages/News";
 import TestPage from "./pages/TestPage";
 import Debug from "./pages/Debug";
+import Investing from "./pages/Investing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ function App() {
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/accounts" element={<Accounts />} />
               <Route path="/about" element={<About />} />
+              <Route path="/investing" element={<Investing />} />
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Dashboard />

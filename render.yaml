@@ -1,0 +1,31 @@
+services:
+  # Backend API Service
+  - type: web
+    name: cryptofuture-api
+    env: node
+    plan: free
+    buildCommand: npm run build:backend
+    startCommand: npm run start:prod
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: CORS_ORIGIN
+        value: "*"
+
+  # Frontend Static Site
+  - type: web
+    name: cryptofuture-frontend
+    env: static
+    plan: free
+    buildCommand: npm run build:frontend
+    staticPublishPath: ./dist/spa
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://cryptofuture-api.onrender.com/api/*
+      - type: rewrite
+        source: /*
+        destination: /index.html

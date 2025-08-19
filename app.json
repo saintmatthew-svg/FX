@@ -1,0 +1,32 @@
+{
+  "name": "CryptoFuture Platform",
+  "description": "Advanced cryptocurrency investment platform",
+  "repository": "https://github.com/yourusername/cryptofuture",
+  "logo": "https://node-js-sample.herokuapp.com/node.png",
+  "keywords": ["node", "express", "crypto", "trading", "investment"],
+  "image": "heroku/nodejs",
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "NODE_ENV": {
+      "description": "Node environment",
+      "value": "production"
+    },
+    "PORT": {
+      "description": "Port number",
+      "value": "3000"
+    },
+    "CORS_ORIGIN": {
+      "description": "CORS origin",
+      "value": "*"
+    }
+  },
+  "scripts": {
+    "postdeploy": "echo 'Deployment successful!'"
+  },
+  "stack": "heroku-22",
+  "addons": []
+}
