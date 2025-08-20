@@ -1,16 +1,12 @@
 {
   "version": 2,
-  "functions": {
-    "api/*.ts": {
-      "runtime": "@vercel/node@3"
-    }
-  },
   "builds": [
     {
-      "src": "client/**",
+      "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist/spa"
+        "buildCommand": "npm run build:frontend",
+        "outputDirectory": "dist/spa"
       }
     },
     {
