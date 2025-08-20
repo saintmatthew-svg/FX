@@ -1,11 +1,6 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-
-// Environment configuration
-const isProduction = process.env.NODE_ENV === 'production';
-const port = process.env.PORT || 3000;
-const corsOrigin = process.env.CORS_ORIGIN || (isProduction ? '*' : 'http://localhost:8080');
 import { handleDemo } from "../server/routes/demo";
 import {
   handleLogin,
@@ -31,43 +26,50 @@ import {
   getAccountInfo,
 } from "../server/routes/trading";
 
+// Environment configuration for Vercel
+const isProduction = process.env.NODE_ENV === 'production';
+const corsOrigin = process.env.CORS_ORIGIN || '*';
 
 export function createServer() {
   const app = express();
 
-  // Configure CORS for production
+  // Configure CORS for Vercel deployment
   app.use(cors({
     origin: corsOrigin,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
   }));
-
+  
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // Debug middleware for development
-  if (process.env.NODE_ENV !== 'production') {
+  // Debug middleware for Vercel
+  if (!isProduction) {
     app.use('/api', (req, res, next) => {
       console.log(`🔄 ${req.method} ${req.path} - Body:`, req.body);
       next();
     });
   }
 
-  // Health check endpoint
+  // Health check endpoints
   app.get("/api/ping", (_req, res) => {
-    const ping = process.env.PING_MESSAGE ?? "ping";
-    res.json({
+    const ping = process.env.PING_MESSAGE ?? "CryptoFuture API is running on Vercel";
+    res.json({ 
       message: ping,
       status: 'healthy',
       timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV || 'development'
+      environment: process.env.NODE_ENV || 'development',
+      platform: 'vercel'
     });
   });
 
-  // Health check for load balancers
   app.get("/health", (_req, res) => {
-    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+    res.status(200).json({ 
+      status: 'ok', 
+      timestamp: new Date().toISOString(),
+      platform: 'vercel'
+    });
   });
 
   app.get("/api/demo", handleDemo);
@@ -80,10 +82,6 @@ export function createServer() {
   app.post("/api/auth/balance", handleUpdateBalance);
   app.post("/api/auth/forgot-password", handleForgotPassword);
   app.post("/api/auth/reset-password", handleResetPassword);
-
-  // OAuth routes removed as requested
-
-
 
   // Market data routes
   app.get("/api/crypto/prices", getCryptoPrices);
@@ -102,14 +100,14 @@ export function createServer() {
   // Global error handler
   app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error('Global error handler:', err);
-
+    
     if (res.headersSent) {
       return next(err);
     }
-
+    
     const status = err.status || err.statusCode || 500;
     const message = isProduction ? 'Internal Server Error' : err.message;
-
+    
     res.status(status).json({
       success: false,
       error: message,
@@ -122,11 +120,19 @@ export function createServer() {
     res.status(404).json({
       success: false,
       error: 'API endpoint not found',
-      path: req.path
+      path: req.path,
+      availableEndpoints: [
+        '/api/ping',
+        '/api/auth/register',
+        '/api/auth/login', 
+        '/api/crypto/prices'
+      ]
     });
   });
 
   return app;
 }
 
-export default createServer;
+// Export for Vercel serverless function
+const app = createServer();
+export default app;
