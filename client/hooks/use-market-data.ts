@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 export interface CryptoPrice {
   symbol: string;
@@ -64,16 +64,29 @@ export const useCryptoPrices = (
   symbols?: string[],
   refreshInterval = 30000, // Update every 30 seconds to be respectful to API
 ) => {
-  const [data, setData] = useState<CryptoPrice[]>(getFallbackCryptoData()); // Start with fallback data
-  const [loading, setLoading] = useState(false); // Start as not loading since we have fallback
+  const [data, setData] = useState<CryptoPrice[]>(() => getFallbackCryptoData()); // Start with fallback data
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastFetch, setLastFetch] = useState<number>(0);
+
+  // Memoize symbols to prevent infinite loop
+  const symbolsString = useMemo(() =>
+    symbols ? symbols.join(',') : 'BTC,ETH,ADA,SOL,DOT',
+    [symbols]
+  );
 
   const fetchData = useCallback(async () => {
+    // Prevent too frequent API calls
+    const now = Date.now();
+    if (now - lastFetch < 10000) { // Minimum 10 seconds between calls
+      return;
+    }
+
     try {
       setError(null);
+      setLastFetch(now);
 
-      const symbolsParam = symbols ? symbols.join(',') : 'BTC,ETH,ADA,SOL,DOT';
-      const response = await fetch(`/api/crypto/prices?symbols=${symbolsParam}`);
+      const response = await fetch(`/api/crypto/prices?symbols=${symbolsString}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -88,77 +101,114 @@ export const useCryptoPrices = (
         throw new Error(result.error || 'Failed to fetch data');
       }
     } catch (err) {
-      console.log('📊 Using fallback crypto data due to:', err);
+      console.log('📊 API unavailable, using fallback data:', err);
       setError(null); // Don't show error, just use fallback
-      // Continue with current fallback data - it updates automatically
+      // Don't update data here - let fallback interval handle it
     } finally {
       setLoading(false);
     }
-  }, [symbols]);
+  }, [symbolsString, lastFetch]);
 
+  // Try to fetch real data, but don't block UI
   useEffect(() => {
-    // Fetch real data immediately
-    fetchData();
+    let mounted = true;
 
-    // Set up interval for regular updates
-    const interval = setInterval(fetchData, refreshInterval);
+    // Only try API fetch in production or if we know the server is running
+    const shouldTryAPI = process.env.NODE_ENV === 'production' || window.location.port === '8080';
 
-    return () => {
-      clearInterval(interval);
-    };
+    if (shouldTryAPI && mounted) {
+      // Delay initial fetch to let server start
+      const timeoutId = setTimeout(() => {
+        if (mounted) {
+          fetchData();
+        }
+      }, 2000);
+
+      // Set up interval for regular updates (less frequent to avoid spam)
+      const intervalId = setInterval(() => {
+        if (mounted) {
+          fetchData();
+        }
+      }, refreshInterval * 2); // Double the interval for API calls
+
+      return () => {
+        mounted = false;
+        clearTimeout(timeoutId);
+        clearInterval(intervalId);
+      };
+    }
   }, [fetchData, refreshInterval]);
 
-  // Update fallback data every 10 seconds for smooth price movements
+  // Update fallback data for smooth price movements (independent of API)
   useEffect(() => {
-    const fallbackInterval = setInterval(() => {
-      if (!loading) {
-        setData(getFallbackCryptoData());
-      }
-    }, 10000);
+    let mounted = true;
 
-    return () => clearInterval(fallbackInterval);
+    const updateFallbackData = () => {
+      if (mounted && !loading) {
+        setData(currentData => {
+          // Only update if we don't have recent real data
+          const hasRecentData = currentData.some(item =>
+            Date.now() - item.timestamp < 60000 // Less than 1 minute old
+          );
+
+          if (!hasRecentData) {
+            return getFallbackCryptoData();
+          }
+          return currentData;
+        });
+      }
+    };
+
+    // Update fallback data every 15 seconds (less frequent)
+    const fallbackInterval = setInterval(updateFallbackData, 15000);
+
+    return () => {
+      mounted = false;
+      clearInterval(fallbackInterval);
+    };
   }, [loading]);
 
   return { data, loading, error, refetch: fetchData };
 };
 
 export const useForexRates = (pairs?: string[], refreshInterval = 15000) => {
-  const [data, setData] = useState<ForexRate[]>(getFallbackForexData()); // Start with fallback data
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<ForexRate[]>(() => getFallbackForexData()); // Start with fallback data
+  const [loading, setLoading] = useState(false); // Start as not loading
   const [error, setError] = useState<string | null>(null);
 
+  // Memoize pairs to prevent infinite loop
+  const pairsString = useMemo(() =>
+    pairs ? pairs.join(',') : 'EUR/USD,GBP/USD,USD/JPY,USD/CHF',
+    [pairs]
+  );
+
   const fetchData = useCallback(async () => {
-    // For now, skip API calls and use fallback data directly to avoid errors
-    // This ensures a stable experience while the API is being developed
     try {
       setError(null);
-      // Use fallback data immediately
+      // For now, just use fallback data since forex API isn't critical
       setData(getFallbackForexData());
     } catch (err) {
-      // Even fallback data shouldn't fail, but just in case
       setError(null);
     } finally {
       setLoading(false);
     }
-  }, [pairs, data.length]);
+  }, [pairsString]);
 
   useEffect(() => {
-    // Set loading to false immediately when we have fallback data
-    setLoading(false);
+    let mounted = true;
 
-    // Try to fetch real data after a delay, but don't block the UI
-    const initialTimeout = setTimeout(() => {
-      fetchData();
-    }, 2500); // Longer delay to ensure server is ready
-
-    // Reduce frequency of API calls to avoid spamming
-    const interval = setInterval(fetchData, refreshInterval * 3); // 3x less frequent
+    // Update forex data less frequently (it's not as time-sensitive)
+    const updateInterval = setInterval(() => {
+      if (mounted) {
+        setData(getFallbackForexData());
+      }
+    }, refreshInterval * 2); // Update every 30 seconds
 
     return () => {
-      clearTimeout(initialTimeout);
-      clearInterval(interval);
+      mounted = false;
+      clearInterval(updateInterval);
     };
-  }, [fetchData, refreshInterval]);
+  }, [refreshInterval]);
 
   return { data, loading, error, refetch: fetchData };
 };
@@ -169,14 +219,13 @@ export const useMarketNews = (
   refreshInterval = 300000,
 ) => {
   const [data, setData] = useState<MarketNews[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Start as not loading
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    // Skip API calls for news - not critical for core functionality
     try {
       setError(null);
-      // News is optional, so we'll just leave it empty for now
+      // News is optional, keep it empty for now
       setData([]);
     } catch (err) {
       setError(null);
@@ -185,36 +234,19 @@ export const useMarketNews = (
     }
   }, [category, limit]);
 
-  useEffect(() => {
-    setLoading(false); // Don't block UI for news
-
-    // Try to fetch news after a longer delay
-    const initialTimeout = setTimeout(() => {
-      fetchData();
-    }, 5000);
-
-    // Much less frequent updates for news
-    const interval = setInterval(fetchData, refreshInterval * 2);
-
-    return () => {
-      clearTimeout(initialTimeout);
-      clearInterval(interval);
-    };
-  }, [fetchData, refreshInterval]);
-
+  // No automatic fetching for news to keep it simple
   return { data, loading, error, refetch: fetchData };
 };
 
 export const useMarketSentiment = (refreshInterval = 60000) => {
   const [data, setData] = useState<MarketSentiment | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Start as not loading
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    // Skip API calls for sentiment - not critical for core functionality
     try {
       setError(null);
-      // Sentiment is optional, so we'll just leave it null for now
+      // Sentiment is optional, keep it null for now
       setData(null);
     } catch (err) {
       setError(null);
@@ -223,23 +255,7 @@ export const useMarketSentiment = (refreshInterval = 60000) => {
     }
   }, []);
 
-  useEffect(() => {
-    setLoading(false); // Don't block UI for sentiment
-
-    // Try to fetch sentiment after a longer delay
-    const initialTimeout = setTimeout(() => {
-      fetchData();
-    }, 6000);
-
-    // Much less frequent updates for sentiment
-    const interval = setInterval(fetchData, refreshInterval * 5);
-
-    return () => {
-      clearTimeout(initialTimeout);
-      clearInterval(interval);
-    };
-  }, [fetchData, refreshInterval]);
-
+  // No automatic fetching for sentiment to keep it simple
   return { data, loading, error, refetch: fetchData };
 };
 
@@ -275,10 +291,16 @@ let fallbackPriceState: { [key: string]: {
   trend: number
 } } = {};
 
+let lastDailyCheck = 0;
+
 // Check if we need to update daily base prices (simulating daily market changes)
 const checkDailyUpdate = () => {
   const now = Date.now();
   const oneDayMs = 24 * 60 * 60 * 1000;
+
+  // Only check once per hour to avoid excessive calculations
+  if (now - lastDailyCheck < 60 * 60 * 1000) return;
+  lastDailyCheck = now;
 
   Object.keys(fallbackPriceState).forEach(symbol => {
     const state = fallbackPriceState[symbol];
@@ -294,7 +316,17 @@ const checkDailyUpdate = () => {
   });
 };
 
+let lastFallbackUpdate = 0;
+let cachedFallbackData: CryptoPrice[] = [];
+
 const getFallbackCryptoData = (): CryptoPrice[] => {
+  const now = Date.now();
+
+  // Only update every 15 seconds to prevent excessive recalculation
+  if (now - lastFallbackUpdate < 15000 && cachedFallbackData.length > 0) {
+    return cachedFallbackData;
+  }
+
   // Realistic current market data (updated December 2024)
   const baseData = [
     { symbol: 'BTC', name: 'Bitcoin', price: 97234.52, volume24h: 28500000000, marketCap: 1900000000000 },
@@ -304,27 +336,26 @@ const getFallbackCryptoData = (): CryptoPrice[] => {
     { symbol: 'DOT', name: 'Polkadot', price: 8.891, volume24h: 245000000, marketCap: 12000000000 }
   ];
 
-  // Check for daily updates
+  // Check for daily updates (throttled)
   checkDailyUpdate();
 
-  return baseData.map(item => {
+  cachedFallbackData = baseData.map(item => {
     // Initialize price state if not exists
     if (!fallbackPriceState[item.symbol]) {
       fallbackPriceState[item.symbol] = {
         basePrice: item.price,
         lastPrice: item.price,
-        lastUpdate: Date.now(),
+        lastUpdate: now,
         dailyBase: item.price,
-        lastDailyUpdate: Date.now(),
+        lastDailyUpdate: now,
         trend: (Math.random() - 0.5) * 0.005 // Small initial trend
       };
     }
 
     const state = fallbackPriceState[item.symbol];
-    const now = Date.now();
 
-    // Update price every 10 seconds with realistic movement patterns
-    if (now - state.lastUpdate > 10000) {
+    // Update price every 15 seconds with realistic movement patterns
+    if (now - state.lastUpdate > 15000) {
       // Implement momentum-based price movement
       const momentum = state.trend * 0.7; // Carry 70% of previous trend
       const randomChange = (Math.random() - 0.5) * 0.003; // ±0.15% random change
@@ -349,9 +380,22 @@ const getFallbackCryptoData = (): CryptoPrice[] => {
       timestamp: now
     };
   });
+
+  lastFallbackUpdate = now;
+  return cachedFallbackData;
 };
 
+let lastForexUpdate = 0;
+let cachedForexData: ForexRate[] = [];
+
 const getFallbackForexData = (): ForexRate[] => {
+  const now = Date.now();
+
+  // Only update every 30 seconds for forex (less volatile)
+  if (now - lastForexUpdate < 30000 && cachedForexData.length > 0) {
+    return cachedForexData;
+  }
+
   const baseData = [
     { pair: 'EUR/USD', rate: 1.0856 },
     { pair: 'GBP/USD', rate: 1.2634 },
@@ -359,16 +403,19 @@ const getFallbackForexData = (): ForexRate[] => {
     { pair: 'USD/CHF', rate: 0.8912 }
   ];
 
-  return baseData.map(item => {
+  cachedForexData = baseData.map(item => {
     const spread = item.rate * 0.0001;
     return {
       ...item,
       change24h: (Math.random() - 0.5) * 2, // Random change between -1% and +1%
       bid: item.rate - spread,
       ask: item.rate + spread,
-      timestamp: Date.now()
+      timestamp: now
     };
   });
+
+  lastForexUpdate = now;
+  return cachedForexData;
 };
 
 // Utility function to format large numbers
