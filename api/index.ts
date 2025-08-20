@@ -1,30 +1,12 @@
-import "dotenv/config";
-import express from "express";
-import cors from "cors";
-import { handleDemo } from "../server/routes/demo";
-import {
-  handleLogin,
-  handleRegister,
-  handleLogout,
-  handleGetProfile,
-  handleUpdateBalance,
-  handleForgotPassword,
-  handleResetPassword,
-} from "../server/routes/auth";
-import {
-  getCryptoPrices,
-  getForexRates,
-  getMarketNews,
-  getMarketSentiment,
-} from "../server/routes/market-data";
-import {
-  placeOrder,
-  cancelOrder,
-  getOrders,
-  getPositions,
-  getTrades,
-  getAccountInfo,
-} from "../server/routes/trading";
+// This file is no longer needed as we've moved to pure frontend
+// But keeping it minimal for Vercel to avoid build errors
+export default function handler(req: any, res: any) {
+  res.status(200).json({
+    message: 'CryptoFuture is now a frontend-only application',
+    status: 'success',
+    redirect: '/'
+  });
+}
 
 // Environment configuration for Vercel
 const isProduction = process.env.NODE_ENV === 'production';

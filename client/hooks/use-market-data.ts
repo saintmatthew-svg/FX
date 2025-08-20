@@ -62,12 +62,11 @@ interface ApiResponse<T> {
 
 export const useCryptoPrices = (
   symbols?: string[],
-  refreshInterval = 30000, // Update every 30 seconds to be respectful to API
+  refreshInterval = 15000, // Update every 15 seconds for smooth movement
 ) => {
-  const [data, setData] = useState<CryptoPrice[]>(() => getFallbackCryptoData()); // Start with fallback data
+  const [data, setData] = useState<CryptoPrice[]>(() => getFallbackCryptoData());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [lastFetch, setLastFetch] = useState<number>(0);
 
   // Memoize symbols to prevent infinite loop
   const symbolsString = useMemo(() =>
@@ -75,98 +74,30 @@ export const useCryptoPrices = (
     [symbols]
   );
 
-  const fetchData = useCallback(async () => {
-    // Prevent too frequent API calls
-    const now = Date.now();
-    if (now - lastFetch < 10000) { // Minimum 10 seconds between calls
-      return;
-    }
+  // Pure client-side crypto prices - no API calls needed
+  const fetchData = useCallback(() => {
+    setData(getFallbackCryptoData());
+    console.log('🪙 Client-side crypto prices updated');
+  }, []);
 
-    try {
-      setError(null);
-      setLastFetch(now);
-
-      const response = await fetch(`/api/crypto/prices?symbols=${symbolsString}`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result: ApiResponse<CryptoPrice[]> = await response.json();
-
-      if (result.success && result.data) {
-        setData(result.data);
-        console.log('✅ Live crypto prices updated:', result.data.length, 'symbols');
-      } else {
-        throw new Error(result.error || 'Failed to fetch data');
-      }
-    } catch (err) {
-      console.log('📊 API unavailable, using fallback data:', err);
-      setError(null); // Don't show error, just use fallback
-      // Don't update data here - let fallback interval handle it
-    } finally {
-      setLoading(false);
-    }
-  }, [symbolsString, lastFetch]);
-
-  // Try to fetch real data, but don't block UI
+  // Update prices regularly for live feel
   useEffect(() => {
     let mounted = true;
 
-    // Only try API fetch in production or if we know the server is running
-    const shouldTryAPI = process.env.NODE_ENV === 'production' || window.location.port === '8080';
-
-    if (shouldTryAPI && mounted) {
-      // Delay initial fetch to let server start
-      const timeoutId = setTimeout(() => {
-        if (mounted) {
-          fetchData();
-        }
-      }, 2000);
-
-      // Set up interval for regular updates (less frequent to avoid spam)
-      const intervalId = setInterval(() => {
-        if (mounted) {
-          fetchData();
-        }
-      }, refreshInterval * 2); // Double the interval for API calls
-
-      return () => {
-        mounted = false;
-        clearTimeout(timeoutId);
-        clearInterval(intervalId);
-      };
-    }
-  }, [fetchData, refreshInterval]);
-
-  // Update fallback data for smooth price movements (independent of API)
-  useEffect(() => {
-    let mounted = true;
-
-    const updateFallbackData = () => {
-      if (mounted && !loading) {
-        setData(currentData => {
-          // Only update if we don't have recent real data
-          const hasRecentData = currentData.some(item =>
-            Date.now() - item.timestamp < 60000 // Less than 1 minute old
-          );
-
-          if (!hasRecentData) {
-            return getFallbackCryptoData();
-          }
-          return currentData;
-        });
+    const updatePrices = () => {
+      if (mounted) {
+        setData(getFallbackCryptoData());
       }
     };
 
-    // Update fallback data every 15 seconds (less frequent)
-    const fallbackInterval = setInterval(updateFallbackData, 15000);
+    // Update prices every 15 seconds for realistic movement
+    const interval = setInterval(updatePrices, refreshInterval);
 
     return () => {
       mounted = false;
-      clearInterval(fallbackInterval);
+      clearInterval(interval);
     };
-  }, [loading]);
+  }, [refreshInterval]);
 
   return { data, loading, error, refetch: fetchData };
 };

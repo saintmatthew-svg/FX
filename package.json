@@ -12,20 +12,13 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:client && npm run build:server",
+    "build": "vite build",
     "build:client": "vite build",
-    "build:server": "vite build --config vite.config.server.ts",
     "build:frontend": "vite build",
-    "build:backend": "vite build --config vite.config.server.ts",
-    "start": "node dist/server/production.mjs",
-    "start:prod": "NODE_ENV=production node dist/server/production.mjs",
-    "preview": "npm run build && npm run start",
-    "deploy:frontend": "npm run build:frontend",
-    "deploy:backend": "npm run build:backend && npm run start:prod",
+    "preview": "vite preview",
     "test": "vitest --run",
     "format.fix": "prettier --write .",
-    "typecheck": "tsc",
-    "postbuild": "echo 'Build completed successfully!'"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@types/pg": "^8.15.5",

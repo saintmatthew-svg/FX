@@ -41,125 +41,141 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (credentials: LoginRequest): Promise<AuthResponse> => {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
+      // Simulate server validation with client-side logic
+      const storedUsers = JSON.parse(localStorage.getItem('cryptofuture_users') || '[]');
+      const user = storedUsers.find((u: any) =>
+        u.email === credentials.email && u.password === credentials.password
+      );
 
-      if (!response.ok) {
-        // Handle non-200 status codes
-        let errorMessage = 'Login failed';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
-        } catch {
-          // If JSON parsing fails, use default message
-          errorMessage = `Server error: ${response.status}`;
-        }
+      if (!user) {
         return {
           success: false,
-          message: errorMessage,
+          message: 'Invalid email or password',
         };
       }
 
-      const data: AuthResponse = await response.json();
+      // Create session token
+      const token = `token_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-      if (data.success && data.user && data.token) {
-        setUser(data.user);
-        if (typeof localStorage !== 'undefined') {
-          localStorage.setItem('auth_token', data.token);
-          localStorage.setItem('user_data', JSON.stringify(data.user));
-          // Initialize empty portfolio for new sessions
-          if (!localStorage.getItem('user_portfolio')) {
-            localStorage.setItem('user_portfolio', JSON.stringify({}));
-          }
+      const userWithoutPassword = {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        country: user.country,
+        tradingExperience: user.tradingExperience,
+        balance: user.balance || 0,
+        createdAt: user.createdAt,
+      };
+
+      setUser(userWithoutPassword);
+
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('auth_token', token);
+        localStorage.setItem('user_data', JSON.stringify(userWithoutPassword));
+        // Initialize empty portfolio for new sessions
+        if (!localStorage.getItem('user_portfolio')) {
+          localStorage.setItem('user_portfolio', JSON.stringify({}));
         }
       }
 
-      return data;
+      return {
+        success: true,
+        message: 'Login successful',
+        user: userWithoutPassword,
+        token,
+      };
     } catch (error) {
       console.error('Login error:', error);
       return {
         success: false,
-        message: 'Network error occurred',
+        message: 'Login failed',
       };
     }
   };
 
   const register = async (userData: RegisterRequest): Promise<AuthResponse> => {
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
+      // Client-side registration logic
+      const storedUsers = JSON.parse(localStorage.getItem('cryptofuture_users') || '[]');
 
-      if (!response.ok) {
-        // Handle non-200 status codes
-        let errorMessage = 'Registration failed';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
-        } catch {
-          // If JSON parsing fails, use default message
-          errorMessage = `Server error: ${response.status}`;
-        }
+      // Check if user already exists
+      const existingUser = storedUsers.find((u: any) => u.email === userData.email);
+      if (existingUser) {
         return {
           success: false,
-          message: errorMessage,
+          message: 'User with this email already exists',
         };
       }
 
-      const data: AuthResponse = await response.json();
+      // Create new user
+      const newUser = {
+        id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        password: userData.password, // In a real app, this would be hashed
+        phoneNumber: userData.phoneNumber,
+        country: userData.country,
+        tradingExperience: userData.tradingExperience,
+        balance: 0,
+        createdAt: new Date().toISOString(),
+      };
 
-      if (data.success && data.user && data.token) {
-        setUser(data.user);
-        if (typeof localStorage !== 'undefined') {
-          localStorage.setItem('auth_token', data.token);
-          localStorage.setItem('user_data', JSON.stringify(data.user));
-          // Initialize empty portfolio for new registrations
-          localStorage.setItem('user_portfolio', JSON.stringify({}));
-        }
+      // Save to localStorage users array
+      storedUsers.push(newUser);
+      localStorage.setItem('cryptofuture_users', JSON.stringify(storedUsers));
+
+      // Create session token
+      const token = `token_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      const userWithoutPassword = {
+        id: newUser.id,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email,
+        phoneNumber: newUser.phoneNumber,
+        country: newUser.country,
+        tradingExperience: newUser.tradingExperience,
+        balance: newUser.balance,
+        createdAt: newUser.createdAt,
+      };
+
+      setUser(userWithoutPassword);
+
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('auth_token', token);
+        localStorage.setItem('user_data', JSON.stringify(userWithoutPassword));
+        localStorage.setItem('user_portfolio', JSON.stringify({}));
       }
 
-      return data;
+      return {
+        success: true,
+        message: 'Registration successful',
+        user: userWithoutPassword,
+        token,
+      };
     } catch (error) {
       console.error('Register error:', error);
       return {
         success: false,
-        message: 'Network error occurred',
+        message: 'Registration failed',
       };
     }
   };
 
   const logout = async () => {
     try {
-      // Call server to invalidate session
-      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('auth_token') : null;
-      if (token) {
-        await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      // Clear local state regardless of server response
+      // Pure client-side logout
       setUser(null);
       if (typeof localStorage !== 'undefined') {
         localStorage.removeItem('auth_token');
         localStorage.removeItem('user_data');
         localStorage.removeItem('user_portfolio');
       }
+    } catch (error) {
+      console.error('Logout error:', error);
     }
   };
 
